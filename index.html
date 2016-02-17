@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>hello phaser!</title>
+        <script src="phaser.min.js"></script>
+    </head>
+    <body>
+
+    <div id="game"></div>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+        var cursors;
+        var tunnel;
+
+        var mainstate = {
+
+            preload: function() {
+                //game.time.advancedTiming = true;
+                //game.load.image('sky', 'assets/sky.png');
+                game.load.image('wall', 'wall.jpg');
+                game.load.image('pod', 'pod.jpg');
+                //game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+            },
+            
+            create: function() {
+                
+                cursors = game.input.keyboard.createCursorKeys();
+                
+                game.input.keyboard.onUpCallback = function( e ){
+                    if(e.keyCode == Phaser.Keyboard.ESC){
+                        console.log("pause");
+                        game.state.start('menu');
+                    }
+                };
+
+                game.physics.startSystem(Phaser.Physics.ARCADE);
+                
+                tunnel = game.add.group();
+
+                tunnel.enableBody = true;
+
+                //game.world.height - 64
+                var wall = tunnel.create(0, 0, 'wall');
+                wall.scale.setTo(2, 2);
+                wall.body.immovable = true;
+
+                var wall2 = tunnel.create(0, game.world.height-16, 'wall');
+                wall2.scale.setTo(2, 2);
+                wall2.body.immovable = true;
+
+                // player
+                player = game.add.sprite(32, game.world.height / 2, 'pod');
+
+                game.physics.arcade.enable(player);
+
+                player.body.bounce.y = 0.2;
+                player.body.gravity.y = 300;
+                player.body.collideWorldBounds = true;
+
+                player.animations.add('left', [0, 1, 2, 3], 10, true);
+                player.animations.add('right', [5, 6, 7, 8], 10, true);
+
+                // var ledge = platforms.create(400, 400, 'wall');
+                // ledge.body.immovable = true;
+            },
+
+            update: function() {
+
+                game.physics.arcade.collide(player, tunnel);
+
+                //  Reset the players velocity (movement)
+                player.body.velocity.x = 0;
+
+                if (cursors.left.isDown)
+                {
+                    //  Move to the left
+                    player.body.velocity.x = -150;
+
+                    player.animations.play('left');
+                }
+                else if (cursors.right.isDown)
+                {
+                    //  Move to the right
+                    player.body.velocity.x = 150;
+
+                    player.animations.play('right');
+                }
+                else
+                {
+                    //  Stand still
+                    player.animations.stop();
+
+                    player.frame = 4;
+                }
+
+                //  Allow the player to jump if they are touching the ground.
+                if (cursors.up.isDown && player.body.touching.down)
+                {
+                    player.body.velocity.y = -350;
+                }
+            },
+            
+            render: function() {
+                game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");  
+            }
+            
+        };
+
+        var menustate = {
+
+            preload: function() {
+                game.input.keyboard.onUpCallback = function( e ){
+                    if(e.keyCode == Phaser.Keyboard.ESC){
+                        console.log("pause");
+                        game.state.start('menu');
+                    }
+                };
+            },
+            
+            create: function() {
+            },
+
+            update: function() {
+            },
+            
+            render: function() {
+                game.debug.text("Paused", 2, 14, "#00ff00");  
+            }
+            
+        };
+
+        // initialise
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game');
+
+        // states
+        game.state.add('main', mainstate);
+        game.state.add('menu', menustate);
+        game.state.start('main');  
+    };
+
+    </script>
+
+    </body>
+</html>
