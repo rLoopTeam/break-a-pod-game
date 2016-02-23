@@ -12,6 +12,7 @@ BasicGame.Preloader.prototype = {
 
 	preload: function () {
 
+
 		//	These are the assets we loaded in Boot.js
 		//	A nice sparkly background and a loading progress bar
 
@@ -27,10 +28,13 @@ BasicGame.Preloader.prototype = {
 		//	Here we load the rest of the assets our game needs.
 		//	You can find all of these assets in the Phaser Examples repository
 		this.load.image('title_image', 'assets/sprites/title_image.png');
+	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
+
+	    //GUI
+		this.load.atlas('button', 'assets/GUI/button_texture_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.image('button_normal', 'assets/GUI/button_normal.png');
 		this.load.image('button_pressed', 'assets/GUI/button_pressed.png');
 		this.load.image('button_selected', 'assets/GUI/button_selected.png');
-	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
 	    this.load.image('booster', 'assets/sprites/booster.png');
