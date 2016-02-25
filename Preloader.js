@@ -51,7 +51,7 @@ BasicGame.Preloader.prototype = {
 	create: function () {
 		console.log("go to main menu")
 		//this.state.start('MainMenu');
-		this.state.start('LevelGenerator');
+		this.state.start('Game');
 
 	},
 	update: function () {

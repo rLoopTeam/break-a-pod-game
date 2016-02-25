@@ -15,7 +15,7 @@ BasicGame.Boot.prototype = {
         this.stage.disableVisibilityChange = true;
 
         //  This tells the game to resize the renderer to match the game dimensions (i.e. 100% browser width / height)
-        this.scale.scaleMode = Phaser.ScaleManager.RESIZE;
+        //this.scale.scaleMode = Phaser.ScaleManager.RESIZE;
 
     },
 

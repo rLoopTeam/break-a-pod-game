@@ -5,6 +5,8 @@ BasicGame.LevelGenerator = function (game) {
     this.cursors;
 
     this.player;
+    this.playerCollisionGroup;
+    this.tunnelCollisionGroup;
 };
 
 BasicGame.LevelGenerator.prototype = {
@@ -14,8 +16,10 @@ BasicGame.LevelGenerator.prototype = {
         this.game.time.advancedTiming = true;
 
         console.log("game started")
-        this.physics.startSystem(Phaser.Physics.arcade);
-        
+        this.physics.startSystem(Phaser.Physics.P2JS);
+        this.game.physics.p2.gravity.y = 300;
+        this.game.physics.p2.restitution = 0.8;
+
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
         
@@ -28,81 +32,33 @@ BasicGame.LevelGenerator.prototype = {
         // set world size
         this.world.setBounds(0, 0, 20000, 500);
 
-        this.tunnel = this.add.group();
-
-        this.tunnel.enableBody = true;
-
-        var wall = this.tunnel.create(0, 0, 'wall');
-        wall.scale.setTo(2, 2);
-        wall.body.immovable = true;
-
-        var wall2 = this.tunnel.create(0, this.world.height-16, 'wall');
-        wall2.scale.setTo(2, 2);
-        wall2.body.immovable = true;
-
-        var booster = this.add.sprite(300, this.world.height-41, 'booster');
-
-
         // player
+        // this.playerCollisionGroup = this.physics.p2.createCollisionGroup();
         this.player = this.add.sprite(32, this.world.height / 2, 'pod');
+        this.physics.p2.enable(this.player);
 
-        this.physics.arcade.enable(this.player);
+        // this.physics.p2.enable(this.player, false);
+        // this.player.body.fixedRotation = false;
 
-        this.player.body.bounce.y = 0.2;
-        this.player.body.gravity.y = 300;
-        //player.body.collideWorldBounds = true;
+        // this.player.body.setCollisionGroup(this.playerCollisionGroup);
 
+        //tunnel
+        // this.tunnelCollisionGroup = this.physics.p2.createCollisionGroup();
+        // this.tunnel = this.add.group();
+        // this.tunnel.enableBody = true;
+        // this.tunnel.physicsBodyType = Phaser.Physics.P2JS;
+
+        // generate graphics
         var graphics = this.game.add.graphics(0, 0);
-        
-        // draw a second shape
-        /*graphics.moveTo(210,300);
-        graphics.lineTo(450,320);
-        graphics.lineTo(570,350);
-        graphics.quadraticCurveTo(600, 0, 480,100);
-        graphics.lineTo(330,120);
-        graphics.lineTo(410,200);
-        graphics.lineTo(210,300);
-        graphics.endFill();*/
-        
-        // var length = 300,
-        //     depth = 500,
-        //     resolution = 10,
-        //     floor_position = {"x": 0, "y": 500};
-
-        // graphics.moveTo(floor_position.x, 800);
-
-        // graphics.lineStyle(10, 0xFF0000, 0.8);
-        // graphics.beginFill(0xFF700B, 1);
-        
-        // for ( var i = 0; i < (length*resolution); i++ ) {
-        //     graphics.lineTo(floor_position.x + i*10, floor_position.y + Math.sin( i )*10);
-        // }
-        // graphics.lineTo(length*resolution, floor_position.y);
-        // graphics.endFill();
-
-        /*graphics.lineTo(450,320);
-        graphics.lineTo(570,350);
-        graphics.quadraticCurveTo(600, 0, 480,100);
-        graphics.lineTo(330,120);
-        graphics.lineTo(410,200);
-        graphics.lineTo(210,300);
-        graphics.endFill();*/
-
         this.drawHills(graphics, this.tunnel, 5, 15);
-
+        
         window.graphics = graphics;
 	},
 
 	update: function () {
-
-		this.physics.arcade.collide(this.player, this.tunnel);
-        this.physics.arcade.overlap(this.player, this.end, this.win, null, this);
-
-        // make camera follow player
         this.camera.x = this.player.x - 200;
 
         this.handleInput();
-
 	},
             
     render: function() {
@@ -132,16 +88,7 @@ BasicGame.LevelGenerator.prototype = {
             this.player.animations.play('idle');
     },
 
-    // graphics.lineStyle(10, 0xFF0000, 0.8);
-    // graphics.beginFill(0xFF700B, 1);
-    
-    // for ( var i = 0; i < (length*resolution); i++ ) {
-    //     graphics.lineTo(floor_position.x + i*10, floor_position.y + Math.sin( i )*10);
-    // }
-    // graphics.lineTo(length*resolution, floor_position.y);
-    // graphics.endFill();
-
-    drawHills: function(graphics, physics_group, numberOfHills, pixelStep) {
+    drawHills: function(graphics, group, numberOfHills, pixelStep) {
         try{
             var hillStartY  = 400+Math.random()*200,
                 hillWidth   = 640/numberOfHills,
@@ -174,12 +121,15 @@ BasicGame.LevelGenerator.prototype = {
                         // drawing stuff
                         graphics.lineTo(hillPoint.x, hillPoint.y);
 
-                        var wall = this.tunnel.create(prevx, prevy, 'wall');
-                        wall.scale.setTo(length, 10);
-                        wall.rotation = angle;
-                        wall.body.immovable = true;
+                        var newRect = this.add.sprite(x, y, 'wall', 0);
+                        newRect.scale.setTo(length, 10);
+                        this.physics.p2.enable(newRect, true);
+                        newRect.anchor.setTo(1, 0.5);
+                        newRect.body.clearShapes();
+                        newRect.body.addRectangle(length, 10, -length/2, 0);
+                        newRect.body.static = true;
+                        newRect.body.rotation = angle;
 
-                        //graphics.lineTo(hillPoint.x, 480);
                         graphics.moveTo(hillPoint.x, hillPoint.y);
 
                         prevx = x;
