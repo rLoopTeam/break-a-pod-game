@@ -75,7 +75,7 @@ BasicGame.Game.prototype = {
 	update: function () {
 
         this.camera.x = this.player.x - 200;
-        this.player.body.velocity.x = 400;
+        //this.player.body.velocity.x = 400;
         this.handleInput();
 
 	},
@@ -143,6 +143,10 @@ BasicGame.Game.prototype = {
             }
             graphics.lineTo(tube_length,480);
             graphics.endFill();
+
+            // material physics
+            var groundPlayerCM = this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 0.0 });
+
         } catch(e) {
             console.log(e);
         }
