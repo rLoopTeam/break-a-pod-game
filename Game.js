@@ -186,6 +186,16 @@ BasicGame.Game.prototype = {
             carBody.body.angularVelocity = 2;
             //game.physics.p2.walls.bottom.velocity[0] = wheel_back.body.angularVelocity+(carBody.position.x-(w/2-w/4+100))/50;
         }
+
+        if (this.cursors.left.isDown || this.moveLeft) {
+            this.player.body.velocity.x -= 25 * Math.cos(this.player.body.angle * Math.PI / 180);
+            if (this.player.body.velocity.x < 0) { this.player.body.velocity.x = 0; } // This prevents pod from traveling backwards
+            this.player.frame = 2;
+        }
+        else if (this.cursors.right.isDown || this.moveRight) {
+            this.player.body.velocity.x += 10 * Math.cos(this.player.body.angle * Math.PI / 180);
+            this.player.frame = 1;
+        }
         
 
         if (this.cursors.down.isDown)
