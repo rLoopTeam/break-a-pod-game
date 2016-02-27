@@ -169,11 +169,12 @@ BasicGame.Game.prototype = {
 
     handleInput: function() {
         if (this.cursors.left.isDown || this.moveLeft) {
-            this.player.body.velocity.x = -200;
+            this.player.body.velocity.x -= 25 * Math.cos(this.player.body.angle * Math.PI / 180);
+            if (this.player.body.velocity.x < 0) { this.player.body.velocity.x = 0; } // This prevents pod from traveling backwards
             this.player.frame = 2;
         }
         else if (this.cursors.right.isDown || this.moveRight) {
-            this.player.body.velocity.x = 200;
+            this.player.body.velocity.x += 10 * Math.cos(this.player.body.angle * Math.PI / 180);
             this.player.frame = 1;
         }
         else {
