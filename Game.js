@@ -28,17 +28,23 @@ BasicGame.Game = function (game) {
 
     this.player;
 
+
     this.playerCollisionGroup;
     this.tunnelCollisionGroup;
+
+    this.tunnelPhysicsData;
 };
 
 BasicGame.Game.prototype = {
+    preload: function() {
+        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
+        this.tunnelPhysicsData = this.generateTubePoints(5, (this.world.height / 2) +100, 580, 15000, 200, 15);
+        this.load.physics('physicsData', "", this.tunnelPhysicsData);
+    },
 
 	create: function () {
         //gametime
         this.time.advancedTiming = true;
-
-        console.log("game started")
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.gravity.y = 300;
         this.physics.p2.restitution = 0.2;
@@ -66,101 +72,97 @@ BasicGame.Game.prototype = {
         this.player.body.setMaterial(this.playerMaterial);
         //player.body.collideWorldBounds = true;
 
-        var graphics = this.game.add.graphics(0, 0);
-        this.drawTube(graphics, this.tunnel, 3, (this.world.height / 2) - 100, 580, 4000, 200, 15);
-                      //graphics, group, numberOfHills, hill_max_height, tube_length, tube_height, pixelStep){
+        var graphics = this.add.graphics(0, 0);
+
+        this.drawTube(graphics, this.tunnelPhysicsData);
+        
         this.addCar();
         window.graphics = graphics;
 	},
 
 	update: function () {
 
-        this.camera.x = carBody.body.x - 200;
+        this.camera.x = this.player.body.x - 200;
         //this.player.body.velocity.x = 400;
         this.handleInput();
 
 	},
 
-    drawTube: function (graphics, group, numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
-        try{
-            var hillStartY  = start_y,//+Math.random()*hill_max_height
-                hillWidth   = tube_length/numberOfHills,
-                hillSlices  = hillWidth/pixelStep,
-                prevx,
-                prevy;
-    
-            graphics.lineStyle(6,0xAAAAAA, 0.8);
-            graphics.beginFill(0xFF700B, 1);
-            graphics.moveTo(0,480);
+    generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
+        var hillStartY          = start_y,
+            hillWidth           = tube_length/numberOfHills,
+            hillSlices          = hillWidth/pixelStep,
+            tunnelPhysicsData   = {"top":[], "bottom":[]},
+            prevx               = 0,
+            prevy               = 800;
 
-            for (var i = 0; i < numberOfHills; i++) {
-                var randomHeight = Math.random()*100;
-                // this is necessary to make all hills (execept the first one) begin where the previous hill ended
-                if (i!=0) {
-                    hillStartY -= randomHeight;
-                }
-                // looping through hill slices
-                for (var j = 0; j <= hillSlices; j++) {
-                        var x           = j * pixelStep + hillWidth * i,
-                            y           = hillStartY + randomHeight * Math.cos(2*Math.PI/hillSlices*j),
-                            height      = y - prevy,
-                            length      = Math.sqrt((pixelStep*pixelStep) + (height*height)),
-                            hillPoint   = {"x": x, "y": y},
-                            angle       = Math.atan2(y - prevy, x - prevx);
-
-                        // drawing the line
-                        //graphics.lineTo(hillPoint.x, hillPoint.y);
-
-                        // generating the physics for the line
-                        // bottom wall
-                        var newRect = this.add.sprite(x, y, 'wall', 0);
-                        newRect.scale.setTo(length, 10);
-                        this.physics.p2.enable(newRect, true);
-                        newRect.anchor.setTo(1, 0.5);
-                        newRect.body.clearShapes();
-                        newRect.body.addRectangle(length, 10, -length/2, 0);
-                        newRect.body.static = true;
-                        newRect.body.rotation = angle;
-                        newRect.body.setMaterial(this.groundMaterial);
-
-                        //top wall
-                        var newRect = this.add.sprite(x, y + tube_height, 'wall', 0);
-                        newRect.scale.setTo(length, 10);
-                        this.physics.p2.enable(newRect, true);
-                        newRect.anchor.setTo(1, 0.5);
-                        newRect.body.clearShapes();
-                        newRect.body.addRectangle(length, 10, -length/2, 0);
-                        newRect.body.static = true;
-                        newRect.body.rotation = angle;
-                        newRect.body.setMaterial(this.groundMaterial);
-
-                        //graphics.moveTo(hillPoint.x, hillPoint.y);
-
-                        prevx = x;
-                        prevy = y;
-                }
-                // this is also necessary to make all hills (execept the first one) begin where the previous hill ended
-                hillStartY = hillStartY + randomHeight;
+        for (var i = 0; i < numberOfHills; i++) {
+            var randomHeight = Math.random()*78.5;
+            // this is necessary to make all hills (execept the first one) begin where the previous hill ended
+            if (i!=0) {
+                hillStartY -= randomHeight;
             }
-            graphics.lineTo(tube_length,480);
-            graphics.endFill();
+            // looping through hill slices
+            for (var j = 0; j <= hillSlices; j++) {
+                    var x           = j * pixelStep + hillWidth * i,
+                        y           = hillStartY + randomHeight * Math.cos(2*Math.PI/hillSlices*j),
+                        height      = y - prevy,
+                        length      = Math.sqrt((pixelStep*pixelStep) + (height*height)),
+                        hillPoint   = {"x": x, "y": y},
+                        angle       = Math.atan2(y - prevy, x - prevx)
 
-            // material physics
-            var groundPlayerCM = this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 1.0 });
+                    var rect = {
+                        "density": 2, "friction": 0, "bounce": 0, 
+                        "filter": { "categoryBits": 1, "maskBits": 65535 },
+                        "shape": [  prevx,800,   prevx,prevy,  hillPoint.x,hillPoint.y,  hillPoint.x,800  ]
+                    };
+                    tunnelPhysicsData['bottom'].push(rect);
 
-        } catch(e) {
-            console.log(e);
+                    prevx = x;
+                    prevy = y;
+            }
+            // this is also necessary to make all hills (execept the first one) begin where the previous hill ended
+            hillStartY = hillStartY + randomHeight;
         }
+        return tunnelPhysicsData;
+    },
+    drawTube: function (graphics, points){    
+        var totalPoints = points['bottom'].length;    
+        var prevx = points['bottom'][0]['shape'][2];
+        var prevy = points['bottom'][0]['shape'][3];
+        
+        graphics.lineStyle(6,0xAAAAAA, 0.8);
+        graphics.beginFill(0xFF700B, 1);
+        graphics.moveTo(0,800);
+
+        for (var i = 1; i < totalPoints; i++) {
+            var x = points['bottom'][i]['shape'][4]
+                y = points['bottom'][i]['shape'][5];
+
+            graphics.lineTo(x, y);
+            graphics.moveTo(x, y);
+
+            prevx = x;
+            prevy = y;
+        }
+
+        graphics.lineTo(prevx+500,prevy);
+        graphics.endFill();
+
+        // load physics data
+        var polygonCollisionSprite = this.add.sprite(0, 0,'wall', true);  
+        this.physics.p2.enableBody(polygonCollisionSprite,true);
+        polygonCollisionSprite.body.static = true;
+        polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+        polygonCollisionSprite.body.clearShapes();
+        polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
+        // material physics
+        var groundPlayerCM = this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 1.0 });
+
     },
             
     render: function() {
-        try{
         this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");  
-        } catch(e){
-            console.log("===render error====")
-            console.log(e)
-        }
-        
     },
     
     resize: function (width, height) {
@@ -187,7 +189,7 @@ BasicGame.Game.prototype = {
             //game.physics.p2.walls.bottom.velocity[0] = wheel_back.body.angularVelocity+(carBody.position.x-(w/2-w/4+100))/50;
         }
 
-        if (this.cursors.left.isDown || this.moveLeft) {
+        /*if (this.cursors.left.isDown || this.moveLeft) {
             this.player.body.velocity.x -= 25 * Math.cos(this.player.body.angle * Math.PI / 180);
             if (this.player.body.velocity.x < 0) { this.player.body.velocity.x = 0; } // This prevents pod from traveling backwards
             this.player.frame = 2;
@@ -195,7 +197,7 @@ BasicGame.Game.prototype = {
         else if (this.cursors.right.isDown || this.moveRight) {
             this.player.body.velocity.x += 10 * Math.cos(this.player.body.angle * Math.PI / 180);
             this.player.frame = 1;
-        }
+        }*/
         
 
         if (this.cursors.down.isDown)
@@ -276,7 +278,8 @@ BasicGame.Game.prototype = {
             //addPhaserP2_debug(constraint_1,"prismaticConstraint")
             constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
             constraint_1.upperLimit = -1;
-            constraint_1.lowerLimit = -8;    
+            constraint_1.lowerLimit = -8;  
+
     }
 
 };
