@@ -129,7 +129,7 @@ BasicGame.Game.prototype = {
                     var topRect = {
                         "density": 2, "friction": 0, "bounce": 0,
                         "filter": { "categoryBits": 1, "maskBits": 65535 },
-                        "shape": [prevx,hillPoint.y-tube_height-100,   hillPoint.x,hillPoint.y-tube_height-100,   hillPoint.x,hillPoint.y-tube_height,   prevx,hillPoint.y-tube_height]
+                        "shape": [prevx,hillPoint.y-tube_height-100,   hillPoint.x,hillPoint.y-tube_height-100,   hillPoint.x,hillPoint.y-tube_height,   prevx,prevy-tube_height]
                         //"shape": [prevx, hillPoint.y - tube_height, prevx, hillPoint.y - tube_height - 10, hillPoint.x, hillPoint.y - tube_height-10, hillPoint.x, hillPoint.y - tube_height]
                     };
                     tunnelPhysicsData['top'].push(topRect);
@@ -184,14 +184,14 @@ BasicGame.Game.prototype = {
         graphics.endFill();
 
         // load physics data
-        var polygonCollisionSprite = this.add.sprite(0, 0,'wall', true);  
-        this.physics.p2.enableBody(polygonCollisionSprite,true);
+        var polygonCollisionSprite = this.add.sprite(0, 0,'wall');  
+        this.physics.p2.enableBody(polygonCollisionSprite);
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
 
-        var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall', true);
-        this.physics.p2.enableBody(top_polygonCollisionSprite, true);
+        var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
+        this.physics.p2.enableBody(top_polygonCollisionSprite);
         top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
         top_polygonCollisionSprite.body.static = true;
         top_polygonCollisionSprite.body.addRectangle(10, 50, 0, 400);
