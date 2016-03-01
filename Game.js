@@ -43,7 +43,7 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
     preload: function() {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(5, (this.world.height / 2) +100, 580, 15000, 200, 15);
+        this.tunnelPhysicsData = this.generateTubePoints(10, (this.world.height / 2) +100, 580, 15000, 150, 15);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
     },
 
@@ -111,9 +111,16 @@ BasicGame.Game.prototype = {
                     var rect = {
                         "density": 2, "friction": 0, "bounce": 0, 
                         "filter": { "categoryBits": 1, "maskBits": 65535 },
-                        "shape": [  prevx,800,   prevx,prevy,  hillPoint.x,hillPoint.y,  hillPoint.x,800  ]
+                        "shape": [prevx, hillPoint.y + 10, prevx, prevy, hillPoint.x, hillPoint.y, hillPoint.x, hillPoint.y+10]
                     };
                     tunnelPhysicsData['bottom'].push(rect);
+
+                    var topRect = {
+                        "density": 2, "friction": 0, "bounce": 0,
+                        "filter": { "categoryBits": 1, "maskBits": 65535 },
+                        "shape": [prevx, hillPoint.y - tube_height, prevx, hillPoint.y - tube_height - 10, hillPoint.x, hillPoint.y - tube_height-10, hillPoint.x, hillPoint.y - tube_height]
+                    };
+                    tunnelPhysicsData['top'].push(topRect);
 
                     prevx = x;
                     prevy = y;
@@ -146,14 +153,38 @@ BasicGame.Game.prototype = {
         graphics.lineTo(prevx+500,prevy);
         graphics.endFill();
 
+        graphics.lineStyle(6, 0xAAAAAA, 0.8);
+        graphics.beginFill(0xFF700B, 1);
+        graphics.moveTo(0, 800);
+
+        for (var i = 1; i < totalPoints; i++) {
+            var x = points['top'][i]['shape'][4]
+            y = points['top'][i]['shape'][5];
+
+            graphics.lineTo(x, y);
+            graphics.moveTo(x, y);
+
+            prevx = x;
+            prevy = y;
+        }
+
+        graphics.lineTo(prevx + 500, prevy);
+        graphics.endFill();
+
         // load physics data
         var polygonCollisionSprite = this.add.sprite(0, 0,'wall', true);  
         this.physics.p2.enableBody(polygonCollisionSprite,true);
-        //polygonCollisionSprite.body.clearShapes();
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
         polygonCollisionSprite.body.addRectangle(10, 50, 0, 400);
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+
+        var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall', true);
+        this.physics.p2.enableBody(top_polygonCollisionSprite, true);
+        top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
+        top_polygonCollisionSprite.body.static = true;
+        top_polygonCollisionSprite.body.addRectangle(10, 50, 0, 400);
+        top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
 
     },
             
@@ -223,7 +254,7 @@ BasicGame.Game.prototype = {
 
 
     addCar: function () {
-        var carBody = this.add.sprite(100, 250); //CARBODY
+        var carBody = this.add.sprite(100, (this.world.height / 2) + 100); //CARBODY
         var wheel_front = this.add.sprite(140, 280); //FRONT WHEEL
         var wheel_back = this.add.sprite(60, 280); //BACK WHEEL 
         //var CG_car = this.physics.p2.createCollisionGroup(); //CAR GROUP
