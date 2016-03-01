@@ -16,8 +16,8 @@ BasicGame.Preloader.prototype = {
 		//	These are the assets we loaded in Boot.js
 		//	A nice sparkly background and a loading progress bar
 
-		this.background = this.add.sprite(0, 0, 'preloaderBackground');
-		this.preloadBar = this.add.sprite(300, 400, 'preloaderBar');
+		this.background = this.add.sprite(300, 400, 'preloaderBackground');
+		this.preloadBar = this.add.sprite(305, 405, 'preloaderBar');
 
 		//	This sets the preloadBar sprite as a loader sprite.
 		//	What that does is automatically crop the sprite from 0 to full-width
@@ -30,17 +30,22 @@ BasicGame.Preloader.prototype = {
 		this.load.image('title_image', 'assets/sprites/title_image.png');
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
-	    //GUI
+        // GUI assets
+        this.load.image('progressorBackground', 'assets/GUI/track-progress.png');
+        this.load.image('progressorMarker', 'assets/GUI/track-progress-marker.png');
+
 		this.load.atlas('button', 'assets/GUI/button_texture_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.image('button_normal', 'assets/GUI/button_normal.png');
 		this.load.image('button_pressed', 'assets/GUI/button_pressed.png');
 		this.load.image('button_selected', 'assets/GUI/button_selected.png');
 
+		// WORLD
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
 	    this.load.image('booster', 'assets/sprites/booster.png');
 	    this.load.image('end_sign', 'assets/sprites/end_sign.png');
 
-        this.load.image('pod', 'assets/sprites/pod.jpg');
+        this.load.image('pod', 'assets/sprites/pod.png');
+
 
 	    //music
 	    //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
