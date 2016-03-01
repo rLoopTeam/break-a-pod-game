@@ -27,12 +27,17 @@ BasicGame.Game = function (game) {
     this.cursors;
 
     this.player;
+    this.carBody;
 
+    this.groundMaterial;
+    this.playerMaterial;
 
     this.playerCollisionGroup;
     this.tunnelCollisionGroup;
 
     this.tunnelPhysicsData;
+
+    this.CG_world;
 };
 
 BasicGame.Game.prototype = {
@@ -52,7 +57,7 @@ BasicGame.Game.prototype = {
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
         this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 1.0,restitution: 0  });
-        
+
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
         
@@ -61,28 +66,20 @@ BasicGame.Game.prototype = {
 
         // world
         this.stage.backgroundColor = "#0c9fc7";
-        
-        // set world size
         this.world.setBounds(0, 0, 20000, 500);
 
-        // player
-        this.player = this.add.sprite(32, this.world.height, 'pod');
-        this.physics.p2.enable(this.player, true);
-        this.player.body.mass = 2;
-        this.player.body.setMaterial(this.playerMaterial);
-        //player.body.collideWorldBounds = true;
 
         var graphics = this.add.graphics(0, 0);
 
         this.drawTube(graphics, this.tunnelPhysicsData);
-        
         this.addCar();
+
         window.graphics = graphics;
 	},
 
 	update: function () {
-
-        this.camera.x = this.player.body.x - 200;
+        this.camera.x = this.carBody.body.x - 200;
+        //this.camera.x = this.player.body.x - 200;
         //this.player.body.velocity.x = 400;
         this.handleInput();
 
@@ -152,12 +149,11 @@ BasicGame.Game.prototype = {
         // load physics data
         var polygonCollisionSprite = this.add.sprite(0, 0,'wall', true);  
         this.physics.p2.enableBody(polygonCollisionSprite,true);
-        polygonCollisionSprite.body.static = true;
-        polygonCollisionSprite.body.setMaterial(this.groundMaterial);
-        polygonCollisionSprite.body.clearShapes();
+        //polygonCollisionSprite.body.clearShapes();
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
-        // material physics
-        var groundPlayerCM = this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 1.0 });
+        polygonCollisionSprite.body.static = true;
+        polygonCollisionSprite.body.addRectangle(10, 50, 0, 400);
+        polygonCollisionSprite.body.setMaterial(this.groundMaterial);
 
     },
             
@@ -174,19 +170,21 @@ BasicGame.Game.prototype = {
         
         if (this.cursors.right.isDown)
         {
-            if (wheel_back.body.angularVelocity < 300) 
+            if (this.wheel_back.body.angularVelocity < 300) 
             {
-                wheel_back.body.angularVelocity += 10; 
-                wheel_front.body.angularVelocity += 10;
+                this.wheel_back.body.angularVelocity += 10; 
+                this.wheel_front.body.angularVelocity += 10;
             }
-            carBody.body.thrust(200)
-            //game.physics.p2.walls.bottom.velocity[0] = wheel_back.body.angularVelocity+(carBody.position.x-(w/2-w/4))/50;
+            this.carBody.body.thrust(200);
         }
 
         if (this.cursors.up.isDown)
         {
-            carBody.body.angularVelocity = 2;
-            //game.physics.p2.walls.bottom.velocity[0] = wheel_back.body.angularVelocity+(carBody.position.x-(w/2-w/4+100))/50;
+            this.carBody.body.angularVelocity = 2;
+        }
+        if (this.cursors.down.isDown)
+        {
+            this.carBody.body.angularVelocity = -2;
         }
 
         /*if (this.cursors.left.isDown || this.moveLeft) {
@@ -198,14 +196,6 @@ BasicGame.Game.prototype = {
             this.player.body.velocity.x += 10 * Math.cos(this.player.body.angle * Math.PI / 180);
             this.player.frame = 1;
         }*/
-        
-
-        if (this.cursors.down.isDown)
-        {
-            carBody.body.angularVelocity = -2;
-            //game.physics.p2.walls.bottom.velocity[0] = wheel_back.body.angularVelocity+(carBody.position.x-(w/2-w/4+100))/50;
-        }
-
     },
 
 
@@ -233,53 +223,45 @@ BasicGame.Game.prototype = {
 
 
     addCar: function () {
-        carBody =this.game.add.sprite(100, 250);; //CARBODY
-        wheel_front =this.game.add.sprite(140, 280); //FRONT WHEEL
-        wheel_back =this.game.add.sprite(60, 280);; //BACK WHEEL 
-        CG_car =this.game.physics.p2.createCollisionGroup(); //CAR GROUP
+        var carBody = this.add.sprite(100, 250); //CARBODY
+        var wheel_front = this.add.sprite(140, 280); //FRONT WHEEL
+        var wheel_back = this.add.sprite(60, 280); //BACK WHEEL 
+        //var CG_car = this.physics.p2.createCollisionGroup(); //CAR GROUP
         
-       this.game.physics.p2.updateBoundsCollisionGroup(); //UPDATE COLLISION BOUND FOR GROUPS
-        
-       this.game.physics.p2.enable([wheel_front, wheel_back,carBody]);
+        this.physics.p2.updateBoundsCollisionGroup(); 
+        this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
-            carBody.body.setRectangle(30,100);
-            carBody.body.debug = true;
-            carBody.body.mass = 1;
-            carBody.body.setCollisionGroup(CG_car);
-            carBody.body.angle = 90;
-            carBody.body.setMaterial(this.playerMaterial);
+        carBody.body.setRectangle(30,100);
+        carBody.body.debug = true;
+        carBody.body.mass = 1;
+        carBody.body.angle = 90;
+        carBody.body.setMaterial(this.playerMaterial);
 
-            wheel_front.body.setCircle(20);
-            //wheel_front.body.debug = false;
-            wheel_front.body.mass = 0.1;
-            //wheel_front.body.renderable = false;
-            //wheel_front.body.setCollisionGroup(CG_car);
-            wheel_front.body.setMaterial(this.playerMaterial);
+        wheel_front.body.setCircle(5);
+        wheel_front.body.mass = 0.1;
+        wheel_front.body.setMaterial(this.playerMaterial);
+    
+        wheel_back.body.setCircle(5);
+        wheel_back.body.mass = 0.1;
+        wheel_back.body.setMaterial(this.playerMaterial);
         
-            wheel_back.body.setCircle(20);
-            //wheel_back.body.debug = false;
-            wheel_back.body.mass = 0.1;
-            //wheel_front.body.renderable = false;
-            //wheel_back.body.setCollisionGroup(CG_car);
-            wheel_back.body.setMaterial(this.playerMaterial);
-        
-    //        //Spring(world, bodyA, bodyB, restLength, stiffness, damping, worldA, worldB, localA, localB)
-        var spring =this.game.physics.p2.createSpring(carBody,wheel_front, 70, 200, 10,null,null,[0,30],null);
-            //addPhaserP2_debug(spring,"spring")
-        var spring_1 =this.game.physics.p2.createSpring(carBody,wheel_back, 70, 200, 10,null,null,[0,-30],null);
-            //addPhaserP2_debug(spring_1,"spring")
-            
-        var constraint =this.game.physics.p2.createPrismaticConstraint(carBody,wheel_front, false,[0,30],[0,0],[1,0]);
-            //addPhaserP2_debug(constraint,"prismaticConstraint")
-            constraint.lowerLimitEnabled=constraint.upperLimitEnabled = true;
-            constraint.upperLimit = -1;
-            constraint.lowerLimit = -8;    
-        var constraint_1 =this.game.physics.p2.createPrismaticConstraint(carBody,wheel_back, false,[0,-30],[0,0],[1,0]);
-            //addPhaserP2_debug(constraint_1,"prismaticConstraint")
-            constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
-            constraint_1.upperLimit = -1;
-            constraint_1.lowerLimit = -8;  
+        var spring = this.physics.p2.createSpring(carBody, wheel_front, 70, 150, 10,null,null,[0,30],null);
+        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 70, 150, 10,null,null,[0,-30],null);
 
+        var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false,[0,30],[0,0],[1,0]);
+        constraint.lowerLimitEnabled=constraint.upperLimitEnabled = true;
+        constraint.upperLimit = -1;
+        constraint.lowerLimit = -8;  
+
+        var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false,[0,-30],[0,0],[1,0]);
+        
+        constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
+        constraint_1.upperLimit = -1;
+        constraint_1.lowerLimit = -8;  
+
+        this.carBody = carBody;
+        this.wheel_front = wheel_front;
+        this.wheel_back = wheel_back;
     }
 
 };
