@@ -274,15 +274,26 @@ BasicGame.Game.prototype = {
 
     handleInput: function() {
         
-        if (this.cursors.up.isDown)
-        {
-            if (this.wheel_back.body.angularVelocity < 300) 
-            {
-                this.wheel_back.body.angularVelocity += 10; 
+        if (this.cursors.up.isDown) {
+            if (this.wheel_back.body.angularVelocity < 300) {
+                this.wheel_back.body.angularVelocity += 10;
                 this.wheel_front.body.angularVelocity += 10;
             }
             this.carBody.body.thrust(200);
         }
+
+        if (this.cursors.down.isDown) {
+            if (this.wheel_back.body.angularVelocity < 300) {
+                this.wheel_back.body.angularVelocity -= 50;
+                this.wheel_front.body.angularVelocity -= 50;
+            }
+            this.carBody.body.thrust(-1000);
+        }
+        if (this.carBody.body.velocity.x < 0)
+        {
+            this.carBody.body.velocity.x = 0;
+        }
+        
 
         if (this.cursors.right.isDown)
         {
