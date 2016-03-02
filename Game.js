@@ -159,7 +159,7 @@ BasicGame.Game.prototype = {
         //==================//
         graphics.lineStyle(6,0xAAAAAA, 0.8);
         graphics.beginFill(0xFF700B, 1);
-        graphics.moveTo(0,800);
+        graphics.moveTo(points['bottom'][0]['shape'][4], points['bottom'][0]['shape'][5]);
 
         for (var i = 1; i < totalPoints; i++) {
             var x = points['bottom'][i]['shape'][4],
@@ -177,7 +177,7 @@ BasicGame.Game.prototype = {
 
         graphics.lineStyle(6, 0xAAAAAA, 0.8);
         graphics.beginFill(0xFF700B, 1);
-        graphics.moveTo(0, 800);
+        graphics.moveTo(points['top'][0]['shape'][4], points['top'][0]['shape'][5]);
 
         for (var i = 1; i < totalPoints; i++) {
             var x = points['top'][i]['shape'][4],
