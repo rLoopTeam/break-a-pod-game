@@ -274,7 +274,7 @@ BasicGame.Game.prototype = {
 
     handleInput: function() {
         
-        if (this.cursors.right.isDown)
+        if (this.cursors.up.isDown)
         {
             if (this.wheel_back.body.angularVelocity < 300) 
             {
@@ -284,13 +284,13 @@ BasicGame.Game.prototype = {
             this.carBody.body.thrust(200);
         }
 
-        if (this.cursors.up.isDown)
+        if (this.cursors.right.isDown)
         {
-            this.carBody.body.angularVelocity = 2;
+            this.carBody.body.angularVelocity = .5;
         }
-        if (this.cursors.down.isDown)
+        if (this.cursors.left.isDown)
         {
-            this.carBody.body.angularVelocity = -2;
+            this.carBody.body.angularVelocity = -.5;
         }
 
         /*if (this.cursors.left.isDown || this.moveLeft) {
@@ -339,7 +339,7 @@ BasicGame.Game.prototype = {
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
         carBody.body.setRectangle(30, 100);
-        carBody.body.debug = true; //this adds the pink box
+        //carBody.body.debug = true; //this adds the pink box
         carBody.body.mass = 1;
         carBody.body.angle = 90;
         carBody.body.setMaterial(this.playerMaterial);
