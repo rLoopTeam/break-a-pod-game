@@ -22,6 +22,7 @@ BasicGame.Game = function (game) {
 
     // world settings
     this.levelLength = 30000;
+    this.tubeHeight = 200;
 
     // global vars
     this.menuButton;
@@ -40,7 +41,7 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
     preload: function() {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(5, (this.world.height / 2) +100, 580, this.levelLength, 200, 80);
+        this.tunnelPhysicsData = this.generateTubePoints(5, (this.world.height / 2) +100, 580, this.levelLength, this.tubeHeight, 80);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
     },
 
@@ -73,8 +74,8 @@ BasicGame.Game.prototype = {
 
         var graphics = this.add.graphics(0, 0);
 
-        this.drawTube(graphics, this.tunnelPhysicsData);
         this.addCar();
+        this.drawTube(graphics, this.tunnelPhysicsData);
 
         window.graphics = graphics;
 	},
@@ -100,7 +101,7 @@ BasicGame.Game.prototype = {
         var hillStartY          = start_y,
             hillWidth           = tube_length/numberOfHills,
             hillSlices          = hillWidth/pixelStep,
-            tunnelPhysicsData   = {"top":[], "bottom":[]},
+            tunnelPhysicsData   = {"top":[], "bottom":[], "pylons":[]},
             prevx               = 0,
             prevy               = 800;
 
@@ -137,22 +138,31 @@ BasicGame.Game.prototype = {
                     prevx = x;
                     prevy = y;
             }
+            tunnelPhysicsData['pylons'].push({ position:{"x": prevx, "y": prevy} });
+
             // this is also necessary to make all hills (execept the first one) begin where the previous hill ended
             hillStartY = hillStartY + randomHeight;
         }
         return tunnelPhysicsData;
     },
     drawTube: function (graphics, points){    
-        var totalPoints = points['bottom'].length;    
+        console.log(points)
+        var totalPoints = points['bottom'].length;  
         var prevx = points['bottom'][0]['shape'][2];
         var prevy = points['bottom'][0]['shape'][3];
+
+        var totalPylons = points['pylons'].length;
         
+
+        //==================//
+        // draw tube
+        //==================//
         graphics.lineStyle(6,0xAAAAAA, 0.8);
         graphics.beginFill(0xFF700B, 1);
         graphics.moveTo(0,800);
 
         for (var i = 1; i < totalPoints; i++) {
-            var x = points['bottom'][i]['shape'][4]
+            var x = points['bottom'][i]['shape'][4],
                 y = points['bottom'][i]['shape'][5];
 
             graphics.lineTo(x, y);
@@ -170,20 +180,35 @@ BasicGame.Game.prototype = {
         graphics.moveTo(0, 800);
 
         for (var i = 1; i < totalPoints; i++) {
-            var x = points['top'][i]['shape'][4]
-            y = points['top'][i]['shape'][5];
+            var x = points['top'][i]['shape'][4],
+                y = points['top'][i]['shape'][5];
 
             graphics.lineTo(x, y);
             graphics.moveTo(x, y);
 
             prevx = x;
             prevy = y;
+
         }
 
         graphics.lineTo(prevx + 500, prevy);
         graphics.endFill();
 
+
+        //==================//
+        // draw pylons
+        //==================//
+        for (var i = 0; i < totalPylons; i++) {
+            var x = points['pylons'][i]['position'].x,
+                y = points['pylons'][i]['position'].y;
+            var pylon = this.add.sprite(x, y-this.tubeHeight-20,'pylon');  
+            //pylon.anchor.setTo(0.5, 0.1);
+        }
+        
+
+        //==================//
         // load physics data
+        //==================//
         var polygonCollisionSprite = this.add.sprite(0, 0,'wall');  
         this.physics.p2.enableBody(polygonCollisionSprite);
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');

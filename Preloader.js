@@ -43,7 +43,7 @@ BasicGame.Preloader.prototype = {
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
 	    this.load.image('booster', 'assets/sprites/booster.png');
 	    this.load.image('end_sign', 'assets/sprites/end_sign.png');
-
+		this.load.image('pylon', 'assets/sprites/pylon.png');
         this.load.image('pod', 'assets/sprites/pod.png');
 
 
