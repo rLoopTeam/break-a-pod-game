@@ -41,7 +41,7 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
     preload: function() {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(5, (this.world.height / 2) +100, 580, this.levelLength, this.tubeHeight, 80);
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) +100, 580, this.levelLength, this.tubeHeight, 80);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
     },
 
@@ -87,8 +87,10 @@ BasicGame.Game.prototype = {
         this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
         this.trackProgressorBackground.y = this.camera.y + 560;
 
-        // update marker on track progressor
-        this.trackProgressorMarker.x = this.trackProgressorBackground.x + ((this.carBody.x / this.levelLength)*this.trackProgressorBackground.width);
+	    // update marker on track progressor
+        var ProgressMultiplier = this.carBody.x / this.levelLength;
+        if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
+        this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier  *  this.trackProgressorBackground.width);
         this.trackProgressorMarker.y = this.trackProgressorBackground.y;
 
         this.menuButton.x = this.camera.x + 20;
@@ -290,7 +292,7 @@ BasicGame.Game.prototype = {
 
 
     addCar: function () {
-        var carBody = this.add.sprite(100, (this.world.height / 2) + 100, 'pod'); //CARBODY
+        var carBody = this.add.sprite(100, (this.world.height / 2) + 150, 'pod'); //CARBODY
         carBody.scale.set(0.5, 0.5)
         var wheel_front = this.add.sprite(140, 280); //FRONT WHEEL
         var wheel_back = this.add.sprite(60, 280); //BACK WHEEL 
@@ -300,7 +302,7 @@ BasicGame.Game.prototype = {
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
         carBody.body.setRectangle(30, 100);
-        carBody.body.debug = true;
+        carBody.body.debug = true; //this adds the pink box
         carBody.body.mass = 1;
         carBody.body.angle = 90;
         carBody.body.setMaterial(this.playerMaterial);
