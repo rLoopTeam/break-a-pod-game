@@ -24,7 +24,8 @@ BasicGame.MainMenu.prototype = {
 	    this.title_image.anchor.set(0.5, 0.5);
 	    this.title_image.scale.setTo(0.5, 0.5);
 
-        this.playButton = this.add.button((this.game.width/2), (this.game.height/2) + 100, 'button', this.startGame, this, 'over', 'out', 'down');
+        this.playButton = this.add.button(this.game.width/2, (this.game.height/2) + 100, 'start_button', this.startGame, this, 'over', 'out', 'down');
+        this.playButton.anchor.set(0.5, 0.5);
 
 	},
 

@@ -28,6 +28,7 @@ BasicGame.Preloader.prototype = {
 		//	Here we load the rest of the assets our game needs.
 		//	You can find all of these assets in the Phaser Examples repository
 		this.load.image('title_image', 'assets/sprites/title_image.png');
+		this.load.image('rud_event', 'assets/sprites/rud_event.png');
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
         // GUI assets
@@ -35,6 +36,9 @@ BasicGame.Preloader.prototype = {
         this.load.image('progressorMarker', 'assets/GUI/track-progress-marker.png');
 
 		this.load.atlas('button', 'assets/GUI/button_texture_atlas.png', 'assets/GUI/button_texture_atlas.json');
+		this.load.atlas('start_button', 'assets/GUI/start_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
+		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
+
 		this.load.image('button_normal', 'assets/GUI/button_normal.png');
 		this.load.image('button_pressed', 'assets/GUI/button_pressed.png');
 		this.load.image('button_selected', 'assets/GUI/button_selected.png');
@@ -56,7 +60,7 @@ BasicGame.Preloader.prototype = {
 	create: function () {
 		console.log("go to main menu")
 		//this.state.start('MainMenu');
-		this.state.start('Game');
+		this.state.start('MainMenu');
 
 	},
 	update: function () {
