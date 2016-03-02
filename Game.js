@@ -38,6 +38,7 @@ BasicGame.Game = function (game) {
     this.CG_world;
 
     this.Timer_text;
+    this.Speed_text;
 };
 
 
@@ -70,8 +71,13 @@ BasicGame.Game.prototype = {
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'button_normal', this.quitGame, this, 'button_hover', 'button_normal', 'button_hover');
         this.menuButton.scale.set(0.5, 0.5);
-
+        // Displays
         this.Timer_text = this.add.text(this.camera.x + 15, this.world.height - 50, "00:00:00", {
+            font: "24px Arial",
+            fill: "#ffffff",
+            align: "center"
+        });
+        this.Speed_text = this.add.text(this.camera.x + 15, this.world.height - 75, "0 m/s", {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
@@ -97,6 +103,7 @@ BasicGame.Game.prototype = {
         this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
         this.trackProgressorBackground.y = this.camera.y + 560;
         this.Timer_text.x = this.camera.x + 15;
+        this.Speed_text.x = this.camera.x + 15;
 
 	    // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / this.levelLength;
@@ -110,18 +117,23 @@ BasicGame.Game.prototype = {
         this.handleInput();
 
         if (ProgressMultiplier != 1) {
-           // this.Timer_text.setText(Math.round(this.game.time.totalElapsedSeconds() * 10) / 10);
+            // Timer
             var minutes = Math.floor(this.game.time.totalElapsedSeconds() / 60);
             var seconds = Math.floor(this.game.time.totalElapsedSeconds()) % 60;
-            var miliseconds = Math.floor((this.game.time.totalElapsedSeconds() - Math.floor(this.game.time.totalElapsedSeconds())) * 100);
-
-            //If any of the digits becomes a single digit number, pad it with a zero  
+            var miliseconds = Math.floor((this.game.time.totalElapsedSeconds() - Math.floor(this.game.time.totalElapsedSeconds())) * 100); 
             if (seconds < 10) seconds = '0' + seconds;
             if (minutes < 10) minutes = '0' + minutes;
             if (miliseconds < 10) miliseconds = '0' + miliseconds;
-
             this.Timer_text.setText(minutes + ':' + seconds + ':' + miliseconds);
+
+            // Speed
+            var pod_velcity = this.carBody.body.velocity.x; // in pixels per second
+            pod_velcity = pod_velcity / 5; // could set this as a constant somewhere...pixels/meter
+            pod_velcity = Math.floor(pod_velcity);
+            this.Speed_text.setText(pod_velcity + ' m/s');
         };
+
+        
 	},
 
     generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
