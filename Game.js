@@ -36,7 +36,11 @@ BasicGame.Game = function (game) {
     this.tunnelPhysicsData;
 
     this.CG_world;
+
+    this.Timer_text;
 };
+
+
 
 BasicGame.Game.prototype = {
     preload: function() {
@@ -65,7 +69,13 @@ BasicGame.Game.prototype = {
         this.trackProgressorMarker = this.add.sprite(this.camera.x, this.camera.y,'progressorMarker'); 
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'button_normal', this.quitGame, this, 'button_hover', 'button_normal', 'button_hover');
-        this.menuButton.scale.set(0.5,0.5);
+        this.menuButton.scale.set(0.5, 0.5);
+
+        this.Timer_text = this.add.text(this.camera.x + 15, this.world.height - 50, "00:00:00", {
+            font: "24px Arial",
+            fill: "#ffffff",
+            align: "center"
+        });
 
         // world
         this.stage.backgroundColor = "#0c9fc7";
@@ -86,6 +96,7 @@ BasicGame.Game.prototype = {
         // update GUI
         this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
         this.trackProgressorBackground.y = this.camera.y + 560;
+        this.Timer_text.x = this.camera.x + 15;
 
 	    // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / this.levelLength;
@@ -97,6 +108,20 @@ BasicGame.Game.prototype = {
         this.menuButton.y = this.camera.y + 20;
 
         this.handleInput();
+
+        if (ProgressMultiplier != 1) {
+           // this.Timer_text.setText(Math.round(this.game.time.totalElapsedSeconds() * 10) / 10);
+            var minutes = Math.floor(this.game.time.totalElapsedSeconds() / 60);
+            var seconds = Math.floor(this.game.time.totalElapsedSeconds()) % 60;
+            var miliseconds = Math.floor((this.game.time.totalElapsedSeconds() - Math.floor(this.game.time.totalElapsedSeconds())) * 100);
+
+            //If any of the digits becomes a single digit number, pad it with a zero  
+            if (seconds < 10) seconds = '0' + seconds;
+            if (minutes < 10) minutes = '0' + minutes;
+            if (miliseconds < 10) miliseconds = '0' + miliseconds;
+
+            this.Timer_text.setText(minutes + ':' + seconds + ':' + miliseconds);
+        };
 	},
 
     generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
@@ -227,7 +252,7 @@ BasicGame.Game.prototype = {
     },
             
     render: function() {
-        this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");  
+        this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
     },
     
     resize: function (width, height) {
