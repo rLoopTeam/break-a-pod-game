@@ -410,7 +410,7 @@ BasicGame.Game.prototype = {
 
     podCollision: function (body, bodyB, shapeA, shapeB, equation) {
         var damage = Math.abs(body.velocity.y) / 5000;
-        if (damage < 1) { damage = .01; }
+        if (damage < .01) { damage = .01; }
         console.log('Damage: ' + damage);
         this.carBody.health -= damage;
         if (this.carBody.health > 0) {
@@ -427,8 +427,8 @@ BasicGame.Game.prototype = {
     addCar: function () {
         // basic settings
         var startPos = this.startPos;
-        var wheel_front_pos = [50, 0];
-        var wheel_back_pos = [-50, 0];
+        var wheel_front_pos = [50, 30];
+        var wheel_back_pos = [-50, 30];
 
         // create pod
         var carBody = this.add.sprite(startPos.x, startPos.y, 'pod'); //CARBODY
@@ -458,29 +458,29 @@ BasicGame.Game.prototype = {
         //}, this);
 
         wheel_front.body.setCircle(5);
-        wheel_front.body.debug = false;
-        wheel_front.body.mass = 0.5;
+        wheel_front.body.debug = true;
+        wheel_front.body.mass = 0.05;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
     
         wheel_back.body.setCircle(5);
-        wheel_back.body.debug = false;
+        wheel_back.body.debug = true;
         wheel_back.body.mass = 0.05;
         wheel_back.body.setMaterial(this.wheelMaterial);
         wheel_back.renderable = false;
 
-        var spring = this.physics.p2.createSpring(carBody, wheel_front, 110, 190, 5, null, null, wheel_front_pos, null);
-        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 110, 190, 5, null, null, wheel_back_pos, null);
+        var spring = this.physics.p2.createSpring(carBody, wheel_front, 100, 50, 5, null, null, wheel_front_pos, null);
+        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 100, 50, 5, null, null, wheel_back_pos, null);
 
-        var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0,0], [0,-1]);
-        // constraint.lowerLimitEnabled=constraint.upperLimitEnabled = true;
-        // constraint.upperLimit = -1;
-        // constraint.lowerLimit = -2;  
+        var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0, 0], [0, 1]);
+        constraint.lowerLimitEnabled=constraint.upperLimitEnabled = true;
+        constraint.upperLimit = -.1;
+        constraint.lowerLimit = -10;  
 
-        var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0,0], [0,-1]);
-        // constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
-        // constraint_1.upperLimit = -1;
-        // constraint_1.lowerLimit = -2;  
+        var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0, 0], [0, 1]);
+        constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
+        constraint_1.upperLimit = -.1;
+        constraint_1.lowerLimit = -10;  
 
         this.carBody = carBody;
         this.wheel_front = wheel_front;
