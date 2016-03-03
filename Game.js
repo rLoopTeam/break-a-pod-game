@@ -34,6 +34,7 @@ BasicGame.Game = function (game) {
     this.wheelMaterial;
     this.tunnelPhysicsData;
     this.CG_world;
+    this.Health_text;
 
     // global vars
     this.menuButton;
@@ -105,6 +106,11 @@ BasicGame.Game.prototype = {
             fill: "#ffffff",
             align: "center"
         });
+        this.Health_text = this.add.text(this.camera.x + this.camera.width - 100, this.camera.height - 50, "Health: 100%", {
+            font: "24px Arial",
+            fill: "#ffffff",
+            align: "center"
+        });
 
         // set world settings and player start position
         this.startPos = { "x": 100, "y": (this.world.height / 2) };
@@ -116,6 +122,8 @@ BasicGame.Game.prototype = {
 
         this.addCar();
         this.drawTube(graphics, this.tunnelPhysicsData);
+
+        this.carBody.body.onBeginContact.add(this.podCollision, this);
 
         window.graphics = graphics;
 	},
@@ -138,6 +146,7 @@ BasicGame.Game.prototype = {
         this.Timer_text.y = this.camera.y + 550;
         this.Speed_text.x = this.camera.x + 15;
         this.Speed_text.y = this.camera.y + 530;
+        this.Health_text.x = this.camera.x + this.camera.width - 135;
 
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / this.levelLength;
@@ -399,6 +408,22 @@ BasicGame.Game.prototype = {
 
     },
 
+    podCollision: function (body, bodyB, shapeA, shapeB, equation) {
+        var damage = Math.abs(body.velocity.y) / 5000;
+        if (damage < 1) { damage = .01; }
+        console.log('Damage: ' + damage);
+        this.carBody.health -= damage;
+        if (this.carBody.health > 0) {
+            console.log('Colision! rPod Health is ' + this.carBody.health);
+        } else {
+            console.log('You exploded!');
+            this.lose();
+        }
+        var health_percentage = Math.round(this.carBody.health * 100);
+        if (health_percentage < 0) { health_percentage = 0; }
+        this.Health_text.setText('Health: ' + health_percentage + '%');
+    },
+
     addCar: function () {
         // basic settings
         var startPos = this.startPos;
@@ -425,12 +450,12 @@ BasicGame.Game.prototype = {
         carBody.body.setMaterial(this.playerMaterial);
 
         // detect collision between car body only and walls
-        carBody.body.onBeginContact.add(function (obj1, obj2) {
-            if (obj2.shapes[0].material.name === "ground") {
-                this.lose();
-            }            
-            return true;
-        }, this);
+        //carBody.body.onBeginContact.add(function (obj1, obj2) {
+        //   if (obj2.shapes[0].material.name === "ground") {
+        //        this.lose();
+        //    }            
+        //    return true;
+        //}, this);
 
         wheel_front.body.setCircle(5);
         wheel_front.body.debug = false;
