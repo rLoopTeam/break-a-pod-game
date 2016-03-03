@@ -29,6 +29,7 @@ BasicGame.Preloader.prototype = {
 		//	You can find all of these assets in the Phaser Examples repository
 		this.load.image('title_image', 'assets/sprites/title_image.png');
 		this.load.image('rud_event', 'assets/sprites/rud_event.png');
+		this.load.image('win_stage', 'assets/sprites/win_stage.png');
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
         // GUI assets

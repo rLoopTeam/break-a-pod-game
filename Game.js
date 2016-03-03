@@ -2,7 +2,6 @@
 BasicGame.Game = function (game) {
 
 	//	When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
-
     this.game;		//	a reference to the currently runningthis.game
     this.add;		//	used to add sprites, text, groups, etc
     this.camera;	//	a reference to thethis.game camera
@@ -20,6 +19,9 @@ BasicGame.Game = function (game) {
     this.physics;	//	the physics manager
     this.rnd;		//	the repeatable random number generator
 
+    //
+    this.isRunning = true;
+
     // world settings
     this.levelLength = 30000;
     this.tubeHeight = 200;
@@ -32,8 +34,6 @@ BasicGame.Game = function (game) {
     this.wheelMaterial;
     this.tunnelPhysicsData;
     this.CG_world;
-    this.Timer_text;
-    this.Speed_text;
 
     // global vars
     this.menuButton;
@@ -44,8 +44,13 @@ BasicGame.Game = function (game) {
     this.wheelSpeed = 25;
 
 
+    // GUI
+    this.rudEvent_graphic;
+    this.winStage_graphic;
+    this.Level_text;
+    this.Timer_text;
+    this.Speed_text;
 };
-
 
 
 BasicGame.Game.prototype = {
@@ -53,9 +58,12 @@ BasicGame.Game.prototype = {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
         this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2)+30, 580, this.levelLength, this.tubeHeight, 80);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
+
     },
 
 	create: function () {
+        console.log(this.game['GameData'].cLevel)
+
         //gametime
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
@@ -82,6 +90,11 @@ BasicGame.Game.prototype = {
         this.menuButton.scale.set(0.5, 0.5);
 
         // Displays
+        this.Level_text = this.add.text(this.camera.x + this.camera.width -50, this.camera.y + 50, this.game['GameData'].cLevel, {
+            font: "24px Arial",
+            fill: "#ffffff",
+            align: "center"
+        });
         this.Timer_text = this.add.text(this.camera.x + 15, this.world.height - 50, "00:00:00", {
             font: "24px Arial",
             fill: "#ffffff",
@@ -118,6 +131,9 @@ BasicGame.Game.prototype = {
         // update GUI
         this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
         this.trackProgressorBackground.y = this.camera.y + 560;
+
+        this.Level_text.x = this.camera.x + this.camera.width -50;
+        this.Level_text.y = this.camera.y + 50;
         this.Timer_text.x = this.camera.x + 15;
         this.Timer_text.y = this.camera.y + 550;
         this.Speed_text.x = this.camera.x + 15;
@@ -150,7 +166,15 @@ BasicGame.Game.prototype = {
             this.Speed_text.setText(pod_velcity + ' m/s');
         };
 
-        
+        if (this.rudEvent_graphic) {
+
+        }
+
+        // check if pod reached end
+        if ( this.carBody.body.x >= this.levelLength ) {
+            this.winStage();
+        }
+
 	},
 
     generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
@@ -298,7 +322,8 @@ BasicGame.Game.prototype = {
                 this.wheel_back.body.angularVelocity += this.wheelSpeed;
                 this.wheel_front.body.angularVelocity += this.wheelSpeed;
             }
-            //this.carBody.body.thrust(200);
+            //this.carBody.body.thrust(500);
+            this.carBody.body.velocity.x += 20;
         }
 
         if (this.cursors.down.isDown) {
@@ -335,14 +360,32 @@ BasicGame.Game.prototype = {
 	},
 
     lose: function(pointer) {
-        console.log("You lost!")
-        
-        var rudEvent = this.add.sprite(this.camera.x + this.camera.width/2, this.camera.y+ this.camera.height/2, 'rud_event');
-        rudEvent.anchor.set(0.5, 0.5);
 
-        setTimeout(function(state) {
+        console.log("You lost!")
+        if (!this.rudEvent_graphic) {
+            this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width/2, this.camera.y+ this.camera.height/2, 'rud_event');
+            this.rudEvent_graphic.anchor.set(0.5, 0.5);
+        }
+
+        var loseTimeout = setTimeout(function(state) {
             state.start('Game')
         }, 3000, this.state);
+
+    },
+ 
+    winStage: function (pointer) {
+        console.log("You won the stage!")
+
+        if (!this.winStage_graphic) {
+            this.game['GameData'].cLevel += 1;
+            this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width/2, this.camera.y+ this.camera.height/2, 'win_stage');
+            this.winStage_graphic.anchor.set(0.5, 0.5);
+            
+            setTimeout(function(state) {
+                state.start('Game')
+            }, 3000, this.state);
+        }
+
     },
 
     win: function (pointer) {
@@ -391,21 +434,28 @@ BasicGame.Game.prototype = {
 
         wheel_front.body.setCircle(5);
         wheel_front.body.debug = false;
-        wheel_front.body.mass = 0.01;
+        wheel_front.body.mass = 0.5;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
     
         wheel_back.body.setCircle(5);
         wheel_back.body.debug = false;
-        wheel_back.body.mass = 0.01;
+        wheel_back.body.mass = 0.05;
         wheel_back.body.setMaterial(this.wheelMaterial);
         wheel_back.renderable = false;
 
-        var spring = this.physics.p2.createSpring(carBody, wheel_front, 110, 150, 5, null, null, wheel_front_pos, null);
-        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 110, 150, 5, null, null, wheel_back_pos, null);
+        var spring = this.physics.p2.createSpring(carBody, wheel_front, 110, 190, 5, null, null, wheel_front_pos, null);
+        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 110, 190, 5, null, null, wheel_back_pos, null);
 
-        var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0,0], [0,1]);
-        var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0,0], [0,1]);
+        var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0,0], [0,-1]);
+        // constraint.lowerLimitEnabled=constraint.upperLimitEnabled = true;
+        // constraint.upperLimit = -1;
+        // constraint.lowerLimit = -2;  
+
+        var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0,0], [0,-1]);
+        // constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
+        // constraint_1.upperLimit = -1;
+        // constraint_1.lowerLimit = -2;  
 
         this.carBody = carBody;
         this.wheel_front = wheel_front;

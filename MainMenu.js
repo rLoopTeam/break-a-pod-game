@@ -27,6 +27,11 @@ BasicGame.MainMenu.prototype = {
         this.playButton = this.add.button(this.game.width/2, (this.game.height/2) + 100, 'start_button', this.startGame, this, 'over', 'out', 'down');
         this.playButton.anchor.set(0.5, 0.5);
 
+        // set global variable to store level
+        this.game.add.tween(BasicGame).to({
+            clevel: 0
+        });
+
 	},
 
 	update: function () {
