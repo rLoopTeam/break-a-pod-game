@@ -23,8 +23,11 @@ BasicGame.Game = function (game) {
     this.isRunning = true;
 
     // world settings
-    this.levelLength = 30000;
-    this.tubeHeight = 200;
+    this.levelLength = [5000, 10000, 25000];
+    this.tubeHeight = [200, 150, 100];
+    this.numberOfHills = [1, 3, 15];
+    this.backgroundColor = ["#0c9fc7", "#fa8072", "#6a5acd"];
+    this.winFlag;
     this.startPos;
 
     this.bottomWall;
@@ -57,13 +60,16 @@ BasicGame.Game = function (game) {
 BasicGame.Game.prototype = {
     preload: function() {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2)+30, 580, this.levelLength, this.tubeHeight, 80);
+        this.tunnelPhysicsData = this.generateTubePoints(this.numberOfHills[this.game['GameData'].cLevel - 1], (this.world.height / 2) + 30, 580, this.levelLength[this.game['GameData'].cLevel - 1], this.tubeHeight[this.game['GameData'].cLevel - 1], 100);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
     },
 
 	create: function () {
-        console.log(this.game['GameData'].cLevel)
+
+        // Level variable setup
+	    this.winFlag = false;
+	    this.time.reset(); // Reset game ellapsed time, so timer display level time
 
         //gametime
         this.time.advancedTiming = true;
@@ -91,7 +97,7 @@ BasicGame.Game.prototype = {
         this.menuButton.scale.set(0.5, 0.5);
 
         // Displays
-        this.Level_text = this.add.text(this.camera.x + this.camera.width -50, this.camera.y + 50, this.game['GameData'].cLevel, {
+        this.Level_text = this.add.text(this.camera.x + this.camera.width - 200, this.camera.y + 25, 'Level ' + this.game['GameData'].cLevel, {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
@@ -114,8 +120,8 @@ BasicGame.Game.prototype = {
 
         // set world settings and player start position
         this.startPos = { "x": 100, "y": (this.world.height / 2) };
-        this.stage.backgroundColor = "#0c9fc7";
-        this.world.setBounds(0, 0, this.levelLength, 500);
+        this.stage.backgroundColor = this.backgroundColor[this.game['GameData'].cLevel - 1];
+        this.world.setBounds(0, 0, this.levelLength[this.game['GameData'].cLevel - 1], 500);
 
         // create a graphics object and prepare to tube to it
         var graphics = this.add.graphics(0, 0);
@@ -139,9 +145,7 @@ BasicGame.Game.prototype = {
         // update GUI
         this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
         this.trackProgressorBackground.y = this.camera.y + 560;
-
-        this.Level_text.x = this.camera.x + this.camera.width -50;
-        this.Level_text.y = this.camera.y + 50;
+        this.Level_text.x = this.camera.x + this.camera.width - 100;
         this.Timer_text.x = this.camera.x + 15;
         this.Timer_text.y = this.camera.y + 550;
         this.Speed_text.x = this.camera.x + 15;
@@ -149,20 +153,23 @@ BasicGame.Game.prototype = {
         this.Health_text.x = this.camera.x + this.camera.width - 135;
 
         // update marker on track progressor
-        var ProgressMultiplier = this.carBody.x / this.levelLength;
+        var ProgressMultiplier = this.carBody.x / this.levelLength[this.game['GameData'].cLevel - 1];
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
-        this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier  *  this.trackProgressorBackground.width);
-        this.trackProgressorMarker.y = this.trackProgressorBackground.y;
+        
 
         this.menuButton.x = this.camera.x + 20;
         this.menuButton.y = this.camera.y + 20;
 
 
         if (ProgressMultiplier != 1) {
+
+            this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier * this.trackProgressorBackground.width);
+            this.trackProgressorMarker.y = this.trackProgressorBackground.y;
+
             // Timer
             var minutes = Math.floor(this.game.time.totalElapsedSeconds() / 60);
             var seconds = Math.floor(this.game.time.totalElapsedSeconds()) % 60;
-            var miliseconds = Math.floor((this.game.time.totalElapsedSeconds() - Math.floor(this.game.time.totalElapsedSeconds())) * 100); 
+            var miliseconds = Math.floor((this.game.time.totalElapsedSeconds() - Math.floor(this.game.time.totalElapsedSeconds())) * 100);
             if (seconds < 10) seconds = '0' + seconds;
             if (minutes < 10) minutes = '0' + minutes;
             if (miliseconds < 10) miliseconds = '0' + miliseconds;
@@ -173,15 +180,15 @@ BasicGame.Game.prototype = {
             pod_velcity = pod_velcity / 5; // could set this as a constant somewhere...pixels/meter
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
-        };
+        } else {
+            if (!this.winFlag) {
+                this.winFlag = true;
+                this.winStage();
+            }
+        }
 
         if (this.rudEvent_graphic) {
 
-        }
-
-        // check if pod reached end
-        if ( this.carBody.body.x >= this.levelLength ) {
-            this.winStage();
         }
 
 	},
@@ -290,7 +297,7 @@ BasicGame.Game.prototype = {
         for (var i = 0; i < totalPylons; i++) {
             var x = points['pylons'][i]['position'].x,
                 y = points['pylons'][i]['position'].y;
-            var pylon = this.add.sprite(x, y-this.tubeHeight-20,'pylon');  
+            var pylon = this.add.sprite(x, y - this.tubeHeight[this.game['GameData'].cLevel - 1] - 20, 'pylon');
             //pylon.anchor.setTo(0.5, 0.1);
         }
         
@@ -304,6 +311,7 @@ BasicGame.Game.prototype = {
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+        //polygonCollisionSprite.body.debug = true;
 
         var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
         this.physics.p2.enableBody(top_polygonCollisionSprite);
@@ -385,15 +393,23 @@ BasicGame.Game.prototype = {
     winStage: function (pointer) {
         console.log("You won the stage!")
 
-        if (!this.winStage_graphic) {
-            this.game['GameData'].cLevel += 1;
-            this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width/2, this.camera.y+ this.camera.height/2, 'win_stage');
-            this.winStage_graphic.anchor.set(0.5, 0.5);
-            
-            setTimeout(function(state) {
+        var thislevel = this.game['GameData'].cLevel + 1;
+        var totalLevels = this.levelLength.length;
+
+        console.log('thislevel: ' + thislevel + ', totalLevels: ' + totalLevels);
+
+        this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
+        this.winStage_graphic.anchor.set(0.5, 0.5);
+
+        setTimeout(function (state) {
+            if (thislevel <= totalLevels) {
+                this.winFlag = false;
+                state.game['GameData'].cLevel += 1;
                 state.start('Game')
-            }, 3000, this.state);
-        }
+            } else {
+                state.start('MainMenu');
+            }
+        }, 3000, this.state);
 
     },
 
@@ -458,13 +474,13 @@ BasicGame.Game.prototype = {
         //}, this);
 
         wheel_front.body.setCircle(5);
-        wheel_front.body.debug = true;
+        wheel_front.body.debug = false;
         wheel_front.body.mass = 0.05;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
     
         wheel_back.body.setCircle(5);
-        wheel_back.body.debug = true;
+        wheel_back.body.debug = false;
         wheel_back.body.mass = 0.05;
         wheel_back.body.setMaterial(this.wheelMaterial);
         wheel_back.renderable = false;
