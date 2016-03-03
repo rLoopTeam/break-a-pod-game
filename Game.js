@@ -396,8 +396,6 @@ BasicGame.Game.prototype = {
         var thislevel = this.game['GameData'].cLevel + 1;
         var totalLevels = this.levelLength.length;
 
-        console.log('thislevel: ' + thislevel + ', totalLevels: ' + totalLevels);
-
         this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
         this.winStage_graphic.anchor.set(0.5, 0.5);
 
@@ -407,6 +405,7 @@ BasicGame.Game.prototype = {
                 state.game['GameData'].cLevel += 1;
                 state.start('Game')
             } else {
+                state.game['GameData'].cLevel = 1;
                 state.start('MainMenu');
             }
         }, 3000, this.state);
