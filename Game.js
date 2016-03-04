@@ -82,6 +82,11 @@ BasicGame.Game.prototype = {
         this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
+        // Audio
+        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.mp3');
+        this.load.audio('level2Music', 'assets/sound/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
+        this.load.audio('explosion', 'assets/sound/player_death.wav');
+        this.load.audio('hit', 'assets/sound/squit.wav');
     },
 
     create: function () {

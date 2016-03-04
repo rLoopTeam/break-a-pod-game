@@ -68,12 +68,7 @@ BasicGame.Preloader.prototype = {
 
         // Effects
         this.load.spritesheet('kaboom', 'assets/sprites/explode.png', 128, 128);
-        
-	    // Audio
-        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.mp3');
-        this.load.audio('level2Music', 'assets/sound/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
-        this.load.audio('explosion', 'assets/sound/player_death.wav');
-        this.load.audio('hit', 'assets/sound/squit.wav');
+
 	},
 
 	create: function () {
