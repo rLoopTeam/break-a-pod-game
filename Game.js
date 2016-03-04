@@ -437,6 +437,11 @@ BasicGame.Game.prototype = {
             this.rudEvent_graphic.anchor.set(0.5, 0.5);
         }
 
+        this.carBody.loadTexture('kaboom');
+        this.carBody.scale.set(2, 2);
+        this.carBody.animations.add('kaboom');
+        this.carBody.animations.play('kaboom', 30, false, false); //play(name, frameRate, loop, killOnComplete) 
+        
         var loseTimeout = setTimeout(function(state) {
             state.start('Game')
         }, 3000, this.state);
