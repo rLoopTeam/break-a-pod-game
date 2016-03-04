@@ -144,7 +144,7 @@ BasicGame.Game.prototype = {
         this.menuButton.scale.set(0.5, 0.5);
 
         // Displays
-        this.Level_text = this.add.text(this.camera.x + this.camera.width - 50, this.camera.y + 50, this.game['GameData'].cLevel, {
+        this.Level_text = this.add.text(this.camera.x + this.camera.width - 100, this.camera.y + 10, 'Level ' + this.game['GameData'].cLevel, {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
@@ -177,7 +177,7 @@ BasicGame.Game.prototype = {
 
     update: function () {
         // handle inputs
-        this.handleInput();
+        if (!this.loseflag) { this.handleInput(); }
 
         // camera follow pod
         this.camera.x = this.carBody.body.x - 200;
@@ -452,7 +452,7 @@ BasicGame.Game.prototype = {
 
         //	Here you should destroy anything you no longer need.
         //	Stop music, delete sprites, purge caches, free resources, all that good stuff.
-
+        this.sound_music.stop();
         this.state.start('MainMenu');
     },
 
@@ -466,6 +466,9 @@ BasicGame.Game.prototype = {
 
         this.sound_music.stop();
         this.sound_explosion.play();
+
+        this.carBody.body.velocity.x = 0;
+        this.carBody.body.velocity.y = 0;
 
         this.carBody.loadTexture('kaboom');
         this.carBody.scale.set(2, 2);
