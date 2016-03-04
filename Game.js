@@ -80,7 +80,6 @@ BasicGame.Game.prototype = {
     preload: function () {
         // Audio
         this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
-        this.load.audio('level2Music', 'assets/sound/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
         this.load.audio('explosion', 'assets/sound/player_death.wav');
         this.load.audio('hit', 'assets/sound/squit.wav');
     },
@@ -221,6 +220,13 @@ BasicGame.Game.prototype = {
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
         };
+
+        // Check pod's angle, explode if out of bounds
+        if (!this.loseflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
+            console.log('You exploded!');
+            this.loseflag = true;
+            this.lose();
+        }
 
         // check if pod reached end
         if (this.carBody.body.x >= this.levelLength) {
