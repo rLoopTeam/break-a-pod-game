@@ -204,7 +204,7 @@ BasicGame.Game.prototype = {
         this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier * this.trackProgressorBackground.width);
         this.trackProgressorMarker.y = this.trackProgressorBackground.y;
 
-        if (ProgressMultiplier != 1) {
+        if (ProgressMultiplier != 1 && !this.loseflag) {
             // Timer
             var minutes = Math.floor(this.game.time.totalElapsedSeconds() / 60);
             var seconds = Math.floor(this.game.time.totalElapsedSeconds()) % 60;
@@ -219,7 +219,9 @@ BasicGame.Game.prototype = {
             pod_velcity = pod_velcity / 5; // could set this as a constant somewhere...pixels/meter
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
-        };
+        } else {
+            this.Speed_text.setText('Signal Lost!');
+        }
 
         // Check pod's angle, explode if out of bounds
         if (!this.loseflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
@@ -511,24 +513,27 @@ BasicGame.Game.prototype = {
     },
 
     podCollision: function (body, bodyB, shapeA, shapeB, equation) {
-        var damage = Math.abs(body.velocity.y) / 5000;
-        if (damage < .01) { damage = .01; }
-        console.log('Damage: ' + damage);
-        this.carBody.health -= damage;
-        if (this.carBody.health > 0) {
-            this.sound_hit.play();
-            console.log('Colision! rPod Health is ' + this.carBody.health);
-        } else {
-            if (!this.loseflag) {
-                console.log('You exploded!');
-                this.loseflag = true;
-                this.lose();
+        if (!this.loseflag) {
+            var damage = Math.abs(body.velocity.y) / 5000;
+            if (damage < .01) { damage = .01; }
+            this.carBody.health -= damage;
+            if (this.carBody.health > 0) {
+                this.sound_hit.play();
+                console.log('Colision! rPod Health is ' + this.carBody.health);
+            } else {
+                if (!this.loseflag) {
+                    console.log('You exploded!');
+                    this.loseflag = true;
+                    this.lose();
 
+                }
             }
+            var health_percentage = Math.round(this.carBody.health * 100);
+            if (health_percentage < 0) { health_percentage = 0; }
+            this.Health_text.setText('Health: ' + health_percentage + '%');
+        } else {
+            this.Health_text.setText('Health: 0%');
         }
-        var health_percentage = Math.round(this.carBody.health * 100);
-        if (health_percentage < 0) { health_percentage = 0; }
-        this.Health_text.setText('Health: ' + health_percentage + '%');
     },
 
     addCar: function () {
