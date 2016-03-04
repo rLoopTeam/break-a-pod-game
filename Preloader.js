@@ -44,12 +44,27 @@ BasicGame.Preloader.prototype = {
 		this.load.image('button_pressed', 'assets/GUI/button_pressed.png');
 		this.load.image('button_selected', 'assets/GUI/button_selected.png');
 
+		///////////
 		// WORLD
+		///////////
+		// player
+        this.load.image('pod', 'assets/sprites/pod.png');
+
+		// props
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
 	    this.load.image('booster', 'assets/sprites/booster.png');
 	    this.load.image('end_sign', 'assets/sprites/end_sign.png');
 		this.load.image('pylon', 'assets/sprites/pylon.png');
-        this.load.image('pod', 'assets/sprites/pod.png');
+
+		// environment
+		this.load.image('grassy_hill', 'assets/environment/grassy_hill.png');        
+		this.load.image('grassy_hill_night', 'assets/environment/grassy_hill_night.png'); 
+
+		// skies
+        this.load.image('sunny_sky', 'assets/skies/sunny_sky.png'); 
+        this.load.image('night_sky', 'assets/skies/night_sky.png'); 
+        this.load.image('sun', 'assets/skies/sun.png'); 
+        this.load.image('moon', 'assets/skies/moon.png'); 
 
 
 	    //music

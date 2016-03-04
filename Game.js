@@ -23,7 +23,7 @@ BasicGame.Game = function (game) {
     this.isRunning = true;
 
     // world settings
-    this.levelLength = 30000;
+    this.levelLength;
     this.tubeHeight = 200;
     this.startPos;
 
@@ -35,6 +35,12 @@ BasicGame.Game = function (game) {
     this.tunnelPhysicsData;
     this.CG_world;
     this.Health_text;
+
+    // environment
+    this.environment;
+    this.background;
+    this.midground;
+    this.foreground;
 
     // global vars
     this.menuButton;
@@ -55,6 +61,16 @@ BasicGame.Game = function (game) {
 
 
 BasicGame.Game.prototype = {
+    init: function () {
+        var envs = this.game['GameData'].environments,
+            totalEnvs = envs.length;
+
+        var levelSelect = (Math.random() < 0.5) ? 0 : 1;
+        
+        this.environment = envs[levelSelect];
+        this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+    },
+
     preload: function() {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
         this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2)+30, 580, this.levelLength, this.tubeHeight, 80);
@@ -63,8 +79,6 @@ BasicGame.Game.prototype = {
     },
 
 	create: function () {
-        console.log(this.game['GameData'].cLevel)
-
         //gametime
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
@@ -80,13 +94,29 @@ BasicGame.Game.prototype = {
 
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
-        
-        // GUI
-        this.trackProgressorBackground = this.add.sprite(this.camera.x, this.camera.y,'progressorBackground');  
+
+        // set world settings and player start position
+        this.startPos = { "x": 100, "y": (this.world.height / 2) };
+        this.stage.backgroundColor = "#0c9fc7";
+        this.world.setBounds(0, 0, this.levelLength, 500);
+
+        // create background first so that it goes to the back most position
+        this.addBackground();
+        this.addMidground();
+        var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
+        this.addCar();
+        this.drawTube(graphics, this.tunnelPhysicsData);
+        this.carBody.body.onBeginContact.add(this.podCollision, this);
+        this.addForeground();
+
+        window.graphics = graphics;
+
+        // GUI - create this last so it overlays on top of everything else
+        this.trackProgressorBackground = this.add.sprite(this.camera.x + ((this.camera.height)/4), this.camera.y + 560,'progressorBackground');  
         this.trackProgressorBackground.anchor.setTo(0, 0.5);
-        this.trackProgressorMarker = this.add.sprite(this.camera.x, this.camera.y,'progressorMarker'); 
+        this.trackProgressorMarker = this.add.sprite(this.trackProgressorBackground.x, this.trackProgressorBackground.y,'progressorMarker'); 
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
-        //this.menuButton = this.add.button(this.camera.x, this.camera.y, 'button_normal', this.quitGame, this, 'button_hover', 'button_normal', 'button_hover');
+
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
         this.menuButton.scale.set(0.5, 0.5);
 
@@ -96,67 +126,60 @@ BasicGame.Game.prototype = {
             fill: "#ffffff",
             align: "center"
         });
-        this.Timer_text = this.add.text(this.camera.x + 15, this.world.height - 50, "00:00:00", {
+        this.Timer_text = this.add.text(this.camera.x + 15, this.camera.y + 550, "00:00:00", {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
         });
-        this.Speed_text = this.add.text(this.camera.x + 15, this.world.height - 75, "0 m/s", {
+        this.Speed_text = this.add.text(this.camera.x + 15, this.camera.y + 530, "0 m/s", {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
         });
-        this.Health_text = this.add.text(this.camera.x + this.camera.width - 100, this.camera.height - 50, "Health: 100%", {
+        this.Health_text = this.add.text(this.camera.x + this.camera.width - 135, this.camera.height - 50, "Health: 100%", {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
         });
 
-        // set world settings and player start position
-        this.startPos = { "x": 100, "y": (this.world.height / 2) };
-        this.stage.backgroundColor = "#0c9fc7";
-        this.world.setBounds(0, 0, this.levelLength, 500);
-
-        // create a graphics object and prepare to tube to it
-        var graphics = this.add.graphics(0, 0);
-
-        this.addCar();
-        this.drawTube(graphics, this.tunnelPhysicsData);
-
-        this.carBody.body.onBeginContact.add(this.podCollision, this);
-
-        window.graphics = graphics;
+        //fix GUI elements to camera
+        this.trackProgressorBackground.fixedToCamera = true;
+        this.trackProgressorMarker.fixedToCamera = false;
+        this.menuButton.fixedToCamera = true;
+        this.Level_text.fixedToCamera = true;
+        this.Timer_text.fixedToCamera = true;
+        this.Speed_text.fixedToCamera = true;
+        this.Health_text.fixedToCamera = true;
 	},
 
 	update: function () {
-
         // handle inputs
         this.handleInput();
 
         // camera follow pod
         this.camera.x = this.carBody.body.x - 200;
         
-        // update GUI
-        this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
-        this.trackProgressorBackground.y = this.camera.y + 560;
+        // update background
+        //this.background.x = this.camera.x;
 
-        this.Level_text.x = this.camera.x + this.camera.width -50;
-        this.Level_text.y = this.camera.y + 50;
-        this.Timer_text.x = this.camera.x + 15;
-        this.Timer_text.y = this.camera.y + 550;
-        this.Speed_text.x = this.camera.x + 15;
-        this.Speed_text.y = this.camera.y + 530;
-        this.Health_text.x = this.camera.x + this.camera.width - 135;
+        // update midground
+        var camera = this.camera;
+        this.midground.forEach(function (item) {
+            if (item.type === 5) { // tileable sprite
+                item.tilePosition.x = -(camera.x * item.parallax) + item.offset.x;
+                item.tilePosition.y = item.offset.y;
+            }
+        })
+
+        // update fore ground
+
+        // update GUI
 
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / this.levelLength;
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
         this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier  *  this.trackProgressorBackground.width);
         this.trackProgressorMarker.y = this.trackProgressorBackground.y;
-
-        this.menuButton.x = this.camera.x + 20;
-        this.menuButton.y = this.camera.y + 20;
-
 
         if (ProgressMultiplier != 1) {
             // Timer
@@ -175,17 +198,55 @@ BasicGame.Game.prototype = {
             this.Speed_text.setText(pod_velcity + ' m/s');
         };
 
-        if (this.rudEvent_graphic) {
-
-        }
-
         // check if pod reached end
         if ( this.carBody.body.x >= this.levelLength ) {
             this.winStage();
         }
 
 	},
+    addBackground: function () {
+        var environmentBackground = this.environment['background'];
+        var backgroundGroup = this.background = this.add.group();
+        for (var key in environmentBackground) {
+            if (environmentBackground.hasOwnProperty(key)) {
+                //alert(key + " -> " + background[key]);
+                var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, environmentBackground[key].texture);
+                unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+            }
+        }
+    },
+    addMidground: function () {
+        var environmentMidground = this.environment['midground'];
+        var midgroundGroup = this.midground = this.add.group();
+        for (var key in environmentMidground) {
 
+            if (environmentMidground.hasOwnProperty(key)) {
+
+                if (environmentMidground[key].type === "unique") {
+                    
+                    midgroundGroup.create(environmentMidground[key].position.x, environmentMidground[key].position.y, environmentMidground[key].texture);
+
+                } else if (environmentMidground[key].type === "repeat") {
+
+                    var tileable = this.add.tileSprite(0, 0, this.camera.width, this.camera.height, environmentMidground[key].texture);
+                    tileable.tilePosition = {"x": environmentMidground[key].position.x, "y": environmentMidground[key].position.y};
+                    tileable.fixedToCamera = true;
+                    tileable.scale = {"x": environmentMidground[key].scale.x, "y": environmentMidground[key].scale.y};
+
+                    // need to pass some data to the update function so store it on the object
+                    tileable['parallax'] = environmentMidground[key].parallax;
+                    tileable['offset'] = environmentMidground[key].position;
+                    midgroundGroup.add(tileable);
+                }
+
+            }
+
+        }
+    },
+    addForeground: function () {
+        this.foreground = this.add.group();
+
+    },
     generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
         var hillStartY          = start_y,
             hillWidth           = tube_length/numberOfHills,
@@ -389,7 +450,7 @@ BasicGame.Game.prototype = {
             this.game['GameData'].cLevel += 1;
             this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width/2, this.camera.y+ this.camera.height/2, 'win_stage');
             this.winStage_graphic.anchor.set(0.5, 0.5);
-            
+
             setTimeout(function(state) {
                 state.start('Game')
             }, 3000, this.state);
@@ -448,14 +509,6 @@ BasicGame.Game.prototype = {
         carBody.body.mass = 1;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
-
-        // detect collision between car body only and walls
-        //carBody.body.onBeginContact.add(function (obj1, obj2) {
-        //   if (obj2.shapes[0].material.name === "ground") {
-        //        this.lose();
-        //    }            
-        //    return true;
-        //}, this);
 
         wheel_front.body.setCircle(5);
         wheel_front.body.debug = true;
