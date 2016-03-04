@@ -529,30 +529,33 @@ BasicGame.Game.prototype = {
         wheel_front.name = 'wheel_front';
         var wheel_back = this.add.sprite(60, startPos.y + 50); //BACK WHEEL 
         wheel_front.name = 'wheel_back';
+        carGroup = this.game.physics.p2.createCollisionGroup();
 
         this.physics.p2.updateBoundsCollisionGroup();
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
         carBody.body.setRectangle(110, 40);
         carBody.body.debug = false; //this adds the pink box
-        carBody.body.mass = 1;
+        carBody.body.mass = 1.5;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
+        //carBody.body.setCollisionGroup(carGroup);
 
-        wheel_front.body.setCircle(5);
+        wheel_front.body.setCircle(1);
         wheel_front.body.debug = false;
-        wheel_front.body.mass = 0.05;
+        wheel_front.body.mass = 0.2;
         wheel_front.body.setMaterial(this.wheelMaterial);
-        wheel_front.renderable = false;
+        //wheel_front.renderable = false;
+        //wheel_front.body.setCollisionGroup(carGroup);
 
-        wheel_back.body.setCircle(5);
+        wheel_back.body.setCircle(1);
         wheel_back.body.debug = false;
-        wheel_back.body.mass = 0.05;
+        wheel_back.body.mass = 0.5;
         wheel_back.body.setMaterial(this.wheelMaterial);
-        wheel_back.renderable = false;
+        //wheel_back.renderable = false;
 
-        var spring = this.physics.p2.createSpring(carBody, wheel_front, 5, 10, 1, null, null, wheel_front_pos, null);
-        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 5, 10, 1, null, null, wheel_back_pos, null);
+        var spring = this.physics.p2.createSpring(carBody, wheel_front, 123, 150, 10, null, null, wheel_front_pos, null);
+        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 123, 150, 10, null, null, wheel_back_pos, null);
 
         var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0, 0], [0, 1]);
         constraint.lowerLimitEnabled = constraint.upperLimitEnabled = true;
