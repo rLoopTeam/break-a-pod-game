@@ -78,25 +78,35 @@ BasicGame.Game.prototype = {
     },
 
     preload: function () {
-        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
-        this.load.physics('physicsData', "", this.tunnelPhysicsData);
-
         // Audio
-        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.mp3');
+        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
         this.load.audio('level2Music', 'assets/sound/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
         this.load.audio('explosion', 'assets/sound/player_death.wav');
         this.load.audio('hit', 'assets/sound/squit.wav');
     },
 
     create: function () {
+        //Audio
+        this.sound_music = this.add.sound('level1Music');
+        this.sound_explosion = this.add.sound('explosion');
+        this.sound_hit = this.add.sound('hit');
+        this.sound_music.play();
+
+        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
+        this.load.physics('physicsData', "", this.tunnelPhysicsData);
+
+        // Variable setup
+        this.time.reset();
+        this.loseflag = false;
+
         //gametime
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.gravity.y = 300;
         this.physics.p2.restitution = 0.2;
         this.physics.p2.setImpactEvents(true);
-        this.loseflag = false;
+        
 
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
@@ -104,11 +114,7 @@ BasicGame.Game.prototype = {
         this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
         this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
 
-        //Audio
-        this.sound_music = this.add.sound('level1Music');
-        this.sound_explosion = this.add.sound('explosion');
-        this.sound_hit = this.add.sound('hit');
-        this.sound_music.play();
+        
 
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -469,6 +475,8 @@ BasicGame.Game.prototype = {
 
     winStage: function (pointer) {
         console.log("You won the stage!")
+
+        this.sound_music.stop();
 
         if (!this.winStage_graphic) {
             this.game['GameData'].cLevel += 1;
