@@ -1,7 +1,7 @@
 
 BasicGame.Game = function (game) {
 
-	//	When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
+    //	When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
     this.game;		//	a reference to the currently runningthis.game
     this.add;		//	used to add sprites, text, groups, etc
     this.camera;	//	a reference to thethis.game camera
@@ -28,6 +28,7 @@ BasicGame.Game = function (game) {
     this.numberOfHills = [1, 3, 15];
     this.backgroundColor = ["#0c9fc7", "#fa8072", "#6a5acd"];
     this.winFlag;
+    this.loseFlag;
     this.startPos;
 
     this.bottomWall;
@@ -58,18 +59,19 @@ BasicGame.Game = function (game) {
 
 
 BasicGame.Game.prototype = {
-    preload: function() {
+    preload: function () {
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
         this.tunnelPhysicsData = this.generateTubePoints(this.numberOfHills[this.game['GameData'].cLevel - 1], (this.world.height / 2) + 30, 580, this.levelLength[this.game['GameData'].cLevel - 1], this.tubeHeight[this.game['GameData'].cLevel - 1], 100);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
-
+        this.load.spritesheet('kaboom', 'assets/sprites/explode.png', 128, 128);
     },
 
-	create: function () {
+    create: function () {
 
         // Level variable setup
-	    this.winFlag = false;
-	    this.time.reset(); // Reset game ellapsed time, so timer display level time
+        this.winFlag = false;
+        this.loseFlag = false;
+        this.time.reset(); // Reset game ellapsed time, so timer display level time
 
         //gametime
         this.time.advancedTiming = true;
@@ -81,16 +83,16 @@ BasicGame.Game.prototype = {
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
         this.wheelMaterial = this.physics.p2.createMaterial('wheel');
-        this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 5.0,restitution: 0  });
-        this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 5.0,restitution: 0  });
+        this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
+        this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
 
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
-        
+
         // GUI
-        this.trackProgressorBackground = this.add.sprite(this.camera.x, this.camera.y,'progressorBackground');  
+        this.trackProgressorBackground = this.add.sprite(this.camera.x, this.camera.y, 'progressorBackground');
         this.trackProgressorBackground.anchor.setTo(0, 0.5);
-        this.trackProgressorMarker = this.add.sprite(this.camera.x, this.camera.y,'progressorMarker'); 
+        this.trackProgressorMarker = this.add.sprite(this.camera.x, this.camera.y, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
         //this.menuButton = this.add.button(this.camera.x, this.camera.y, 'button_normal', this.quitGame, this, 'button_hover', 'button_normal', 'button_hover');
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
@@ -132,18 +134,17 @@ BasicGame.Game.prototype = {
         this.carBody.body.onBeginContact.add(this.podCollision, this);
 
         window.graphics = graphics;
-	},
+    },
 
-	update: function () {
-
+    update: function () {
         // handle inputs
         this.handleInput();
 
         // camera follow pod
         this.camera.x = this.carBody.body.x - 200;
-        
+
         // update GUI
-        this.trackProgressorBackground.x = this.camera.x + ((this.camera.height)/4);
+        this.trackProgressorBackground.x = this.camera.x + ((this.camera.height) / 4);
         this.trackProgressorBackground.y = this.camera.y + 560;
         this.Level_text.x = this.camera.x + this.camera.width - 100;
         this.Timer_text.x = this.camera.x + 15;
@@ -155,11 +156,24 @@ BasicGame.Game.prototype = {
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / this.levelLength[this.game['GameData'].cLevel - 1];
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
-        
+
 
         this.menuButton.x = this.camera.x + 20;
         this.menuButton.y = this.camera.y + 20;
 
+        // check angle of pod, destory if its out of range
+        if (!this.loseFlag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
+            
+            console.log('You exploded for being upside down!');
+
+            this.carBody.health = 0;
+            this.loseFlag = true;
+            this.lose();
+ 
+            var health_percentage = Math.round(this.carBody.health * 100);
+            if (health_percentage < 0) { health_percentage = 0; }
+            this.Health_text.setText('Health: ' + health_percentage + '%');
+        }
 
         if (ProgressMultiplier != 1) {
 
@@ -191,69 +205,69 @@ BasicGame.Game.prototype = {
 
         }
 
-	},
+    },
 
-    generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep){
-        var hillStartY          = start_y,
-            hillWidth           = tube_length/numberOfHills,
-            hillSlices          = hillWidth/pixelStep,
-            tunnelPhysicsData   = {"top":[], "bottom":[], "pylons":[]},
-            prevx               = 0,
-            prevy               = 800;
+    generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep) {
+        var hillStartY = start_y,
+            hillWidth = tube_length / numberOfHills,
+            hillSlices = hillWidth / pixelStep,
+            tunnelPhysicsData = { "top": [], "bottom": [], "pylons": [] },
+            prevx = 0,
+            prevy = 800;
 
         for (var i = 0; i < numberOfHills; i++) {
-            var randomHeight = Math.random()*78.5;
+            var randomHeight = Math.random() * 78.5;
             // this is necessary to make all hills (execept the first one) begin where the previous hill ended
-            if (i!=0) {
+            if (i != 0) {
                 hillStartY -= randomHeight;
             }
             // looping through hill slices
             for (var j = 0; j <= hillSlices; j++) {
-                    var x           = j * pixelStep + hillWidth * i,
-                        y           = hillStartY + randomHeight * Math.cos(2*Math.PI/hillSlices*j),
-                        height      = y - prevy,
-                        length      = Math.sqrt((pixelStep*pixelStep) + (height*height)),
-                        hillPoint   = {"x": x, "y": y},
-                        angle       = Math.atan2(y - prevy, x - prevx)
+                var x = j * pixelStep + hillWidth * i,
+                    y = hillStartY + randomHeight * Math.cos(2 * Math.PI / hillSlices * j),
+                    height = y - prevy,
+                    length = Math.sqrt((pixelStep * pixelStep) + (height * height)),
+                    hillPoint = { "x": x, "y": y },
+                    angle = Math.atan2(y - prevy, x - prevx)
 
-                    var rect = {
-                        "density": 2, "friction": 0, "bounce": 0, 
-                        "filter": { "categoryBits": 1, "maskBits": 65535 },
-                        "shape": [prevx,hillPoint.y + 100,   prevx,prevy,   hillPoint.x,hillPoint.y,   hillPoint.x,hillPoint.y+100]
-                    };
-                    tunnelPhysicsData['bottom'].push(rect);
+                var rect = {
+                    "density": 2, "friction": 0, "bounce": 0,
+                    "filter": { "categoryBits": 1, "maskBits": 65535 },
+                    "shape": [prevx, hillPoint.y + 100, prevx, prevy, hillPoint.x, hillPoint.y, hillPoint.x, hillPoint.y + 100]
+                };
+                tunnelPhysicsData['bottom'].push(rect);
 
-                    var topRect = {
-                        "density": 2, "friction": 0, "bounce": 0,
-                        "filter": { "categoryBits": 1, "maskBits": 65535 },
-                        "shape": [prevx,hillPoint.y-tube_height-100,   hillPoint.x,hillPoint.y-tube_height-100,   hillPoint.x,hillPoint.y-tube_height,   prevx,prevy-tube_height]
-                        //"shape": [prevx, hillPoint.y - tube_height, prevx, hillPoint.y - tube_height - 10, hillPoint.x, hillPoint.y - tube_height-10, hillPoint.x, hillPoint.y - tube_height]
-                    };
-                    tunnelPhysicsData['top'].push(topRect);
+                var topRect = {
+                    "density": 2, "friction": 0, "bounce": 0,
+                    "filter": { "categoryBits": 1, "maskBits": 65535 },
+                    "shape": [prevx, hillPoint.y - tube_height - 100, hillPoint.x, hillPoint.y - tube_height - 100, hillPoint.x, hillPoint.y - tube_height, prevx, prevy - tube_height]
+                    //"shape": [prevx, hillPoint.y - tube_height, prevx, hillPoint.y - tube_height - 10, hillPoint.x, hillPoint.y - tube_height-10, hillPoint.x, hillPoint.y - tube_height]
+                };
+                tunnelPhysicsData['top'].push(topRect);
 
-                    prevx = x;
-                    prevy = y;
+                prevx = x;
+                prevy = y;
             }
-            tunnelPhysicsData['pylons'].push({ position:{"x": prevx, "y": prevy} });
+            tunnelPhysicsData['pylons'].push({ position: { "x": prevx, "y": prevy } });
 
             // this is also necessary to make all hills (execept the first one) begin where the previous hill ended
             hillStartY = hillStartY + randomHeight;
         }
         return tunnelPhysicsData;
     },
-    drawTube: function (graphics, points){    
+    drawTube: function (graphics, points) {
 
-        var totalPoints = points['bottom'].length;  
+        var totalPoints = points['bottom'].length;
         var prevx = points['bottom'][0]['shape'][2];
         var prevy = points['bottom'][0]['shape'][3];
 
         var totalPylons = points['pylons'].length;
-        
+
 
         //==================//
         // draw tube
         //==================//
-        graphics.lineStyle(6,0xAAAAAA, 0.8);
+        graphics.lineStyle(6, 0xAAAAAA, 0.8);
         graphics.beginFill(0xFF700B, 1);
         graphics.moveTo(points['bottom'][0]['shape'][4], points['bottom'][0]['shape'][5]);
 
@@ -268,7 +282,7 @@ BasicGame.Game.prototype = {
             prevy = y;
         }
 
-        graphics.lineTo(prevx+500,prevy);
+        graphics.lineTo(prevx + 500, prevy);
         graphics.endFill();
 
         graphics.lineStyle(6, 0xAAAAAA, 0.8);
@@ -300,12 +314,12 @@ BasicGame.Game.prototype = {
             var pylon = this.add.sprite(x, y - this.tubeHeight[this.game['GameData'].cLevel - 1] - 20, 'pylon');
             //pylon.anchor.setTo(0.5, 0.1);
         }
-        
+
 
         //==================//
         // load physics data
         //==================//
-        var polygonCollisionSprite = this.add.sprite(0, 0,'wall');  
+        var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
         this.physics.p2.enableBody(polygonCollisionSprite);
         polygonCollisionSprite.name = 'wall_bot';
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
@@ -323,17 +337,17 @@ BasicGame.Game.prototype = {
 
         this.bottomWall = polygonCollisionSprite;
     },
-            
-    render: function() {
+
+    render: function () {
         this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
     },
-    
+
     resize: function (width, height) {
         //this.menuButton.x = 25;
         //this.menuButton.y = 25;
     },
 
-    handleInput: function() {
+    handleInput: function () {
         if (this.cursors.up.isDown) {
             if (this.wheel_back.body.angularVelocity < 300) {
                 this.wheel_back.body.angularVelocity += this.wheelSpeed;
@@ -352,44 +366,47 @@ BasicGame.Game.prototype = {
             this.wheel_back.body.angularVelocity *= 0.2;
             this.wheel_front.body.angularVelocity *= 0.2;
         }
-        if (this.carBody.body.velocity.x < 0)
-        {
+        if (this.carBody.body.velocity.x < 0) {
             this.carBody.body.velocity.x = 0;
         }
-        
 
-        if (this.cursors.right.isDown)
-        {
+
+        if (this.cursors.right.isDown) {
             this.carBody.body.angularVelocity = .5;
         }
-        if (this.cursors.left.isDown)
-        {
+        if (this.cursors.left.isDown) {
             this.carBody.body.angularVelocity = -.5;
         }
     },
 
-	quitGame: function (pointer) {
+    quitGame: function (pointer) {
 
-		//	Here you should destroy anything you no longer need.
-		//	Stop music, delete sprites, purge caches, free resources, all that good stuff.
+        //	Here you should destroy anything you no longer need.
+        //	Stop music, delete sprites, purge caches, free resources, all that good stuff.
 
-		this.state.start('MainMenu');
-	},
+        this.state.start('MainMenu');
+    },
 
-    lose: function(pointer) {
+    lose: function (pointer) {
 
         console.log("You lost!")
-        if (!this.rudEvent_graphic) {
-            this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width/2, this.camera.y+ this.camera.height/2, 'rud_event');
-            this.rudEvent_graphic.anchor.set(0.5, 0.5);
-        }
 
-        var loseTimeout = setTimeout(function(state) {
-            state.start('Game')
+        this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
+        this.rudEvent_graphic.anchor.set(0.5, 0.5);
+
+        this.carBody.loadTexture('kaboom');
+        this.carBody.scale.set(2, 2);
+        this.carBody.animations.add('kaboom');
+        this.carBody.animations.play('kaboom', 30, false, false); //play(name, frameRate, loop, killOnComplete) 
+        
+        var loseTimeout = setTimeout(function (state) {
+            this.winFlag = false;
+            this.loseFlag = false;
+            state.start('Game');
         }, 3000, this.state);
 
     },
- 
+
     winStage: function (pointer) {
         console.log("You won the stage!")
 
@@ -402,8 +419,9 @@ BasicGame.Game.prototype = {
         setTimeout(function (state) {
             if (thislevel <= totalLevels) {
                 this.winFlag = false;
+                this.loseFlag = false;
                 state.game['GameData'].cLevel += 1;
-                state.start('Game')
+                state.start('Game');
             } else {
                 state.game['GameData'].cLevel = 1;
                 state.start('MainMenu');
@@ -424,15 +442,18 @@ BasicGame.Game.prototype = {
     },
 
     podCollision: function (body, bodyB, shapeA, shapeB, equation) {
-        var damage = Math.abs(body.velocity.y) / 5000;
+        var damage = Math.abs(body.velocity.y) / 1;
         if (damage < .01) { damage = .01; }
-        console.log('Damage: ' + damage);
+
         this.carBody.health -= damage;
         if (this.carBody.health > 0) {
             console.log('Colision! rPod Health is ' + this.carBody.health);
         } else {
             console.log('You exploded!');
-            this.lose();
+            if (!this.loseFlag) {
+                this.loseFlag = true;
+                this.lose();
+            }
         }
         var health_percentage = Math.round(this.carBody.health * 100);
         if (health_percentage < 0) { health_percentage = 0; }
@@ -454,8 +475,8 @@ BasicGame.Game.prototype = {
         wheel_front.name = 'wheel_front';
         var wheel_back = this.add.sprite(60, startPos.y + 50); //BACK WHEEL 
         wheel_front.name = 'wheel_back';
-        
-        this.physics.p2.updateBoundsCollisionGroup(); 
+
+        this.physics.p2.updateBoundsCollisionGroup();
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
         carBody.body.setRectangle(110, 40);
@@ -477,7 +498,7 @@ BasicGame.Game.prototype = {
         wheel_front.body.mass = 0.05;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
-    
+
         wheel_back.body.setCircle(5);
         wheel_back.body.debug = false;
         wheel_back.body.mass = 0.05;
@@ -488,14 +509,14 @@ BasicGame.Game.prototype = {
         var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 100, 50, 5, null, null, wheel_back_pos, null);
 
         var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0, 0], [0, 1]);
-        constraint.lowerLimitEnabled=constraint.upperLimitEnabled = true;
+        constraint.lowerLimitEnabled = constraint.upperLimitEnabled = true;
         constraint.upperLimit = -.1;
-        constraint.lowerLimit = -10;  
+        constraint.lowerLimit = -10;
 
         var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0, 0], [0, 1]);
-        constraint_1.lowerLimitEnabled=constraint_1.upperLimitEnabled = true;
+        constraint_1.lowerLimitEnabled = constraint_1.upperLimitEnabled = true;
         constraint_1.upperLimit = -.1;
-        constraint_1.lowerLimit = -10;  
+        constraint_1.lowerLimit = -10;
 
         this.carBody = carBody;
         this.wheel_front = wheel_front;
