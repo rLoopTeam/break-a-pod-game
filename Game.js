@@ -78,25 +78,34 @@ BasicGame.Game.prototype = {
     },
 
     preload: function () {
-        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
-        this.load.physics('physicsData', "", this.tunnelPhysicsData);
-
         // Audio
-        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.mp3');
-        this.load.audio('level2Music', 'assets/sound/Scyphe-Goldrunner_(Maccie_Pimp_Me Up_Remix).mp3');
+        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
         this.load.audio('explosion', 'assets/sound/player_death.wav');
         this.load.audio('hit', 'assets/sound/squit.wav');
     },
 
     create: function () {
+        //Audio
+        this.sound_music = this.add.sound('level1Music');
+        this.sound_explosion = this.add.sound('explosion');
+        this.sound_hit = this.add.sound('hit');
+        this.sound_music.play();
+
+        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
+        this.load.physics('physicsData', "", this.tunnelPhysicsData);
+
+        // Variable setup
+        this.time.reset();
+        this.loseflag = false;
+
         //gametime
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.gravity.y = 300;
         this.physics.p2.restitution = 0.2;
         this.physics.p2.setImpactEvents(true);
-        this.loseflag = false;
+        
 
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
@@ -104,11 +113,7 @@ BasicGame.Game.prototype = {
         this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
         this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
 
-        //Audio
-        this.sound_music = this.add.sound('level1Music');
-        this.sound_explosion = this.add.sound('explosion');
-        this.sound_hit = this.add.sound('hit');
-        this.sound_music.play();
+        
 
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -139,7 +144,7 @@ BasicGame.Game.prototype = {
         this.menuButton.scale.set(0.5, 0.5);
 
         // Displays
-        this.Level_text = this.add.text(this.camera.x + this.camera.width - 50, this.camera.y + 50, this.game['GameData'].cLevel, {
+        this.Level_text = this.add.text(this.camera.x + this.camera.width - 100, this.camera.y + 10, 'Level ' + this.game['GameData'].cLevel, {
             font: "24px Arial",
             fill: "#ffffff",
             align: "center"
@@ -172,7 +177,7 @@ BasicGame.Game.prototype = {
 
     update: function () {
         // handle inputs
-        this.handleInput();
+        if (!this.loseflag) { this.handleInput(); }
 
         // camera follow pod
         this.camera.x = this.carBody.body.x - 200;
@@ -199,7 +204,7 @@ BasicGame.Game.prototype = {
         this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier * this.trackProgressorBackground.width);
         this.trackProgressorMarker.y = this.trackProgressorBackground.y;
 
-        if (ProgressMultiplier != 1) {
+        if (ProgressMultiplier != 1 && !this.loseflag) {
             // Timer
             var minutes = Math.floor(this.game.time.totalElapsedSeconds() / 60);
             var seconds = Math.floor(this.game.time.totalElapsedSeconds()) % 60;
@@ -214,7 +219,16 @@ BasicGame.Game.prototype = {
             pod_velcity = pod_velcity / 5; // could set this as a constant somewhere...pixels/meter
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
-        };
+        } else {
+            this.Speed_text.setText('Signal Lost!');
+        }
+
+        // Check pod's angle, explode if out of bounds
+        if (!this.loseflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
+            console.log('You exploded!');
+            this.loseflag = true;
+            this.lose();
+        }
 
         // check if pod reached end
         if (this.carBody.body.x >= this.levelLength) {
@@ -440,7 +454,7 @@ BasicGame.Game.prototype = {
 
         //	Here you should destroy anything you no longer need.
         //	Stop music, delete sprites, purge caches, free resources, all that good stuff.
-
+        this.sound_music.stop();
         this.state.start('MainMenu');
     },
 
@@ -454,6 +468,9 @@ BasicGame.Game.prototype = {
 
         this.sound_music.stop();
         this.sound_explosion.play();
+
+        this.carBody.body.velocity.x = 0;
+        this.carBody.body.velocity.y = 0;
 
         this.carBody.loadTexture('kaboom');
         this.carBody.scale.set(2, 2);
@@ -469,6 +486,8 @@ BasicGame.Game.prototype = {
 
     winStage: function (pointer) {
         console.log("You won the stage!")
+
+        this.sound_music.stop();
 
         if (!this.winStage_graphic) {
             this.game['GameData'].cLevel += 1;
@@ -494,24 +513,27 @@ BasicGame.Game.prototype = {
     },
 
     podCollision: function (body, bodyB, shapeA, shapeB, equation) {
-        var damage = Math.abs(body.velocity.y) / 5000;
-        if (damage < .01) { damage = .01; }
-        console.log('Damage: ' + damage);
-        this.carBody.health -= damage;
-        if (this.carBody.health > 0) {
-            this.sound_hit.play();
-            console.log('Colision! rPod Health is ' + this.carBody.health);
-        } else {
-            if (!this.loseflag) {
-                console.log('You exploded!');
-                this.loseflag = true;
-                this.lose();
+        if (!this.loseflag) {
+            var damage = Math.abs(body.velocity.y) / 5000;
+            if (damage < .01) { damage = .01; }
+            this.carBody.health -= damage;
+            if (this.carBody.health > 0) {
+                this.sound_hit.play();
+                console.log('Colision! rPod Health is ' + this.carBody.health);
+            } else {
+                if (!this.loseflag) {
+                    console.log('You exploded!');
+                    this.loseflag = true;
+                    this.lose();
 
+                }
             }
+            var health_percentage = Math.round(this.carBody.health * 100);
+            if (health_percentage < 0) { health_percentage = 0; }
+            this.Health_text.setText('Health: ' + health_percentage + '%');
+        } else {
+            this.Health_text.setText('Health: 0%');
         }
-        var health_percentage = Math.round(this.carBody.health * 100);
-        if (health_percentage < 0) { health_percentage = 0; }
-        this.Health_text.setText('Health: ' + health_percentage + '%');
     },
 
     addCar: function () {

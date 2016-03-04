@@ -69,6 +69,7 @@ BasicGame.Preloader.prototype = {
         // Effects
         this.load.spritesheet('kaboom', 'assets/sprites/explode.png', 128, 128);
 
+	    
 	},
 
 	create: function () {
