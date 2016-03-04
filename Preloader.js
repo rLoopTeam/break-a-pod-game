@@ -66,7 +66,9 @@ BasicGame.Preloader.prototype = {
         this.load.image('sun', 'assets/skies/sun.png'); 
         this.load.image('moon', 'assets/skies/moon.png'); 
 
-
+        // Effects
+        this.load.spritesheet('kaboom', 'assets/sprites/explode.png', 128, 128);
+        
 	    //music
 	    //this.load.audio('titleMusic', ['audio/main_menu.mp3']);
 	    //this.load.audio('mainMusic', ['audio/main_menu.mp3']);
