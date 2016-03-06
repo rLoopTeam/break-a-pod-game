@@ -88,17 +88,6 @@ BasicGame.Game.prototype = {
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
     },
 
-    preload: function () {
-        // Audio
-        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
-        this.load.audio('explosion', 'assets/sound/player_death.wav');
-        this.load.audio('hit', 'assets/sound/squit.wav');
-
-        // Snow
-        this.load.spritesheet('snowflakes', 'assets/sprites/snowflakes.png', 17, 17);
-        this.load.spritesheet('snowflakes_large', 'assets/sprites/snowflakes_large.png', 64, 64);
-    },
-
     create: function () {
         //Audio
         this.sound_music = this.add.sound('level1Music');

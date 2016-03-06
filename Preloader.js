@@ -70,6 +70,16 @@ BasicGame.Preloader.prototype = {
         // Effects
         this.load.spritesheet('kaboom', 'assets/sprites/explode.png', 128, 128);
 
+        // Weather 
+        this.load.spritesheet('snowflakes', 'assets/sprites/snowflakes.png', 17, 17);
+        this.load.spritesheet('snowflakes_large', 'assets/sprites/snowflakes_large.png', 64, 64);
+
+
+        // Sound
+        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
+        this.load.audio('explosion', 'assets/sound/player_death.wav');
+        this.load.audio('hit', 'assets/sound/squit.wav');
+
 	    
 	},
 
