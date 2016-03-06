@@ -63,6 +63,15 @@ BasicGame.Game = function (game) {
     this.sound_music;
     this.sound_explosion;
     this.sound_hit;
+
+    // Snow
+    this.is_snowing = false;
+    this.snow_var = 0;
+    this.update_interval = 4 * 60;
+    this.max = 0;
+    this.front_emitter;
+    this.mid_emitter;
+    this.back_emitter;
 };
 
 
@@ -71,10 +80,12 @@ BasicGame.Game.prototype = {
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
 
-        var levelSelect = (Math.random() < 0.5) ? 0 : 1;
+        var levelSelect = (Math.random() < 0.5) ? 0 : 2;
 
         this.environment = envs[levelSelect];
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+
+        if (this.environment.name == "Snowy Hills") { this.is_snowing = true; }
     },
 
     preload: function () {
@@ -82,6 +93,10 @@ BasicGame.Game.prototype = {
         this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
         this.load.audio('explosion', 'assets/sound/player_death.wav');
         this.load.audio('hit', 'assets/sound/squit.wav');
+
+        // Snow
+        this.load.spritesheet('snowflakes', 'assets/sprites/snowflakes.png', 17, 17);
+        this.load.spritesheet('snowflakes_large', 'assets/sprites/snowflakes_large.png', 64, 64);
     },
 
     create: function () {
@@ -173,9 +188,49 @@ BasicGame.Game.prototype = {
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
         this.Health_text.fixedToCamera = true;
+
+        // Snow 
+        if (this.is_snowing) {
+            this.back_emitter = this.add.emitter(this.camera.width * 5, -32, 1000);
+            this.back_emitter.makeParticles('snowflakes', [0, 1, 2, 3, 4, 5]);
+            this.back_emitter.maxParticleScale = 0.6;
+            this.back_emitter.minParticleScale = 0.2;
+            this.back_emitter.setYSpeed(20, 100);
+            this.back_emitter.gravity = 0;
+            this.back_emitter.width = this.camera.width * 10;
+            this.back_emitter.minRotation = 0;
+            this.back_emitter.maxRotation = 40;
+
+            this.mid_emitter = this.add.emitter(this.camera.width * 5, -32, 400);
+            this.mid_emitter.makeParticles('snowflakes', [0, 1, 2, 3, 4, 5]);
+            this.mid_emitter.maxParticleScale = 1.2;
+            this.mid_emitter.minParticleScale = 0.8;
+            this.mid_emitter.setYSpeed(50, 150);
+            this.mid_emitter.gravity = 0;
+            this.mid_emitter.width = this.camera.width * 10;
+            this.mid_emitter.minRotation = 0;
+            this.mid_emitter.maxRotation = 40;
+
+            this.front_emitter = this.add.emitter(this.camera.width * 5, -32, 100);
+            this.front_emitter.makeParticles('snowflakes_large', [0, 1, 2, 3, 4, 5]);
+            this.front_emitter.maxParticleScale = 1;
+            this.front_emitter.minParticleScale = 0.5;
+            this.front_emitter.setYSpeed(100, 200);
+            this.front_emitter.gravity = 0;
+            this.front_emitter.width = this.camera.width * 10;
+            this.front_emitter.minRotation = 0;
+            this.front_emitter.maxRotation = 40;
+
+            this.changeWindDirection();
+
+            this.back_emitter.start(false, 14000, 20);
+            this.mid_emitter.start(false, 12000, 40);
+            this.front_emitter.start(false, 6000, 1000);
+        }
     },
 
     update: function () {
+
         // handle inputs
         if (!this.loseflag) { this.handleInput(); }
 
@@ -235,7 +290,48 @@ BasicGame.Game.prototype = {
             this.winStage();
         }
 
+        // Snow
+        if (this.is_snowing) {
+            this.snow_var++;
+            if (this.snow_var === this.update_interval) {
+                this.changeWindDirection();
+                update_interval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec @ 60fps
+                this.snow_var = 0;
+            }
+            this.front_emitter.emitX = (this.camera.x + this.camera.width * 5);
+            this.mid_emitter.emitX = (this.camera.x + this.camera.width * 5);
+            this.back_emitter.emitX = (this.camera.x + this.camera.width * 5);
+        }
     },
+
+    changeWindDirection: function () {
+
+        var multi = Math.floor((this.max + 200) / 4),
+                    frag = (Math.floor(Math.random() * 100) - multi);
+        this.max = this.max + frag;
+
+        if (this.max > 200) this.max = 150;
+        if (this.max < -200) this.max = -150;
+
+        this.setXSpeed(this.back_emitter, this.max);
+        this.setXSpeed(this.mid_emitter, this.max);
+        this.setXSpeed(this.front_emitter, this.max);
+
+    },
+
+    setXSpeed: function (emitter, max) {
+
+        emitter.setXSpeed(max - 20, max);
+        emitter.forEachAlive(this.setParticleXSpeed, this, max);
+
+    },
+
+    setParticleXSpeed: function (particle, max) {
+
+        particle.body.velocity.x = max - Math.floor(Math.random() * 30);
+
+    },
+
     addBackground: function () {
         var environmentBackground = this.environment['background'];
         var backgroundGroup = this.background = this.add.group();
@@ -247,6 +343,7 @@ BasicGame.Game.prototype = {
             }
         }
     },
+
     addMidground: function () {
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();

@@ -58,7 +58,8 @@ BasicGame.Preloader.prototype = {
 
 		// environment
 		this.load.image('grassy_hill', 'assets/environment/grassy_hill.png');        
-		this.load.image('grassy_hill_night', 'assets/environment/grassy_hill_night.png'); 
+		this.load.image('grassy_hill_night', 'assets/environment/grassy_hill_night.png');
+		this.load.image('snowy_hill', 'assets/environment/snowy_hill.png');
 
 		// skies
         this.load.image('sunny_sky', 'assets/skies/sunny_sky.png'); 

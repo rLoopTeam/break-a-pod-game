@@ -129,103 +129,202 @@ window.onload = function() {
 				}
 			},
 			{
-				'name' : 'Grassy Hills Night',
-				'background': {
-					'skyObj' : {
-						'type': 'unique', // types :- unqique, repeat
-						'texture' : 'night_sky',
-						'parallax': 1,
-						'fixedToCamera': true,
-						'scale' : {
-							'x':1,
-							'y':1
-						},
-						'position' : {
-							'x':0,
-							'y':0
-						},
-						'velocity' : {
-							'x':0,
-							'y':0
-						}
-					},
-					'skyLightObj' : {
-						'type': 'unique',
-						'texture' : 'moon',
-						'parallax': 1,
-						'fixedToCamera': true,
-						'scale' : {
-							'x':1,
-							'y':1
-						},
-						'position' : {
-							'x':500,
-							'y':100
-						},
-						'velocity' : {
-							'x':0,
-							'y':0
-						}
-					}
-				},
-				'midground': {
-					'hills' : {
-						'type': 'repeat',
-						'texture' : 'grassy_hill_night',
-						'parallax': 0.5,
-						'fixedToCamera': false,
-						'scale' : {
-							'x':1.5,
-							'y':1
-						},
-						'position' : {
-							'x':300,
-							'y':500
-						},
-						'velocity' : {
-							'x':0,
-							'y':0
-						}
-					},
-					'hills2' : {
-						'type': 'repeat',
-						'texture' : 'grassy_hill_night',
-						'parallax': 0.5,
-						'fixedToCamera': false,
-						'scale' : {
-							'x':1.5,
-							'y':1
-						},
-						'position' : {
-							'x':0,
-							'y':650
-						},
-						'velocity' : {
-							'x':0,
-							'y':0
-						}
-					}
-				},
-				'foreground': {
-					'hills' : {
-						'type': 'repeat',
-						'texture' : 'grassy_hill_night',
-						'parallax': 0,
-						'fixedToCamera': false,
-						'scale' : {
-							'x':1,
-							'y':1
-						},
-						'position' : {
-							'x':0,
-							'y':0
-						},
-						'velocity' : {
-							'x':0,
-							'y':0
-						}
-					}
-				}
+			    'name': 'Grassy Hills Night',
+			    'background': {
+			        'skyObj': {
+			            'type': 'unique', // types :- unqique, repeat
+			            'texture': 'night_sky',
+			            'parallax': 1,
+			            'fixedToCamera': true,
+			            'scale': {
+			                'x': 1,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 0,
+			                'y': 0
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        },
+			        'skyLightObj': {
+			            'type': 'unique',
+			            'texture': 'moon',
+			            'parallax': 1,
+			            'fixedToCamera': true,
+			            'scale': {
+			                'x': 1,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 500,
+			                'y': 100
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        }
+			    },
+			    'midground': {
+			        'hills': {
+			            'type': 'repeat',
+			            'texture': 'grassy_hill_night',
+			            'parallax': 0.5,
+			            'fixedToCamera': false,
+			            'scale': {
+			                'x': 1.5,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 300,
+			                'y': 500
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        },
+			        'hills2': {
+			            'type': 'repeat',
+			            'texture': 'grassy_hill_night',
+			            'parallax': 0.5,
+			            'fixedToCamera': false,
+			            'scale': {
+			                'x': 1.5,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 0,
+			                'y': 650
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        }
+			    },
+			    'foreground': {
+			        'hills': {
+			            'type': 'repeat',
+			            'texture': 'grassy_hill_night',
+			            'parallax': 0,
+			            'fixedToCamera': false,
+			            'scale': {
+			                'x': 1,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 0,
+			                'y': 0
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        }
+			    }
+			},
+			{
+			    'name': 'Snowy Hills',
+			    'background': {
+			        'skyObj': {
+			            'type': 'unique', // types :- unqique, repeat
+			            'texture': 'sunny_sky',
+			            'parallax': 1,
+			            'fixedToCamera': true,
+			            'scale': {
+			                'x': 1,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 0,
+			                'y': 0
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        },
+			        'skyLightObj': {
+			            'type': 'unique',
+			            'texture': 'sun',
+			            'parallax': 1,
+			            'fixedToCamera': true,
+			            'scale': {
+			                'x': 1,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 500,
+			                'y': 100
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        }
+			    },
+			    'midground': {
+			        'hills': {
+			            'type': 'repeat',
+			            'texture': 'snowy_hill',
+			            'parallax': 0.5,
+			            'fixedToCamera': false,
+			            'scale': {
+			                'x': 1.5,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 300,
+			                'y': 500
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        },
+			        'hills2': {
+			            'type': 'repeat',
+			            'texture': 'snowy_hill',
+			            'parallax': 0.5,
+			            'fixedToCamera': false,
+			            'scale': {
+			                'x': 1.5,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 0,
+			                'y': 650
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        }
+			    },
+			    'foreground': {
+			        'hills': {
+			            'type': 'repeat',
+			            'texture': 'snowy_hill',
+			            'parallax': 0,
+			            'fixedToCamera': false,
+			            'scale': {
+			                'x': 1,
+			                'y': 1
+			            },
+			            'position': {
+			                'x': 0,
+			                'y': 0
+			            },
+			            'velocity': {
+			                'x': 0,
+			                'y': 0
+			            }
+			        }
+			    }
 			}
 		]
 	};
