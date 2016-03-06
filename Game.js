@@ -85,7 +85,7 @@ BasicGame.Game.prototype = {
         this.environment = envs[levelSelect];
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
 
-        if (this.environment.name == "Snowy Hills") { this.is_snowing = true; }
+        this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
     },
 
     preload: function () {
