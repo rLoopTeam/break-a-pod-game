@@ -1,0 +1,23 @@
+{
+  "name": "@rloopteam/break-a-pod",
+  "version": "0.0.1",
+  "description": "Break a Pod!",
+  "scripts": {
+    "dev": "http-server",
+    "deploy:dev": "surge --domain break-a-pod.surge.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rloopteam/break-a-pod-game.git"
+  },
+  "author": "Ari Porad <ari@ariporad.com> (http://github.com/ariporad)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rloopteam/break-a-pod-game/issues"
+  },
+  "homepage": "https://github.com/rloopteam/break-a-pod-game#readme",
+  "devDependencies": {
+    "http-server": "^0.9.0",
+    "surge": "^0.17.7"
+  }
+}
