@@ -339,42 +339,34 @@ BasicGame.Game.prototype = {
         //==================//
         // draw tube
         //==================//
-        graphics.lineStyle(6, 0xAAAAAA, 0.8);
-        graphics.beginFill(0xFF700B, 1);
-        graphics.moveTo(points['bottom'][0]['shape'][4], points['bottom'][0]['shape'][5]);
-
+        
+        
+        graphics.beginFill(0xAAAAAA, 0.75);
+        btm_prevx = points['bottom'][0]['shape'][4];
+        btm_prevy = points['bottom'][0]['shape'][5];
+        top_prevx = points['top'][0]['shape'][4];
+        top_prevy = points['top'][0]['shape'][5];
         for (var i = 1; i < totalPoints; i++) {
-            var x = points['bottom'][i]['shape'][4],
-                y = points['bottom'][i]['shape'][5];
+            var btm_x = points['bottom'][i]['shape'][4],
+                btm_y = points['bottom'][i]['shape'][5],
+                top_x = points['top'][i]['shape'][4],
+                top_y = points['top'][i]['shape'][5];
 
-            graphics.lineTo(x, y);
-            graphics.moveTo(x, y);
+            // Solid gray background
+            graphics.lineStyle(6, 0xAAAAAA, 0);
+            graphics.drawPolygon([btm_prevx, btm_prevy, top_prevx, top_prevy, top_x, top_y, btm_x, btm_y]);
 
-            prevx = x;
-            prevy = y;
+            // Black outline
+            graphics.lineStyle(6, 0x000000, 1);
+            graphics.moveTo(btm_prevx, btm_prevy);
+            graphics.lineTo(btm_x, btm_y);
+            graphics.moveTo(top_prevx, top_prevy);
+            graphics.lineTo(top_x, top_y);
+            btm_prevx = btm_x;
+            btm_prevy = btm_y;
+            top_prevx = top_x;
+            top_prevy = top_y;
         }
-
-        graphics.lineTo(prevx + 500, prevy);
-        graphics.endFill();
-
-        graphics.lineStyle(6, 0xAAAAAA, 0.8);
-        graphics.beginFill(0xFF700B, 1);
-        graphics.moveTo(points['top'][0]['shape'][4], points['top'][0]['shape'][5]);
-
-        for (var i = 1; i < totalPoints; i++) {
-            var x = points['top'][i]['shape'][4],
-                y = points['top'][i]['shape'][5];
-
-            graphics.lineTo(x, y);
-            graphics.moveTo(x, y);
-
-            prevx = x;
-            prevy = y;
-
-        }
-
-        graphics.lineTo(prevx + 500, prevy);
-        graphics.endFill();
 
 
         //==================//
@@ -473,7 +465,7 @@ BasicGame.Game.prototype = {
         this.carBody.body.velocity.y = 0;
 
         this.carBody.loadTexture('kaboom');
-        this.carBody.scale.set(2, 2);
+        this.carBody.scale.set(1, 1);
         this.carBody.animations.add('kaboom');
         this.carBody.animations.play('kaboom', 30, false, false); //play(name, frameRate, loop, killOnComplete) 
 
@@ -567,14 +559,14 @@ BasicGame.Game.prototype = {
         wheel_front.body.debug = false;
         wheel_front.body.mass = 0.2;
         wheel_front.body.setMaterial(this.wheelMaterial);
-        //wheel_front.renderable = false;
+        wheel_front.renderable = false;
         //wheel_front.body.setCollisionGroup(carGroup);
 
         wheel_back.body.setCircle(1);
         wheel_back.body.debug = false;
         wheel_back.body.mass = 0.5;
         wheel_back.body.setMaterial(this.wheelMaterial);
-        //wheel_back.renderable = false;
+        wheel_back.renderable = false;
 
         var spring = this.physics.p2.createSpring(carBody, wheel_front, 123, 150, 10, null, null, wheel_front_pos, null);
         var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 123, 150, 10, null, null, wheel_back_pos, null);
