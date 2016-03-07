@@ -7,7 +7,8 @@
 	<script src="Boot.js"></script>
 	<script src="Preloader.js"></script>
 	<script src="MainMenu.js"></script>
-	<script src="Game.js"></script>
+    <script src="Game.js"></script>
+    <script src="Lose.js"></script>
 	<script src="LevelGenerator.js"></script>
     <style>
         body {
@@ -342,6 +343,7 @@ window.onload = function() {
 	game.state.add('MainMenu', BasicGame.MainMenu);
 	game.state.add('Game', BasicGame.Game);
 	game.state.add('Win', BasicGame.Win);
+	game.state.add('Lose', BasicGame.Lose);
 	game.state.add('LevelGenerator', BasicGame.LevelGenerator);
 
 	//	Now start the Boot state.

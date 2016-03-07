@@ -147,6 +147,9 @@ BasicGame.Game.prototype = {
         this.trackProgressorBackground.anchor.setTo(0, 0.5);
         this.trackProgressorMarker = this.add.sprite(this.trackProgressorBackground.x, this.trackProgressorBackground.y, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
+        this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
+        this.rudEvent_graphic.anchor.set(0.5, 0.5);
+        this.rudEvent_graphic.visible = false;
 
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
         this.menuButton.scale.set(0.5, 0.5);
@@ -181,6 +184,7 @@ BasicGame.Game.prototype = {
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
         this.Health_text.fixedToCamera = true;
+        this.rudEvent_graphic.fixedToCamera = true;
 
         // Snow 
         if (this.is_snowing) {
@@ -297,9 +301,6 @@ BasicGame.Game.prototype = {
             this.back_emitter.emitX = (this.camera.x + this.camera.width * 5);
         }
 
-        if (this.loseflag) {
-            this.rudEvent_graphic.x = this.camera.x + this.camera.width / 2;
-        }
     },
 
     changeWindDirection: function () {
@@ -596,9 +597,7 @@ BasicGame.Game.prototype = {
     lose: function (pointer) {
 
         console.log("You lost!")
-        this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
-        this.rudEvent_graphic.anchor.set(0.5, 0.5);
-
+        this.rudEvent_graphic.visible = true;
 
         this.sound_music.stop();
         this.sound_explosion.play();
@@ -613,7 +612,7 @@ BasicGame.Game.prototype = {
 
         var loseTimeout = setTimeout(function (state) {
             this.loseflag = false;
-            state.start('Game')
+            state.start('Lose');
         }, 3000, this.state);
 
     },
