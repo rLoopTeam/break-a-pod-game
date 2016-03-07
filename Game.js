@@ -296,6 +296,10 @@ BasicGame.Game.prototype = {
             this.mid_emitter.emitX = (this.camera.x + this.camera.width * 5);
             this.back_emitter.emitX = (this.camera.x + this.camera.width * 5);
         }
+
+        if (this.loseflag) {
+            this.rudEvent_graphic.x = this.camera.x + this.camera.width / 2;
+        }
     },
 
     changeWindDirection: function () {
@@ -592,10 +596,9 @@ BasicGame.Game.prototype = {
     lose: function (pointer) {
 
         console.log("You lost!")
-        if (!this.rudEvent_graphic) {
-            this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
-            this.rudEvent_graphic.anchor.set(0.5, 0.5);
-        }
+        this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
+        this.rudEvent_graphic.anchor.set(0.5, 0.5);
+
 
         this.sound_music.stop();
         this.sound_explosion.play();
