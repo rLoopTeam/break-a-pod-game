@@ -25,6 +25,8 @@ BasicGame.Game = function (game) {
     // world settings
     this.levelLength;
     this.tubeHeight = 200;
+    this.flatStartLength = 1000;
+    this.flatEndLength = 500;
     this.startPos;
 
     this.bottomWall;
@@ -84,7 +86,7 @@ BasicGame.Game.prototype = {
         var levelSelect = (Math.random() < 0.5) ? 0 : 2;
 
         this.environment = envs[levelSelect];
-        this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+        this.levelLength = 5000;//this.game['GameData'].baseLevelLength * (Math.random() + 1);
 
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
     },
@@ -97,7 +99,7 @@ BasicGame.Game.prototype = {
         this.sound_music.play();
 
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
+        this.tunnelPhysicsData = this.generateTubePoints(1, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
         // Variable setup
@@ -127,7 +129,7 @@ BasicGame.Game.prototype = {
         // set world settings and player start position
         this.startPos = { "x": 100, "y": (this.world.height / 2) };
         this.stage.backgroundColor = "#0c9fc7";
-        this.world.setBounds(0, 0, this.levelLength, 500);
+        this.world.setBounds(0, 0, this.levelLength + this.flatStartLength + this.flatEndLength, 500);
 
         // create background first so that it goes to the back most position
         this.addBackground();
@@ -245,7 +247,7 @@ BasicGame.Game.prototype = {
         // update GUI
 
         // update marker on track progressor
-        var ProgressMultiplier = this.carBody.x / this.levelLength;
+        var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
         this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier * this.trackProgressorBackground.width);
         this.trackProgressorMarker.y = this.trackProgressorBackground.y;
@@ -277,7 +279,7 @@ BasicGame.Game.prototype = {
         }
 
         // check if pod reached end
-        if (this.carBody.body.x >= this.levelLength & !this.winflag) {
+        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag) {
             this.winflag = true;
             this.winStage();
         }
@@ -386,18 +388,39 @@ BasicGame.Game.prototype = {
             hillWidth = tube_length / numberOfHills,
             hillSlices = hillWidth / pixelStep,
             tunnelPhysicsData = { "top": [], "bottom": [], "pylons": [] },
-            prevx = 0,
-            prevy = 800;
+            prevx,
+            prevy;
+
+        // Generate flat at beginning
+        var rect = {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [this.flatStartLength, hillStartY + 100, 0, hillStartY + 100, 0, hillStartY, this.flatStartLength, hillStartY]
+        };
+        tunnelPhysicsData['bottom'].push(rect);
+
+        var topRect = {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [this.flatStartLength, hillStartY - tube_height - 100, this.flatStartLength, hillStartY - tube_height, 0, hillStartY - tube_height, 0, hillStartY - tube_height - 100]
+        };
+        tunnelPhysicsData['top'].push(topRect);
+
+        prevx = this.flatStartLength;
+        prevy = start_y;
 
         for (var i = 0; i < numberOfHills; i++) {
             var randomHeight = Math.random() * 78.5;
             // this is necessary to make all hills (execept the first one) begin where the previous hill ended
-            if (i != 0) {
+            if (i == 0) {
+                hillStartY = prevy - randomHeight;
+            } else {
                 hillStartY -= randomHeight;
             }
+
             // looping through hill slices
             for (var j = 0; j <= hillSlices; j++) {
-                var x = j * pixelStep + hillWidth * i,
+                var x = j * pixelStep + hillWidth * i + this.flatStartLength,
                     y = hillStartY + randomHeight * Math.cos(2 * Math.PI / hillSlices * j),
                     height = y - prevy,
                     length = Math.sqrt((pixelStep * pixelStep) + (height * height)),
@@ -427,6 +450,22 @@ BasicGame.Game.prototype = {
             // this is also necessary to make all hills (execept the first one) begin where the previous hill ended
             hillStartY = hillStartY + randomHeight;
         }
+
+        // Generate flat at end
+        var rect = {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [prevx, prevy + 100, prevx, prevy, prevx + this.flatEndLength, prevy, prevx + this.flatEndLength, prevy + 100]
+        };
+        tunnelPhysicsData['bottom'].push(rect);
+
+        var topRect = {
+            "density": 2, "friction": 0, "bounce": 0,
+            "filter": { "categoryBits": 1, "maskBits": 65535 },
+            "shape": [prevx, prevy - tube_height - 100, prevx + this.flatEndLength, prevy - tube_height - 100, prevx + this.flatEndLength, prevy - tube_height, prevx, prevy - tube_height]
+        };
+        tunnelPhysicsData['top'].push(topRect);
+
         return tunnelPhysicsData;
     },
     drawTube: function (graphics, points) {
@@ -437,12 +476,9 @@ BasicGame.Game.prototype = {
 
         var totalPylons = points['pylons'].length;
 
-
         //==================//
         // draw tube
         //==================//
-        
-        
         graphics.beginFill(0xAAAAAA, 0.75);
         btm_prevx = points['bottom'][0]['shape'][4];
         btm_prevy = points['bottom'][0]['shape'][5];
@@ -490,6 +526,7 @@ BasicGame.Game.prototype = {
         polygonCollisionSprite.name = 'wall_bot';
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
+        polygonCollisionSprite.body.debug = false;
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
 
         var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
@@ -497,7 +534,7 @@ BasicGame.Game.prototype = {
         top_polygonCollisionSprite.name = 'wall_top';
         top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
         top_polygonCollisionSprite.body.static = true;
-        top_polygonCollisionSprite.body.addRectangle(10, 50, 0, 400);
+        top_polygonCollisionSprite.body.debug = false;
         top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
 
         this.bottomWall = polygonCollisionSprite;
