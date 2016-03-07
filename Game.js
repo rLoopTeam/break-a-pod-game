@@ -334,6 +334,7 @@ BasicGame.Game.prototype = {
     },
 
     addMidground: function () {
+        
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();
         for (var key in environmentMidground) {
@@ -355,6 +356,18 @@ BasicGame.Game.prototype = {
                     tileable['parallax'] = environmentMidground[key].parallax;
                     tileable['offset'] = environmentMidground[key].position;
                     midgroundGroup.add(tileable);
+
+                } else if (environmentMidground[key].type === "fog") {
+
+                    var poly = new Phaser.Polygon(0,0,  this.camera.width,0,  this.camera.width,this.camera.height,   -this.camera.width,this.camera.height);
+                    var graphics = this.add.graphics(0, 0);
+                    graphics.fixedToCamera = true;
+                    graphics.beginFill(environmentMidground[key].color);
+                    graphics.alpha = environmentMidground[key].opacity;
+                    graphics.drawPolygon(poly.points);
+                    graphics.endFill();
+                    this.graphics = graphics;
+
                 }
 
             }
