@@ -86,7 +86,7 @@ BasicGame.Game.prototype = {
         var levelSelect = (Math.random() < 0.5) ? 0 : 2;
 
         this.environment = envs[levelSelect];
-        this.levelLength = 5000;//this.game['GameData'].baseLevelLength * (Math.random() + 1);
+        this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
 
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
     },
@@ -99,7 +99,7 @@ BasicGame.Game.prototype = {
         this.sound_music.play();
 
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(1, (this.world.height / 2) + 30, 580, this.levelLength, this.tubeHeight, 100);
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 100);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
         // Variable setup
