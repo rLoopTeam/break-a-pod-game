@@ -46,6 +46,7 @@ BasicGame.Game = function (game) {
     this.menuButton;
     this.cursors;
     this.loseflag;
+    this.winflag;
 
     // pod settings
     this.carBody;
@@ -102,6 +103,7 @@ BasicGame.Game.prototype = {
         // Variable setup
         this.time.reset();
         this.loseflag = false;
+        this.winflag = false;
 
         //gametime
         this.time.advancedTiming = true;
@@ -275,7 +277,8 @@ BasicGame.Game.prototype = {
         }
 
         // check if pod reached end
-        if (this.carBody.body.x >= this.levelLength) {
+        if (this.carBody.body.x >= this.levelLength & !this.winflag) {
+            this.winflag = true;
             this.winStage();
         }
 
@@ -567,15 +570,15 @@ BasicGame.Game.prototype = {
 
         this.sound_music.stop();
 
-        if (!this.winStage_graphic) {
-            this.game['GameData'].cLevel += 1;
-            this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
-            this.winStage_graphic.anchor.set(0.5, 0.5);
+        this.game['GameData'].cLevel += 1;
+        this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
+        this.winStage_graphic.anchor.set(0.5, 0.5);
 
-            setTimeout(function (state) {
-                state.start('Game')
-            }, 3000, this.state);
-        }
+        setTimeout(function (state) {
+            this.winflag = false;
+            state.start('Game')
+        }, 3000, this.state);
+        
 
     },
 
