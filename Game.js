@@ -122,7 +122,7 @@ BasicGame.Game.prototype = {
         //gametime
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
-        this.physics.p2.gravity.y = 300;
+        this.physics.p2.gravity.y = 500;
         this.physics.p2.restitution = 0.2;
         this.physics.p2.setImpactEvents(true);
         
@@ -726,7 +726,7 @@ BasicGame.Game.prototype = {
 
         carBody.body.addPolygon({}, [1, 20, 1, 11, 16, 1, 94, 1, 113, 11, 125, 20, 128, 26, 116, 31, 106, 32, 94, 40, 20, 42, 13, 40, 10, 31]);
         carBody.body.debug = false; //this adds the pink box
-        carBody.body.mass = 20;
+        carBody.body.mass = 30;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
         carBody.body.setCollisionGroup(this.car_collisionGroup);
@@ -787,7 +787,7 @@ BasicGame.Game.prototype = {
 
         carBody.body.addPolygon({}, [6, 0, 83, 1, 100, 12, 99, 21, 88, 42, 6, 42]);
         carBody.body.debug = false; //this adds the pink box
-        carBody.body.mass = 20;
+        carBody.body.mass = 30;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
         carBody.body.setCollisionGroup(this.pusher_collisionGroup);
