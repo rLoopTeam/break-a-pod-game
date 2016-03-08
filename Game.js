@@ -290,12 +290,12 @@ BasicGame.Game.prototype = {
             pod_velcity = pod_velcity / 6; // could set this as a constant somewhere...pixels/meter
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
-        } else {
+        } else if (this.loseflag) {
             this.Speed_text.setText('Signal Lost!');
         }
 
         // Check pod's angle, explode if out of bounds
-        if (!this.loseflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
+        if (!this.loseflag && !this.winflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
             console.log('You exploded!');
             this.loseflag = true;
             this.lose();
@@ -691,7 +691,7 @@ BasicGame.Game.prototype = {
                 this.sound_hit.play();
                 console.log('Colision! rPod Health is ' + this.carBody.health);
             } else {
-                if (!this.loseflag) {
+                if (!this.loseflag && !this.winflag) {
                     console.log('You exploded!');
                     this.lose();
                 }
