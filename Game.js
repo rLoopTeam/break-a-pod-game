@@ -194,7 +194,7 @@ BasicGame.Game.prototype = {
         });
 
         //fix GUI elements to camera
-        this.trackProgressorBackground.fixedToCamera = true;
+        this.trackProgressorBackground.fixedToCamera = false; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = false;
         this.menuButton.fixedToCamera = true;
         this.Level_text.fixedToCamera = true;
@@ -271,6 +271,7 @@ BasicGame.Game.prototype = {
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
+        this.trackProgressorBackground.x = this.camera.x + ((this.camera.height) / 4);
         this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier * this.trackProgressorBackground.width);
         this.trackProgressorMarker.y = this.trackProgressorBackground.y;
 
