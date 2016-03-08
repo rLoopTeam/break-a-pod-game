@@ -71,10 +71,56 @@ window.onload = function() {
 					}
 				},
 				'midground': {
+					'mountainsbig' : {
+						'type': 'repeat',
+						'texture' : 'mountain',
+						'parallax': 0.1,
+						'fixedToCamera': false,
+						'scale' : {
+							'x':1.3,
+							'y':1.5
+						},
+						'position' : {
+							'x':-200,
+							'y':800
+						},
+						'velocity' : {
+							'x':0,
+							'y':0
+						}
+					},
+					'fogLayer' : {
+						'type': 'fog',
+						'color': '0x0CEF9',
+						'opacity': 0.4
+					},
+					'mountainswide' : {
+						'type': 'repeat',
+						'texture' : 'mountain',
+						'parallax': 0.1,
+						'fixedToCamera': false,
+						'scale' : {
+							'x':2,
+							'y':1
+						},
+						'position' : {
+							'x':0,
+							'y':900
+						},
+						'velocity' : {
+							'x':0,
+							'y':0
+						}
+					},
+					'fogLayer' : {
+						'type': 'fog',
+						'color': '0x0CEF9',
+						'opacity': 0.2
+					},
 					'hills' : {
 						'type': 'repeat',
 						'texture' : 'grassy_hill',
-						'parallax': 0.5,
+						'parallax': 0.3,
 						'fixedToCamera': false,
 						'scale' : {
 							'x':1.5,
@@ -92,7 +138,7 @@ window.onload = function() {
 					'hills2' : {
 						'type': 'repeat',
 						'texture' : 'grassy_hill',
-						'parallax': 0.5,
+						'parallax': 0.4,
 						'fixedToCamera': false,
 						'scale' : {
 							'x':1.5,
@@ -106,12 +152,7 @@ window.onload = function() {
 							'x':0,
 							'y':0
 						}
-					},
-					'fogLayer' : {
-						'type': 'fog',
-						'color': '0x0CEF9',
-						'opacity': 0.4
-					}
+					}					
 				},
 				'foreground': {
 					'hills' : {
@@ -275,6 +316,52 @@ window.onload = function() {
 			        }
 			    },
 			    'midground': {
+			    	'mountainsbig' : {
+						'type': 'repeat',
+						'texture' : 'snowy_mountain',
+						'parallax': 0.1,
+						'fixedToCamera': false,
+						'scale' : {
+							'x':1.3,
+							'y':1.5
+						},
+						'position' : {
+							'x':-200,
+							'y':800
+						},
+						'velocity' : {
+							'x':0,
+							'y':0
+						}
+					},
+					'fogLayer' : {
+						'type': 'fog',
+						'color': '0x0CEF9',
+						'opacity': 0.4
+					},
+					'mountainswide' : {
+						'type': 'repeat',
+						'texture' : 'snowy_mountain',
+						'parallax': 0.1,
+						'fixedToCamera': false,
+						'scale' : {
+							'x':2,
+							'y':1
+						},
+						'position' : {
+							'x':0,
+							'y':900
+						},
+						'velocity' : {
+							'x':0,
+							'y':0
+						}
+					},
+					'fogLayer' : {
+						'type': 'fog',
+						'color': '0x0CEF9',
+						'opacity': 0.2
+					},
 			        'hills': {
 			            'type': 'repeat',
 			            'texture': 'snowy_hill',

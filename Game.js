@@ -93,8 +93,8 @@ BasicGame.Game.prototype = {
     init: function () {
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
-
-        var levelSelect = (Math.random() < 0.5) ? 0 : 2;
+        console.log(envs)
+        var levelSelect = Math.floor(Math.random() * totalEnvs);
 
         this.environment = envs[levelSelect];
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);

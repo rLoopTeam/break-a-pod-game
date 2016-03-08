@@ -37,13 +37,9 @@ BasicGame.Preloader.prototype = {
         this.load.image('progressorBackground', 'assets/GUI/track-progress.png');
         this.load.image('progressorMarker', 'assets/GUI/track-progress-marker.png');
 
-		this.load.atlas('button', 'assets/GUI/button_texture_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('start_button', 'assets/GUI/start_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 
-		this.load.image('button_normal', 'assets/GUI/button_normal.png');
-		this.load.image('button_pressed', 'assets/GUI/button_pressed.png');
-		this.load.image('button_selected', 'assets/GUI/button_selected.png');
 
 		///////////
 		// WORLD
@@ -59,7 +55,9 @@ BasicGame.Preloader.prototype = {
 		this.load.image('pylon', 'assets/sprites/pylon.png');
 
 		// environment
-		this.load.image('grassy_hill', 'assets/environment/grassy_hill.png');        
+		this.load.image('snowy_mountain', 'assets/environment/snowy_mountain.png');
+		this.load.image('mountain', 'assets/environment/mountain.png');
+		this.load.image('grassy_hill', 'assets/environment/grassy_hill.png');
 		this.load.image('grassy_hill_night', 'assets/environment/grassy_hill_night.png');
 		this.load.image('snowy_hill', 'assets/environment/snowy_hill.png');
 
