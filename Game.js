@@ -25,7 +25,7 @@ BasicGame.Game = function (game) {
     // world settings
     this.levelLength;
     this.tubeHeight = 200;
-    this.flatStartLength = 1000;
+    this.flatStartLength = 2500;
     this.flatEndLength = 500;
     this.startPos;
 
@@ -53,7 +53,7 @@ BasicGame.Game = function (game) {
     this.cursors;
     this.loseflag;
     this.winflag;
-    this.pusherflag;
+    this.pusherCounter;
 
     // pod settings
     this.carBody;
@@ -117,7 +117,7 @@ BasicGame.Game.prototype = {
         this.time.reset();
         this.loseflag = false;
         this.winflag = false;
-        this.pusherflagv = false;
+        this.pusherCounter = 0;
 
         //gametime
         this.time.advancedTiming = true;
@@ -149,10 +149,12 @@ BasicGame.Game.prototype = {
         var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
         this.addCar();
         this.addPusher();
-        this.carBody.body.collides(this.pusher_collisionGroup);
-        this.pusherBody.body.collides(this.car_collisionGroup);
-        this.carBody.body.onBeginContact.add(this.podCollision, this);
+
         this.drawTube(graphics, this.tunnelPhysicsData);
+
+
+        this.carBody.body.onBeginContact.add(this.podCollision, this);
+        
         this.addForeground();
 
         window.graphics = graphics;
@@ -317,6 +319,13 @@ BasicGame.Game.prototype = {
             this.back_emitter.emitX = (this.camera.x + this.camera.width * 5);
         }
 
+        if (this.pusherCounter++ <= 50) {
+            this.pusherBody.body.force.x = 50000;
+            this.carBody.body.force.x = 50000;
+        } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 100) {
+            this.pusherBody.body.force.x = -50000;
+        }
+
     },
 
     changeWindDirection: function () {
@@ -345,15 +354,6 @@ BasicGame.Game.prototype = {
 
         particle.body.velocity.x = max - Math.floor(Math.random() * 30);
 
-    },
-
-    launchPusher: function () {
-        console.log('launching');
-        this.pusherflag = true;
-        for (var i = 0; i < 10000; i++) {
-            this.pusherBody.body.velocity.x += .25;
-        }
-        
     },
 
     addBackground: function () {
@@ -598,17 +598,13 @@ BasicGame.Game.prototype = {
 
     handleInput: function () {
         if (this.cursors.up.isDown) {
-            if (this.pusherflag) {
                 if (this.wheel_back.body.angularVelocity < 300) {
                     this.wheel_back.body.angularVelocity += this.wheelSpeed;
                     this.wheel_front.body.angularVelocity += this.wheelSpeed;
                 }
                 //this.carBody.body.thrust(500);
                 this.carBody.body.velocity.x += 20;
-            } else {
-                this.pusherflag = true;
-                this.launchPusher();
-            }
+
         }
 
         if (this.cursors.down.isDown) {
@@ -660,6 +656,7 @@ BasicGame.Game.prototype = {
 
         var loseTimeout = setTimeout(function (state) {
             this.loseflag = false;
+            this.pusherCounter = 0;
             state.start('Lose');
         }, 3000, this.state);
 
@@ -676,6 +673,7 @@ BasicGame.Game.prototype = {
 
         setTimeout(function (state) {
             this.winflag = false;
+            this.pusherCounter = 0;
             state.start('Game')
         }, 3000, this.state);
         
@@ -704,9 +702,7 @@ BasicGame.Game.prototype = {
             } else {
                 if (!this.loseflag) {
                     console.log('You exploded!');
-                    this.loseflag = true;
                     this.lose();
-
                 }
             }
             var health_percentage = Math.round(this.carBody.health * 100);
@@ -782,7 +778,7 @@ BasicGame.Game.prototype = {
         var wheel_front_pos = [50, 10];
         var wheel_back_pos = [-50, 10];
 
-        var pusher_start_x = startPos.x-150;
+        var pusher_start_x = startPos.x-100;
 
         // create pod
         var carBody = this.add.sprite(pusher_start_x, startPos.y, 'pusher'); //CARBODY
@@ -795,6 +791,7 @@ BasicGame.Game.prototype = {
         wheel_front.name = 'wheel_back';
 
         this.pusher_collisionGroup = this.physics.p2.createCollisionGroup();
+
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
         carBody.body.addPolygon({}, [6, 0, 83, 1, 100, 12, 99, 21, 88, 42, 6, 42]);
