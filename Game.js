@@ -93,7 +93,6 @@ BasicGame.Game.prototype = {
     init: function () {
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
-        console.log(envs)
         var levelSelect = Math.floor(Math.random() * totalEnvs);
 
         this.environment = envs[levelSelect];
@@ -157,7 +156,7 @@ BasicGame.Game.prototype = {
         
         this.addForeground();
 
-        window.graphics = graphics;
+        //window.graphics = graphics;
 
         // GUI - create this last so it overlays on top of everything else
         this.trackProgressorBackground = this.add.sprite(this.camera.x + ((this.camera.height) / 4), this.camera.y + 560, 'progressorBackground');
@@ -214,6 +213,7 @@ BasicGame.Game.prototype = {
             this.back_emitter.width = this.camera.width * 10;
             this.back_emitter.minRotation = 0;
             this.back_emitter.maxRotation = 40;
+            this.back_emitter.fixedToCamera = true;
 
             this.mid_emitter = this.add.emitter(this.camera.width * 5, -32, 400);
             this.mid_emitter.makeParticles('snowflakes', [0, 1, 2, 3, 4, 5]);
@@ -224,6 +224,7 @@ BasicGame.Game.prototype = {
             this.mid_emitter.width = this.camera.width * 10;
             this.mid_emitter.minRotation = 0;
             this.mid_emitter.maxRotation = 40;
+            this.mid_emitter.fixedToCamera = true;
 
             this.front_emitter = this.add.emitter(this.camera.width * 5, -32, 100);
             this.front_emitter.makeParticles('snowflakes_large', [0, 1, 2, 3, 4, 5]);
@@ -234,12 +235,14 @@ BasicGame.Game.prototype = {
             this.front_emitter.width = this.camera.width * 10;
             this.front_emitter.minRotation = 0;
             this.front_emitter.maxRotation = 40;
+            this.back_emitter.fixedToCamera = true;
 
             this.changeWindDirection();
 
             this.back_emitter.start(false, 14000, 20);
             this.mid_emitter.start(false, 12000, 40);
             this.front_emitter.start(false, 6000, 1000);
+            
         }
 
     },
@@ -315,9 +318,6 @@ BasicGame.Game.prototype = {
                 update_interval = Math.floor(Math.random() * 20) * 60; // 0 - 20sec @ 60fps
                 this.snow_var = 0;
             }
-            this.front_emitter.emitX = (this.camera.x + this.camera.width * 5);
-            this.mid_emitter.emitX = (this.camera.x + this.camera.width * 5);
-            this.back_emitter.emitX = (this.camera.x + this.camera.width * 5);
         }
 
         if (this.pusherCounter++ <= 50) {
@@ -374,7 +374,7 @@ BasicGame.Game.prototype = {
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();
         for (var key in environmentMidground) {
-
+            console.log(key)
             if (environmentMidground.hasOwnProperty(key)) {
 
                 if (environmentMidground[key].type === "unique") {
@@ -398,12 +398,11 @@ BasicGame.Game.prototype = {
                     var poly = new Phaser.Polygon(0,0,  this.camera.width,0,  this.camera.width,this.camera.height,   -this.camera.width,this.camera.height);
                     var graphics = this.add.graphics(0, 0);
                     graphics.fixedToCamera = true;
-                    graphics.beginFill(environmentMidground[key].color);
-                    graphics.alpha = environmentMidground[key].opacity;
+                    graphics.beginFill(environmentMidground[key].color, environmentMidground[key].opacity);
+                    //graphics.fillAlpha = environmentMidground[key].opacity;
                     graphics.drawPolygon(poly.points);
                     graphics.endFill();
-                    this.graphics = graphics;
-
+                    //this.graphics = graphics;
                 }
 
             }
