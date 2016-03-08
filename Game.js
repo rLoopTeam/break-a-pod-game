@@ -482,6 +482,8 @@ BasicGame.Game.prototype = {
             hillStartY = hillStartY + randomHeight;
         }
 
+        prevx += pixelStep;
+
         // Generate flat at end
         var rect = {
             "density": 2, "friction": 0, "bounce": 0,
