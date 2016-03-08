@@ -130,7 +130,7 @@ BasicGame.Game.prototype = {
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // set world settings and player start position
-        this.startPos = { "x": 100, "y": (this.world.height / 2) };
+        this.startPos = { "x": 100, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
         this.world.setBounds(0, 0, this.levelLength + this.flatStartLength + this.flatEndLength, 500);
 
