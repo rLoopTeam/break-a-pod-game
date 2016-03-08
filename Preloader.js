@@ -49,7 +49,7 @@ BasicGame.Preloader.prototype = {
 		// WORLD
 		///////////
 		// player
-        this.load.image('pod', 'assets/sprites/pod.png');
+        this.load.image('pod', 'assets/sprites/rPod.png');
 
 		// props
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
