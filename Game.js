@@ -704,7 +704,7 @@ BasicGame.Game.prototype = {
 
         carBody.body.addPolygon({}, [1, 20, 1, 11, 16, 1, 94, 1, 113, 11, 125, 20, 128, 26, 116, 31, 106, 32, 94, 40, 20, 42, 13, 40, 10, 31]);
         carBody.body.debug = false; //this adds the pink box
-        carBody.body.mass = 4;
+        carBody.body.mass = 20;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
         carBody.body.setCollisionGroup(this.car_collisionGroup);
