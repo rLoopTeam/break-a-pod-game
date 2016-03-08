@@ -31,6 +31,9 @@ BasicGame.Game = function (game) {
 
     this.bottomWall;
 
+    this.car_collisionGroup;
+    this.tube_collisionGroup;
+
     this.groundMaterial;
     this.playerMaterial;
     this.wheelMaterial;
@@ -52,7 +55,7 @@ BasicGame.Game = function (game) {
 
     // pod settings
     this.carBody;
-    this.wheelSpeed = 25;
+    this.wheelSpeed = 10;
 
 
     // GUI
@@ -111,7 +114,7 @@ BasicGame.Game.prototype = {
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.gravity.y = 300;
-        this.physics.p2.restitution = 0.2;
+        this.physics.p2.restitution = 0;
         this.physics.p2.setImpactEvents(true);
         
 
@@ -136,8 +139,8 @@ BasicGame.Game.prototype = {
         this.addMidground();
         var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
         this.addCar();
-        this.drawTube(graphics, this.tunnelPhysicsData);
         this.carBody.body.onBeginContact.add(this.podCollision, this);
+        this.drawTube(graphics, this.tunnelPhysicsData);
         this.addForeground();
 
         window.graphics = graphics;
@@ -224,6 +227,7 @@ BasicGame.Game.prototype = {
             this.mid_emitter.start(false, 12000, 40);
             this.front_emitter.start(false, 6000, 1000);
         }
+        
     },
 
     update: function () {
@@ -522,25 +526,34 @@ BasicGame.Game.prototype = {
             //pylon.anchor.setTo(0.5, 0.1);
         }
 
+        this.tube_collisionGroup = this.physics.p2.createCollisionGroup();
 
         //==================//
         // load physics data
         //==================//
         var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
-        this.physics.p2.enableBody(polygonCollisionSprite);
+        this.physics.p2.enable(polygonCollisionSprite);
         polygonCollisionSprite.name = 'wall_bot';
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
         polygonCollisionSprite.body.debug = false;
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+        polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+        polygonCollisionSprite.body.collides(this.car_collisionGroup);
 
         var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
-        this.physics.p2.enableBody(top_polygonCollisionSprite);
+        this.physics.p2.enable(top_polygonCollisionSprite);
         top_polygonCollisionSprite.name = 'wall_top';
         top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
         top_polygonCollisionSprite.body.static = true;
         top_polygonCollisionSprite.body.debug = false;
         top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+        top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+        top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
+
+        this.carBody.body.collides(this.tube_collisionGroup);
+        this.wheel_front.body.collides(this.tube_collisionGroup);
+        this.wheel_back.body.collides(this.tube_collisionGroup);
 
         this.bottomWall = polygonCollisionSprite;
     },
@@ -672,45 +685,46 @@ BasicGame.Game.prototype = {
     addCar: function () {
         // basic settings
         var startPos = this.startPos;
-        var wheel_front_pos = [50, 30];
-        var wheel_back_pos = [-50, 30];
+        var wheel_front_pos = [50, 10];
+        var wheel_back_pos = [-50, 10];
 
         // create pod
         var carBody = this.add.sprite(startPos.x, startPos.y, 'pod'); //CARBODY
         carBody.name = 'carBody';
         carBody.scale.set(0.5, 0.5);
 
-        var wheel_front = this.add.sprite(140, startPos.y + 50); //FRONT WHEEL
+        var wheel_front = this.add.sprite(startPos.x + carBody.width/2 + wheel_front_pos[0], startPos.y + carBody.height/2 + wheel_front_pos[1]); //FRONT WHEEL
         wheel_front.name = 'wheel_front';
-        var wheel_back = this.add.sprite(60, startPos.y + 50); //BACK WHEEL 
+        var wheel_back = this.add.sprite(startPos.x + carBody.width/2 + wheel_back_pos[0], startPos.y + carBody.height/2 + wheel_back_pos[1]); //BACK WHEEL 
         wheel_front.name = 'wheel_back';
-        carGroup = this.game.physics.p2.createCollisionGroup();
 
-        this.physics.p2.updateBoundsCollisionGroup();
+        this.car_collisionGroup = this.physics.p2.createCollisionGroup();
+
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
-        carBody.body.setRectangle(110, 40);
+        carBody.body.addPolygon({}, [1, 20, 1, 11, 16, 1, 94, 1, 113, 11, 125, 20, 128, 26, 116, 31, 106, 32, 94, 40, 20, 42, 13, 40, 10, 31]);
         carBody.body.debug = false; //this adds the pink box
-        carBody.body.mass = 1.5;
+        carBody.body.mass = 4;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
-        //carBody.body.setCollisionGroup(carGroup);
+        carBody.body.setCollisionGroup(this.car_collisionGroup);
 
-        wheel_front.body.setCircle(1);
+        wheel_front.body.setCircle(20);
         wheel_front.body.debug = false;
-        wheel_front.body.mass = 0.2;
+        wheel_front.body.mass = 1;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
-        //wheel_front.body.setCollisionGroup(carGroup);
+        wheel_front.body.setCollisionGroup(this.car_collisionGroup);
 
-        wheel_back.body.setCircle(1);
+        wheel_back.body.setCircle(20);
         wheel_back.body.debug = false;
-        wheel_back.body.mass = 0.5;
+        wheel_back.body.mass = 1;
         wheel_back.body.setMaterial(this.wheelMaterial);
         wheel_back.renderable = false;
+        wheel_back.body.setCollisionGroup(this.car_collisionGroup);
 
-        var spring = this.physics.p2.createSpring(carBody, wheel_front, 123, 150, 10, null, null, wheel_front_pos, null);
-        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 123, 150, 10, null, null, wheel_back_pos, null);
+        var spring = this.physics.p2.createSpring(carBody, wheel_front, 111, 600, 200, null, null, wheel_front_pos, null);
+        var spring_1 = this.physics.p2.createSpring(carBody, wheel_back, 111, 750, 200, null, null, wheel_back_pos, null);
 
         var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0, 0], [0, 1]);
         constraint.lowerLimitEnabled = constraint.upperLimitEnabled = true;
