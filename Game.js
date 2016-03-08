@@ -287,7 +287,7 @@ BasicGame.Game.prototype = {
 
             // Speed
             var pod_velcity = this.carBody.body.velocity.x; // in pixels per second
-            pod_velcity = pod_velcity / 5; // could set this as a constant somewhere...pixels/meter
+            pod_velcity = pod_velcity / 6; // could set this as a constant somewhere...pixels/meter
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
         } else {
@@ -323,7 +323,7 @@ BasicGame.Game.prototype = {
         if (this.pusherCounter++ <= 50) {
             this.pusherBody.body.force.x = 50000;
             this.carBody.body.force.x = 50000;
-        } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 100) {
+        } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
             this.pusherBody.body.force.x = -50000;
         }
 
@@ -599,23 +599,11 @@ BasicGame.Game.prototype = {
 
     handleInput: function () {
         if (this.cursors.up.isDown) {
-                if (this.wheel_back.body.angularVelocity < 300) {
-                    this.wheel_back.body.angularVelocity += this.wheelSpeed;
-                    this.wheel_front.body.angularVelocity += this.wheelSpeed;
-                }
-                //this.carBody.body.thrust(500);
-                this.carBody.body.velocity.x += 20;
-
+            this.carBody.body.force.x = 10000;
         }
 
         if (this.cursors.down.isDown) {
-            // if (this.wheel_back.body.angularVelocity < 300) {
-            //     this.wheel_back.body.angularVelocity -= 50;
-            //     this.wheel_front.body.angularVelocity -= 50;
-            // }
-            //this.carBody.body.thrust(-1000);
-            this.wheel_back.body.angularVelocity *= 0.2;
-            this.wheel_front.body.angularVelocity *= 0.2;
+            this.carBody.body.force.x = -25000;
         }
         if (this.carBody.body.velocity.x < 0) {
             this.carBody.body.velocity.x = 0;
