@@ -25,7 +25,10 @@ BasicGame.Lose.prototype = {
 	        fill: "#ffffff",
             decoration: "underline",
 	        align: "center"
-	    });
+	    })
+	    .addColor("#1569C7", 38)
+	    .addColor("#ffffff", 60);
+
 	    this.rudEvent_button.anchor.set(0.5, 0.5);
 	    this.rudEvent_button.inputEnabled = true;
 	    this.rudEvent_button.events.onInputDown.add(this.supportUs, this);
@@ -34,7 +37,10 @@ BasicGame.Lose.prototype = {
 	        font: "24px Arial",
 	        fill: "#ffffff",
 	        align: "center"
-	    });
+	    })
+	    .addColor("#43C6DB", 4)
+	    .addColor("#ffffff", 13);
+
         this.playAgain_button.anchor.set(0.5, 0.5);
         this.playAgain_button.inputEnabled = true;
         this.playAgain_button.events.onInputDown.add(this.startGame, this);
