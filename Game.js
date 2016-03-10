@@ -96,21 +96,20 @@ BasicGame.Game.prototype = {
         var levelSelect = Math.floor(Math.random() * totalEnvs);
 
         this.environment = envs[levelSelect];
-        this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
-
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
-    },
 
-    create: function () {
-        //Audio
-        this.sound_music = this.add.sound('level1Music');
-        this.sound_explosion = this.add.sound('explosion');
-        this.sound_hit = this.add.sound('hit');
-        this.sound_music.play();
+        this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+        this.min_speed = this.game['GameData'].min_speed;
+        this.max_speed = this.game['GameData'].max_speed;
 
-        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
-        this.load.physics('physicsData', "", this.tunnelPhysicsData);
+
+                //control
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        // set world settings and player start position
+        this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
+        this.stage.backgroundColor = "#0c9fc7";
+        this.world.setBounds(0, 0, this.levelLength + this.flatStartLength + this.flatEndLength, 500);
 
         // Variable setup
         this.time.reset();
@@ -121,7 +120,7 @@ BasicGame.Game.prototype = {
         //gametime
         this.time.advancedTiming = true;
         this.physics.startSystem(Phaser.Physics.P2JS);
-        this.physics.p2.gravity.y = 500;
+        this.physics.p2.gravity.y = 800;
         this.physics.p2.restitution = 0.2;
         this.physics.p2.setImpactEvents(true);
         
@@ -132,15 +131,21 @@ BasicGame.Game.prototype = {
         this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
         this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
 
+    },
+
+    create: function () {
+        //Audio
+        this.sound_music = this.add.sound('level1Music');
+        this.sound_explosion = this.add.sound('explosion');
+        this.sound_hit = this.add.sound('hit');
+        this.sound_music.play();    
+
         
+        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
+        this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
-        //control
-        this.cursors = this.input.keyboard.createCursorKeys();
 
-        // set world settings and player start position
-        this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
-        this.stage.backgroundColor = "#0c9fc7";
-        this.world.setBounds(0, 0, this.levelLength + this.flatStartLength + this.flatEndLength, 500);
 
         // create background first so that it goes to the back most position
         this.addBackground();
