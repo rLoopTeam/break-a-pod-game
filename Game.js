@@ -109,7 +109,7 @@ BasicGame.Game.prototype = {
         this.sound_music.play();
 
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 100);
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
         // Variable setup

@@ -29,7 +29,7 @@ window.onload = function() {
 	// setup the global game data object
 	game['GameData'] = {
 		'cLevel': 1,
-		'baseLevelLength': '30000',
+		'baseLevelLength': '60000',
 		'environments': environments
 	};
 
@@ -41,7 +41,6 @@ window.onload = function() {
 	game.state.add('Game', BasicGame.Game);
 	game.state.add('Win', BasicGame.Win);
 	game.state.add('Lose', BasicGame.Lose);
-	game.state.add('LevelGenerator', BasicGame.LevelGenerator);
 
 	//	Now start the Boot state.
 	game.state.start('Boot');
