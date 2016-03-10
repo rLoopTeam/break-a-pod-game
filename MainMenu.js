@@ -6,6 +6,7 @@ BasicGame.MainMenu = function (game) {
 
 	this.cameraSpeed = 20;
 	this.pos = 0;
+
 	// environment
     this.environment;
     this.background;
@@ -30,11 +31,10 @@ BasicGame.MainMenu.prototype = {
 	},
 	create: function () {
 
-		// add music
-		//this.music = this.add.audio('titleMusic');
-		//this.music.play();
-		//this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
-		
+        //Audio
+        this.sound_music = this.add.sound('titleMusic');
+        this.sound_music.play();   
+
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
