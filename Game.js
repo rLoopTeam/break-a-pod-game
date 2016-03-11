@@ -140,7 +140,7 @@ BasicGame.Game.prototype = {
         this.sound_hit = this.add.sound('hit');
         this.sound_music.play();    
 
-        
+
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
         this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
@@ -313,6 +313,13 @@ BasicGame.Game.prototype = {
         if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag) {
             this.winflag = true;
             this.winStage();
+        }
+
+        // check if pod is within allowable speeds
+        if (this.carBody.body.velocity.x <= this.min_speed) {
+            console.log("Speed up!!");
+        } else if (this.carBody.body.velocity.x >= this.max_speed) {
+            console.log("Slow down!!");
         }
 
         // Snow
