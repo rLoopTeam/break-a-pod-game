@@ -94,7 +94,8 @@ BasicGame.Game.prototype = {
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
         var levelSelect = Math.floor(Math.random() * totalEnvs);
-
+        levelSelect = 0
+        
         this.environment = envs[levelSelect];
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
 
@@ -103,7 +104,7 @@ BasicGame.Game.prototype = {
         this.max_speed = this.game['GameData'].max_speed;
 
 
-                //control
+        //control
         this.cursors = this.input.keyboard.createCursorKeys();
 
         // set world settings and player start position
@@ -267,8 +268,14 @@ BasicGame.Game.prototype = {
         var camera = this.camera;
         this.midground.forEach(function (item) {
             if (item.type === 5) { // tileable sprite
-                item.tilePosition.x = -(camera.x * item.parallax) + item.offset.x;
-                item.tilePosition.y = item.offset.y;
+                //item.tilePosition += item.velocity;
+                if (item.velocity.x != 0 || item.velocity.y != 0) {
+                    item.tilePosition.x += item.velocity.x;
+                    item.tilePosition.y += item.velocity.y;
+                } else {
+                    item.tilePosition.x = -(camera.x * item.parallax) + item.offset.x;
+                    item.tilePosition.y = item.offset.y - item.velocity.y;
+                }
             }
         })
 
@@ -395,26 +402,17 @@ BasicGame.Game.prototype = {
 
                 } else if (environmentMidground[key].type === "repeat") {
 
-                    var tileable = this.add.tileSprite(0, 0, this.camera.width, this.camera.height, environmentMidground[key].texture);
-                    tileable.tilePosition = { "x": environmentMidground[key].position.x, "y": environmentMidground[key].position.y };
+                    var tileable = this.add.tileSprite(environmentMidground[key].position.x, environmentMidground[key].position.y, this.camera.width, this.cache.getImage(environmentMidground[key].texture).height, environmentMidground[key].texture);
                     tileable.fixedToCamera = true;
-                    tileable.scale = { "x": environmentMidground[key].scale.x, "y": environmentMidground[key].scale.y };
+                    tileable.tileScale = { "x": environmentMidground[key].tileScale.x, "y": environmentMidground[key].tileScale.y };
+                    tileable.tilePosition = { "x": environmentMidground[key].tilePosition.x, "y": environmentMidground[key].tilePosition.y };
 
                     // need to pass some data to the update function so store it on the object
                     tileable['parallax'] = environmentMidground[key].parallax;
-                    tileable['offset'] = environmentMidground[key].position;
+                    tileable['offset'] = environmentMidground[key].tilePosition;
+                    tileable['velocity'] = environmentMidground[key].velocity;
                     midgroundGroup.add(tileable);
 
-                } else if (environmentMidground[key].type === "fog") {
-
-                    var poly = new Phaser.Polygon(0,0,  this.camera.width,0,  this.camera.width,this.camera.height,   -this.camera.width,this.camera.height);
-                    var graphics = this.add.graphics(0, 0);
-                    graphics.fixedToCamera = true;
-                    graphics.beginFill(environmentMidground[key].color, environmentMidground[key].opacity);
-                    //graphics.fillAlpha = environmentMidground[key].opacity;
-                    graphics.drawPolygon(poly.points);
-                    graphics.endFill();
-                    //this.graphics = graphics;
                 }
 
             }

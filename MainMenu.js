@@ -122,7 +122,6 @@ BasicGame.MainMenu.prototype = {
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();
         for (var key in environmentMidground) {
-            console.log(key)
             if (environmentMidground.hasOwnProperty(key)) {
 
                 if (environmentMidground[key].type === "unique") {
@@ -143,7 +142,6 @@ BasicGame.MainMenu.prototype = {
 
                 }
             }
-
         }
     },
     addForeground: function () {

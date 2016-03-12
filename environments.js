@@ -62,7 +62,7 @@ var environments = [
 	                'y': 0
 	            },
 				'velocity' : {
-					'x':0,
+					'x':-1,
 					'y':0
 				}
 			},
