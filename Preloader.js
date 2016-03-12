@@ -63,9 +63,7 @@ BasicGame.Preloader.prototype = {
 
 		// skies
         this.load.image('sunny_sky', 'assets/skies/sunny_sky.png'); 
-        this.load.image('night_sky', 'assets/skies/night_sky.png'); 
         this.load.image('sun', 'assets/skies/sun.png'); 
-        this.load.image('moon', 'assets/skies/moon.png'); 
 
         // Effects
         this.load.spritesheet('kaboom', 'assets/sprites/explode.png', 128, 128);
@@ -81,7 +79,20 @@ BasicGame.Preloader.prototype = {
         this.load.audio('explosion', 'assets/sound/player_death.wav');
         this.load.audio('hit', 'assets/sound/squit.wav');
 
-	    
+        /////// environment set /////
+        //night grass
+        this.load.image('night_sky', 'assets/environment/night_grass/night_sky.png'); 
+        this.load.image('moon', 'assets/environment/night_grass/moon.png'); 
+        this.load.image('night_grass', 'assets/environment/night_grass/night_grass.png'); 
+        
+
+        //savanah
+	    this.load.image('savannah_sky', 'assets/environment/savannah/sky.png'); 
+        this.load.image('savannah_sun', 'assets/environment/savannah/sun.png'); 
+        this.load.image('savannah_clouds', 'assets/environment/savannah/clouds.png'); 
+        this.load.image('savannah_grass', 'assets/environment/savannah/grass.png'); 
+        this.load.image('savannah_tree1', 'assets/environment/savannah/tree1.png'); 
+        this.load.image('savannah_tree2', 'assets/environment/savannah/tree2.png'); 
 	},
 
 	create: function () {
