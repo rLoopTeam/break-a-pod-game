@@ -1,10 +1,10 @@
 var environments = [
 	{
-		'name' : 'Grassy',
+		'name' : 'Savannah',
 		'background': {
 			'skyObj' : {
 				'type': 'unique', // types :- unqique, repeat
-				'texture' : 'sunny_sky',
+				'texture' : 'savannah_sky',
 				'parallax': 1,
 				'fixedToCamera': true,
 				'scale' : {
@@ -22,7 +22,7 @@ var environments = [
 			},
 			'skyLightObj' : {
 				'type': 'unique',
-				'texture' : 'sun',
+				'texture' : 'savannah_sun',
 				'parallax': 1,
 				'fixedToCamera': true,
 				'scale' : {
@@ -30,8 +30,8 @@ var environments = [
 					'y':1
 				},
 				'position' : {
-					'x':500,
-					'y':50
+					'x':650,
+					'y':0
 				},
 				'velocity' : {
 					'x':0,
@@ -40,98 +40,59 @@ var environments = [
 			}
 		},
 		'midground': {
-			'mountainsbig' : {
+			'clouds' : {
 				'type': 'repeat',
-				'texture' : 'mountain',
-				'parallax': 0.1,
-				'fixedToCamera': false,
-				'scale' : {
-					'x':1.3,
-					'y':1.5
-				},
-				'position' : {
-					'x':-200,
-					'y':800
-				},
-				'velocity' : {
-					'x':0,
-					'y':0
-				}
-			},
-			'mountainswide' : {
-				'type': 'repeat',
-				'texture' : 'mountain',
-				'parallax': 0.1,
-				'fixedToCamera': false,
-				'scale' : {
-					'x':2,
-					'y':1
-				},
-				'position' : {
-					'x':0,
-					'y':900
-				},
-				'velocity' : {
-					'x':0,
-					'y':0
-				}
-			},
-			'hills' : {
-				'type': 'repeat',
-				'texture' : 'grassy_hill',
-				'parallax': 0.3,
-				'fixedToCamera': false,
-				'scale' : {
-					'x':1.5,
-					'y':1
-				},
-				'position' : {
-					'x':300,
-					'y':500
-				},
-				'velocity' : {
-					'x':0,
-					'y':0
-				}
-			},
-			'hills2' : {
-				'type': 'repeat',
-				'texture' : 'grassy_hill',
-				'parallax': 0.4,
-				'fixedToCamera': false,
-				'scale' : {
-					'x':1.5,
-					'y':1
-				},
-				'position' : {
-					'x':0,
-					'y':650
-				},
-				'velocity' : {
-					'x':0,
-					'y':0
-				}
-			}					
-		},
-		'foreground': {
-			'hills' : {
-				'type': 'repeat',
-				'texture' : 'grassy_hill',
-				'parallax': 0,
+				'texture' : 'savannah_clouds',
+				'parallax': 0.05,
 				'fixedToCamera': false,
 				'scale' : {
 					'x':1,
 					'y':1
 				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
 				'position' : {
 					'x':0,
 					'y':0
 				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
 				'velocity' : {
 					'x':0,
 					'y':0
 				}
-			}
+			},
+			
+			'grass' : {
+				'type': 'repeat',
+				'texture' : 'savannah_grass',
+				'parallax': 0.4,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':550
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			}					
 		}
 	},
 	{
@@ -167,6 +128,10 @@ var environments = [
 	            'position': {
 	                'x': 500,
 	                'y': 100
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
 	            },
 	            'velocity': {
 	                'x': 0,
