@@ -521,7 +521,7 @@ BasicGame.Game.prototype = {
         //==================//
         // draw tube
         //==================//
-        graphics.beginFill(0xAAAAAA, 0.75);
+        graphics.beginFill(0xAAAAAA, 0.1);
         btm_prevx = points['bottom'][0]['shape'][4];
         btm_prevy = points['bottom'][0]['shape'][5];
         top_prevx = points['top'][0]['shape'][4];
@@ -533,11 +533,11 @@ BasicGame.Game.prototype = {
                 top_y = points['top'][i]['shape'][5];
 
             // Solid gray background
-            graphics.lineStyle(6, 0xAAAAAA, 0);
+            graphics.lineStyle(6, 0x273b53, 0);
             graphics.drawPolygon([btm_prevx, btm_prevy, top_prevx, top_prevy, top_x, top_y, btm_x, btm_y]);
 
             // Black outline
-            graphics.lineStyle(6, 0x000000, 1);
+            graphics.lineStyle(6, 0x273b53, 1);
             graphics.moveTo(btm_prevx, btm_prevy);
             graphics.lineTo(btm_x, btm_y);
             graphics.moveTo(top_prevx, top_prevy);
