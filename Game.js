@@ -40,7 +40,6 @@ BasicGame.Game = function (game) {
     this.wheelMaterial;
     this.tunnelPhysicsData;
     this.CG_world;
-    this.Health_text;
 
     // environment
     this.environment;
@@ -72,6 +71,9 @@ BasicGame.Game = function (game) {
     this.Level_text;
     this.Timer_text;
     this.Speed_text;
+    this.Health_text;
+    this.slowDown_text;
+    this.speedUp_text;
 
     //Audio
     this.sound_music;
@@ -100,6 +102,7 @@ BasicGame.Game.prototype = {
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
 
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+        this.death_speed = this.game['GameData'].death_speed;
         this.min_speed = this.game['GameData'].min_speed;
         this.max_speed = this.game['GameData'].max_speed;
 
@@ -169,9 +172,9 @@ BasicGame.Game.prototype = {
         this.trackProgressorBackground.anchor.setTo(0, 0.5);
         this.trackProgressorMarker = this.add.sprite(this.trackProgressorBackground.x, this.trackProgressorBackground.y, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
+
         this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
         this.rudEvent_graphic.anchor.set(0.5, 0.5);
-        this.rudEvent_graphic.visible = false;
 
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
         this.menuButton.scale.set(0.5, 0.5);
@@ -198,7 +201,21 @@ BasicGame.Game.prototype = {
             align: "center"
         });
 
-        //fix GUI elements to camera
+        this.slowDown_text = this.add.text(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, "Slow down!", {
+            font: "50px Arial",
+            fill: "#FF0000",
+            align: "center"
+        })
+        this.slowDown_text.anchor.set(0.5, 0.5);
+
+        this.speedUp_text = this.add.text(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, "Speed up!", {
+            font: "50px Arial",
+            fill: "#FF0000",
+            align: "center",
+        })
+        this.speedUp_text.anchor.set(0.5, 0.5);
+
+        //fix  elements to camera
         this.trackProgressorBackground.fixedToCamera = false; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = false;
         this.menuButton.fixedToCamera = true;
@@ -207,6 +224,13 @@ BasicGame.Game.prototype = {
         this.Speed_text.fixedToCamera = true;
         this.Health_text.fixedToCamera = true;
         this.rudEvent_graphic.fixedToCamera = true;
+        this.slowDown_text.fixedToCamera = true;
+        this.speedUp_text.fixedToCamera = true;
+
+        // GUI Initial visibility
+        this.rudEvent_graphic.visible = false;
+        this.slowDown_text.visible = false;
+        this.speedUp_text.visible = false;
 
         // Snow 
         if (this.is_snowing) {
@@ -283,6 +307,18 @@ BasicGame.Game.prototype = {
 
         // update GUI
 
+        // set visibility of slowdown/speedup text
+        this.slowDown_text.visible = (this.carBody.body.velocity.x >= this.max_speed);
+        this.speedUp_text.visible = (this.carBody.body.velocity.x <= this.min_speed && this.pusherCounter > 50);
+
+        // if below death speed, the player is stranded so go to lose state
+        if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50) {
+            this.loseflag = true;
+            this.speedUp_text.visible = false;
+            this.lose();
+        }
+        
+
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
@@ -322,12 +358,14 @@ BasicGame.Game.prototype = {
             this.winStage();
         }
 
-        // check if pod is within allowable speeds
-        if (this.carBody.body.velocity.x <= this.min_speed) {
-            console.log("Speed up!!");
-        } else if (this.carBody.body.velocity.x >= this.max_speed) {
-            console.log("Slow down!!");
+        // Check pod's angle, explode if out of bounds
+        if (!this.loseflag && !this.winflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
+            console.log('You exploded!');
+            this.loseflag = true;
+            this.lose();
         }
+
+        
 
         // Snow
         if (this.is_snowing) {
