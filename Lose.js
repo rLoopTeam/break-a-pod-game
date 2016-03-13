@@ -11,6 +11,9 @@ BasicGame.Lose = function (game) {
 };
 
 BasicGame.Lose.prototype = {
+	init: function () {
+		this.stage.backgroundColor = "#000000";
+	},
 
 	create: function () {
 
@@ -18,7 +21,6 @@ BasicGame.Lose.prototype = {
 		//this.music = this.add.audio('titleMusic');
 		//this.music.play();
 
-	    this.bg = this.add.tileSprite(0, 0, this.game.width, this.game.height, 'starfield');
 	    
 	    this.rudEvent_button = this.add.text(this.camera.width / 2, 100, 'You should leave the Hyperloop to us, click here to support!', {
 	        font: "24px Arial",
