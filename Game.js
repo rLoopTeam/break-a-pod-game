@@ -129,8 +129,8 @@ BasicGame.Game.prototype = {
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
         this.wheelMaterial = this.physics.p2.createMaterial('wheel');
-        this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
-        this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 5.0, restitution: 0 });
+        this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 0.1, restitution: 0 });
+        this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 0.1, restitution: 0 });
 
     },
 
