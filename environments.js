@@ -55,7 +55,7 @@ var environments = [
 	            },
 				'position' : {
 					'x':0,
-					'y':0
+					'y':50
 				},
 				'tilePosition': {
 	                'x': 0,
@@ -144,6 +144,157 @@ var environments = [
 	            'type': 'repeat',
 	            'texture': 'night_grass',
 	            'parallax': 0.5,
+	            'fixedToCamera': false,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 552
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    }
+	},
+		{
+	    'name': 'Forest Night',
+	    'background': {
+	        'skyObj': {
+	            'type': 'unique', // types :- unqique, repeat
+	            'texture': 'forest_night_sky',
+	            'parallax': 1,
+	            'fixedToCamera': true,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        },
+	        'skyLightObj': {
+	            'type': 'unique',
+	            'texture': 'forest_night_moon',
+	            'parallax': 1,
+	            'fixedToCamera': true,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 550,
+	                'y': 35
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    },
+	    'midground': {
+	    	'clouds' : {
+				'type': 'repeat',
+				'texture' : 'forest_night_clouds',
+				'parallax': 0.05,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':35
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':-1,
+					'y':0
+				}
+			},
+	    	'trees1': {
+	            'type': 'repeat',
+	            'texture': 'forest_night_trees1',
+	            'parallax': 0.1,
+	            'fixedToCamera': false,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 135
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        },
+	        'trees2': {
+	            'type': 'repeat',
+	            'texture': 'forest_night_trees2',
+	            'parallax': 0.3,
+	            'fixedToCamera': false,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 175
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        },
+	        'grass': {
+	            'type': 'repeat',
+	            'texture': 'forest_night_grass',
+	            'parallax': 1,
 	            'fixedToCamera': false,
 	            'scale': {
 	                'x': 1,

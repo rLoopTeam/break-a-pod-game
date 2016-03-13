@@ -93,6 +93,14 @@ BasicGame.Preloader.prototype = {
         this.load.image('savannah_grass', 'assets/environment/savannah/grass.png'); 
         this.load.image('savannah_tree1', 'assets/environment/savannah/tree1.png'); 
         this.load.image('savannah_tree2', 'assets/environment/savannah/tree2.png'); 
+
+        //savanah
+	    this.load.image('forest_night_sky', 'assets/environment/night_forest/sky.png'); 
+        this.load.image('forest_night_moon', 'assets/environment/night_forest/moon.png'); 
+        this.load.image('forest_night_clouds', 'assets/environment/night_forest/clouds.png'); 
+        this.load.image('forest_night_grass', 'assets/environment/night_forest/dark_grass.png'); 
+        this.load.image('forest_night_trees1', 'assets/environment/night_forest/trees1.png'); 
+        this.load.image('forest_night_trees2', 'assets/environment/night_forest/trees2.png'); 
 	},
 
 	create: function () {
