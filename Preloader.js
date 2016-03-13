@@ -94,13 +94,25 @@ BasicGame.Preloader.prototype = {
         this.load.image('savannah_tree1', 'assets/environment/savannah/tree1.png'); 
         this.load.image('savannah_tree2', 'assets/environment/savannah/tree2.png'); 
 
-        //savanah
+        //Night forest
 	    this.load.image('forest_night_sky', 'assets/environment/night_forest/sky.png'); 
         this.load.image('forest_night_moon', 'assets/environment/night_forest/moon.png'); 
         this.load.image('forest_night_clouds', 'assets/environment/night_forest/clouds.png'); 
         this.load.image('forest_night_grass', 'assets/environment/night_forest/dark_grass.png'); 
         this.load.image('forest_night_trees1', 'assets/environment/night_forest/trees1.png'); 
         this.load.image('forest_night_trees2', 'assets/environment/night_forest/trees2.png'); 
+
+        //Ocean
+	    this.load.image('ocean_sky', 'assets/environment/ocean/sky.png'); 
+        this.load.image('ocean_sun', 'assets/environment/ocean/sun.png');  // use existing sun
+        this.load.image('ocean_clouds1', 'assets/environment/ocean/ocean_clouds1.png'); 
+        this.load.image('ocean_clouds2', 'assets/environment/ocean/ocean_clouds2.png'); 
+        this.load.image('ocean_water', 'assets/environment/ocean/ocean_water.png'); 
+        this.load.image('ocean_mountains1', 'assets/environment/ocean/ocean_mountains1.png'); 
+        this.load.image('ocean_mountains2', 'assets/environment/ocean/ocean_mountains2.png'); 
+        this.load.image('fish_left', 'assets/environment/ocean/fish_left.png'); 
+        this.load.image('fish_right', 'assets/environment/ocean/fish_right.png'); 
+
 	},
 
 	create: function () {
