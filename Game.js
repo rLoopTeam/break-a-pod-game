@@ -123,7 +123,7 @@ BasicGame.Game.prototype = {
         this.physics.startSystem(Phaser.Physics.P2JS);
         this.physics.p2.gravity.y = 800;
         this.physics.p2.restitution = 0.2;
-        this.physics.p2.setImpactEvents(true);
+        //this.physics.p2.setImpactEvents(true);
         
 
         this.groundMaterial = this.physics.p2.createMaterial('ground');
