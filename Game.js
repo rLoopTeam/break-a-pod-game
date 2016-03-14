@@ -497,7 +497,6 @@ BasicGame.Game.prototype = {
     },
     addForeground: function () {
         this.foreground = this.add.group();
-
     },
     generateTubePoints: function (numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep) {
         var hillStartY = start_y,
@@ -744,6 +743,8 @@ BasicGame.Game.prototype = {
         this.carBody.animations.add('kaboom');
         this.carBody.animations.play('kaboom', 30, false, false); //play(name, frameRate, loop, killOnComplete) 
 
+        this.game['GameData'].currentStageScore = this.carBody.body.x; 
+
         var loseTimeout = setTimeout(function (state) {
             this.loseflag = false;
             this.pusherCounter = 0;
@@ -760,6 +761,10 @@ BasicGame.Game.prototype = {
         this.game['GameData'].cLevel += 1;
         this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
         this.winStage_graphic.anchor.set(0.5, 0.5);
+
+        var stageScore = this.carBody.body.x;
+        this.game['GameData'].currentStageScore = stageScore;
+        this.game['GameData'].score += stageScore; 
 
         setTimeout(function (state) {
             this.winflag = false;

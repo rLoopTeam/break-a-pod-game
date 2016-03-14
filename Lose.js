@@ -8,11 +8,13 @@ BasicGame.Lose = function (game) {
 	this.playAgain_button = null;
 
 	this.cursors;
+	this.score;
 };
 
 BasicGame.Lose.prototype = {
 	init: function () {
 		this.stage.backgroundColor = "#000000";
+		this.score = String( Math.floor(this.game['GameData'].score + this.game['GameData'].currentStageScore) );
 	},
 
 	create: function () {
@@ -34,8 +36,9 @@ BasicGame.Lose.prototype = {
 	    this.rudEvent_button.anchor.set(0.5, 0.5);
 	    this.rudEvent_button.inputEnabled = true;
 	    this.rudEvent_button.events.onInputDown.add(this.supportUs, this);
-	    
-	    this.postScore_button = this.add.text(this.camera.width / 2, 150, 'You scored ' + String(this.game['GameData'].score).substring(0, 13) + ((this.game['GameData'].score.length > 13)?"...":""), {
+
+	    // score  
+	    this.postScore_button = this.add.text(this.camera.width / 2, 150, 'You scored ' + this.score.substring(0, 13) + ((this.score.length > 13)?"...":""), {
 	        font: "50px Arial",
 	        fill: "#ffffff",
 	        align: "center"
@@ -160,7 +163,7 @@ BasicGame.Lose.prototype = {
         var playerName = prompt("Please enter your name", "name");
 
         // when player clicked ok, post the data and go back to main menu
-        var data = { "name": playerName, "score": this.game['GameData'].score };
+        var data = { "name": playerName, "score": this.score };
         // ... Post "data" somewhere ...
 
         // go back to main menu
