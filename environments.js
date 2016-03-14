@@ -1,5 +1,5 @@
 var environments = [
-	{
+	{ // savannah
 		'name' : 'Savannah',
 		'background': {
 			'skyObj' : {
@@ -66,6 +66,33 @@ var environments = [
 					'y':0
 				}
 			},
+			'trees' : {
+				'type': 'repeat_unique_randomized',
+				'textures' : ['savannah_tree1', 'savannah_tree2', 'savannah_tree3'],
+				'anchors' : [{'x':0.5,'y':1}, {'x':0.5,'y':1}, {'x':0.5,'y':1}],
+				'parallax': 0.4,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'position' : {
+					'x':0,
+					'y':480
+				},
+				'position_offset' : {
+					'x':700,
+					'y':0
+				},
+				'position_random_factor': {
+					'x':1,
+					'y':0
+				},
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
 			
 			'grass' : {
 				'type': 'repeat',
@@ -95,7 +122,7 @@ var environments = [
 			}					
 		}
 	},
-	{
+	{ // Grassy Hills Night
 	    'name': 'Grassy Hills Night',
 	    'background': {
 	        'skyObj': {
@@ -168,7 +195,7 @@ var environments = [
 	        }
 	    }
 	},
-	{
+	{ // Forest Night
 	    'name': 'Forest Night',
 	    'background': {
 	        'skyObj': {
@@ -319,7 +346,7 @@ var environments = [
 	        }
 	    }
 	},
-	{
+	{ // Ocean
 	    'name': 'Ocean',
 	    'background': {
 	        'skyObj': {

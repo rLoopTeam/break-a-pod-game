@@ -93,6 +93,7 @@ BasicGame.Preloader.prototype = {
         this.load.image('savannah_grass', 'assets/environment/savannah/grass.png'); 
         this.load.image('savannah_tree1', 'assets/environment/savannah/tree1.png'); 
         this.load.image('savannah_tree2', 'assets/environment/savannah/tree2.png'); 
+        this.load.image('savannah_tree3', 'assets/environment/savannah/tree3.png'); 
 
         //Night forest
 	    this.load.image('forest_night_sky', 'assets/environment/night_forest/sky.png'); 

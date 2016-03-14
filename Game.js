@@ -74,6 +74,7 @@ BasicGame.Game = function (game) {
     this.Health_text;
     this.slowDown_text;
     this.speedUp_text;
+    this.pause_text;
 
     //Audio
     this.sound_music;
@@ -93,10 +94,14 @@ BasicGame.Game = function (game) {
 
 BasicGame.Game.prototype = {
     init: function () {
+
+        // use debug plugin
+        this.add.plugin(Phaser.Plugin.Debug);
+
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
         var levelSelect = Math.floor(Math.random() * totalEnvs);
-        levelSelect = 3
+        levelSelect = 0
         
         this.environment = envs[levelSelect];
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
@@ -109,6 +114,11 @@ BasicGame.Game.prototype = {
 
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
+        
+        // Non real time controls
+        // ESC pause game
+        var escapeKey = this.input.keyboard.addKey(Phaser.Keyboard.ESC);
+        escapeKey.onDown.add(this.togglePauseGame, this); 
 
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
@@ -128,6 +138,7 @@ BasicGame.Game.prototype = {
         this.physics.p2.restitution = 0.2;
         //this.physics.p2.setImpactEvents(true);
         
+        this.time.desiredFps = 30;
 
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
@@ -215,6 +226,13 @@ BasicGame.Game.prototype = {
         })
         this.speedUp_text.anchor.set(0.5, 0.5);
 
+        this.pause_text = this.add.text(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, "Game paused", {
+            font: "50px Arial",
+            fill: "#FF0000",
+            align: "center",
+        })
+        this.pause_text.anchor.set(0.5, 0.5);
+
         //fix  elements to camera
         this.trackProgressorBackground.fixedToCamera = false; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = false;
@@ -226,11 +244,13 @@ BasicGame.Game.prototype = {
         this.rudEvent_graphic.fixedToCamera = true;
         this.slowDown_text.fixedToCamera = true;
         this.speedUp_text.fixedToCamera = true;
+        this.pause_text.fixedToCamera = true;
 
         // GUI Initial visibility
         this.rudEvent_graphic.visible = false;
         this.slowDown_text.visible = false;
         this.speedUp_text.visible = false;
+        this.pause_text.visible = false;
 
         // Snow 
         if (this.is_snowing) {
@@ -274,13 +294,11 @@ BasicGame.Game.prototype = {
             this.front_emitter.start(false, 6000, 1000);
             
         }
-
     },
 
     update: function () {
-
         // handle inputs
-        if (!this.loseflag) { this.handleInput(); }
+        if (!this.loseflag) { this.handleInput(); };
 
         // camera follow pod
         this.camera.x = this.carBody.body.x - 200;
@@ -300,6 +318,11 @@ BasicGame.Game.prototype = {
                     item.tilePosition.x = -(camera.x * item.parallax) + item.offset.x;
                     item.tilePosition.y = item.offset.y - item.velocity.y;
                 }
+            } else if (item.type === 0) {
+                console.log(camera.x * item.parallax + item.offset.x)
+                item.x = -(camera.x * item.parallax) + item.offset.x;
+                //item.y = item.offset.y - item.velocity.y;
+
             }
         })
 
@@ -358,15 +381,6 @@ BasicGame.Game.prototype = {
             this.winStage();
         }
 
-        // Check pod's angle, explode if out of bounds
-        if (!this.loseflag && !this.winflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
-            console.log('You exploded!');
-            this.loseflag = true;
-            this.lose();
-        }
-
-        
-
         // Snow
         if (this.is_snowing) {
             this.snow_var++;
@@ -383,7 +397,6 @@ BasicGame.Game.prototype = {
         } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
             this.pusherBody.body.force.x = -50000;
         }
-
     },
 
     changeWindDirection: function () {
@@ -450,6 +463,33 @@ BasicGame.Game.prototype = {
                     tileable['offset'] = environmentMidground[key].tilePosition;
                     tileable['velocity'] = environmentMidground[key].velocity;
                     midgroundGroup.add(tileable);
+                    console.log("Added tileable:")
+                    console.log(tileable)
+
+                } else if (environmentMidground[key].type === "repeat_unique_randomized") {
+
+                    var group = this.add.group();
+                    var textures = environmentMidground[key].textures;
+                    var anchors = environmentMidground[key].anchors;
+                    var total_instances = (this.levelLength * (environmentMidground[key].parallax + 1))/environmentMidground[key].position_offset.x;
+                    var instance_position = environmentMidground[key].position;
+                    
+                    for (var i = 0; i < total_instances; i++) {
+                        var offset = environmentMidground[key].position_offset.x * (environmentMidground[key].position_random_factor.x*Math.random());
+                        instance_position.x += offset;
+                        var texture_index = Math.floor(textures.length*Math.random());
+                        var texture_name = textures[texture_index];
+
+                        var sprite_instance = this.add.sprite( instance_position.x , environmentMidground[key].position.y, texture_name ); // choose random texture from "textures" array
+                        group.add(sprite_instance);
+                    }
+                    group['parallax'] = environmentMidground[key].parallax;
+                    group['offset'] = offset;
+                    group['velocity'] = environmentMidground[key].velocity;
+
+                    midgroundGroup.add(group);
+                    console.log("Added repeat unique to group:")
+                    console.log(group)
 
                 }
 
@@ -666,6 +706,15 @@ BasicGame.Game.prototype = {
             this.carBody.body.angularVelocity = -.5;
         }
         
+    },
+    
+    togglePauseGame: function (pointer) {
+        var res = true;
+        if (this.game.paused) {
+            res = false;
+        }
+        this.game.paused = res;
+        this.pause_text.visible = res;
     },
 
     quitGame: function (pointer) {
