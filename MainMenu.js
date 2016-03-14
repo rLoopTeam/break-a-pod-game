@@ -28,6 +28,11 @@ BasicGame.MainMenu.prototype = {
         this.environment = envs[levelSelect];
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
 
+        // Non real time controls
+        // ESC pause game
+        var escapeKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        escapeKey.onDown.add(this.startGame, this); 
+
 	},
 	create: function () {
 

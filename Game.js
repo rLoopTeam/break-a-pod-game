@@ -111,14 +111,18 @@ BasicGame.Game.prototype = {
         this.min_speed = this.game['GameData'].min_speed;
         this.max_speed = this.game['GameData'].max_speed;
 
-
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
-        
+
+        //------------------------------------//
         // Non real time controls
+        //------------------------------------//
         // ESC pause game
         var escapeKey = this.input.keyboard.addKey(Phaser.Keyboard.ESC);
         escapeKey.onDown.add(this.togglePauseGame, this); 
+        // ESC pause game
+        var spacekey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        spacekey.onDown.add(this.restartGame , this); 
 
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
@@ -160,20 +164,14 @@ BasicGame.Game.prototype = {
         this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
         this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
-
-
         // create background first so that it goes to the back most position
         this.addBackground();
         this.addMidground();
         var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
         this.addCar();
         this.addPusher();
-
         this.drawTube(graphics, this.tunnelPhysicsData);
-
-
         this.carBody.body.onBeginContact.add(this.podCollision, this);
-        
         this.addForeground();
 
         //window.graphics = graphics;
@@ -723,6 +721,11 @@ BasicGame.Game.prototype = {
         //	Stop music, delete sprites, purge caches, free resources, all that good stuff.
         this.sound_music.stop();
         this.state.start('MainMenu');
+    },
+
+    restartGame: function (pointer) {
+        this.sound_music.stop();
+        this.state.start('Game');        
     },
 
     lose: function (pointer) {
