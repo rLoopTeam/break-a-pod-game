@@ -108,6 +108,9 @@ BasicGame.Preloader.prototype = {
         this.load.image('forest_night_grass', 'assets/environment/night_forest/dark_grass.png'); 
         this.load.image('forest_night_trees1', 'assets/environment/night_forest/trees1.png'); 
         this.load.image('forest_night_trees2', 'assets/environment/night_forest/trees2.png'); 
+        this.load.image('forest_night_tree1', 'assets/environment/night_forest/tree1.png'); 
+        this.load.image('forest_night_tree2', 'assets/environment/night_forest/tree2.png'); 
+        this.load.image('forest_night_tree3', 'assets/environment/night_forest/tree3.png'); 
 
         //Ocean
 	    this.load.image('ocean_sky', 'assets/environment/ocean/sky.png'); 

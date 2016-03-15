@@ -78,7 +78,7 @@ var environments = [
 				},
 				'position' : {
 					'x':0,
-					'y':480
+					'y':560
 				},
 				'position_offset' : {
 					'x':700,
@@ -97,7 +97,7 @@ var environments = [
 			'grass' : {
 				'type': 'repeat',
 				'texture' : 'savannah_grass',
-				'parallax': 0.4,
+				'parallax': 1,
 				'fixedToCamera': false,
 				'scale' : {
 					'x':1,
@@ -318,6 +318,33 @@ var environments = [
 	                'y': 0
 	            }
 	        },
+	        'randomtrees' : {
+				'type': 'repeat_unique_randomized',
+				'textures' : ['forest_night_tree1', 'forest_night_tree2', 'forest_night_tree3'],
+				'anchors' : [{'x':0.5,'y':1}, {'x':0.5,'y':1}, {'x':0.5,'y':1}],
+				'parallax': 1,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'position' : {
+					'x':0,
+					'y':560
+				},
+				'position_offset' : {
+					'x':700,
+					'y':0
+				},
+				'position_random_factor': {
+					'x':1,
+					'y':0
+				},
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
 	        'grass': {
 	            'type': 'repeat',
 	            'texture': 'forest_night_grass',

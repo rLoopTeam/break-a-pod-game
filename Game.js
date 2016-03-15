@@ -106,7 +106,7 @@ BasicGame.Game.prototype = {
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
         var levelSelect = Math.floor(Math.random() * totalEnvs);
-        levelSelect = 0
+        levelSelect = 2
         
         this.environment = envs[levelSelect];
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
@@ -463,6 +463,7 @@ BasicGame.Game.prototype = {
                         var texture_name = textures[texture_index];
 
                         var sprite_instance = this.add.sprite( instance_position.x , environmentMidground[key].position.y, texture_name ); // choose random texture from "textures" array
+                        sprite_instance.anchor.set(environmentMidground[key].anchors[texture_index].x, environmentMidground[key].anchors[texture_index].y)
                         group.add(sprite_instance);
                     }
                     group['parallax'] = environmentMidground[key].parallax;
