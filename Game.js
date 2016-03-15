@@ -707,8 +707,10 @@ BasicGame.Game.prototype = {
     
     togglePauseGame: function (pointer) {
         var res = true;
+        this.sound_music.pause();
         if (this.game.paused) {
             res = false;
+            this.sound_music.resume()
         }
         this.game.paused = res;
         this.pause_text.visible = res;
@@ -724,7 +726,7 @@ BasicGame.Game.prototype = {
 
     restartGame: function (pointer) {
         this.sound_music.stop();
-        this.state.start('Game');        
+        this.state.start('Game');
     },
 
     lose: function (pointer) {
