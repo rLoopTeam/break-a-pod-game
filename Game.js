@@ -49,6 +49,7 @@ BasicGame.Game = function (game) {
 
     // global vars
     this.menuButton;
+    this.muteButton;
     this.cursors;
     this.loseflag;
     this.winflag;
@@ -80,6 +81,10 @@ BasicGame.Game = function (game) {
     this.sound_music;
     this.sound_explosion;
     this.sound_hit;
+    this.music_volume;
+    this.sound_volume;
+    this.sound_muted;
+
 
     // Snow
     this.is_snowing = false;
@@ -157,6 +162,12 @@ BasicGame.Game.prototype = {
         this.sound_music = this.add.sound('level1Music');
         this.sound_explosion = this.add.sound('explosion');
         this.sound_hit = this.add.sound('hit');
+        this.music_volume = 0.25;
+        this.sound_volume = 0.15;
+        this.sound_music.volume = this.music_volume;
+        this.sound_explosion.volume = this.sound_volume;
+        this.sound_hit.volume = this.sound_volume;
+        this.sound_muted = false;
         this.sound_music.play();    
 
 
@@ -187,6 +198,9 @@ BasicGame.Game.prototype = {
 
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
         this.menuButton.scale.set(0.5, 0.5);
+
+        this.muteButton = this.add.button(this.camera.x + 10, this.camera.y + 30, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
+        this.muteButton.scale.set(0.4, 0.4);
 
         // Displays
         this.Level_text = this.add.text(this.camera.x + this.camera.width - 100, this.camera.y + 10, 'Level ' + this.game['GameData'].cLevel, {
@@ -238,6 +252,7 @@ BasicGame.Game.prototype = {
         this.trackProgressorBackground.fixedToCamera = false; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = false;
         this.menuButton.fixedToCamera = true;
+        this.muteButton.fixedToCamera = true;
         this.Level_text.fixedToCamera = true;
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
@@ -710,11 +725,29 @@ BasicGame.Game.prototype = {
     
     togglePauseGame: function (pointer) {
         var res = true;
+        this.sound_music.pause();
         if (this.game.paused) {
             res = false;
+            this.sound_music.resume()
         }
         this.game.paused = res;
         this.pause_text.visible = res;
+    },
+
+    toggleMuteAudio: function(pointer) {
+        if (this.sound_muted) {
+            this.sound_muted = false;
+            this.sound_music.volume = this.music_volume;
+            this.sound_explosion.volume = this.sound_volume;
+            this.sound_hit.volume = this.sound_volume;
+            this.muteButton.loadTexture('mute_button');
+        } else {
+            this.sound_music.volume = 0;
+            this.sound_explosion.volume = 0;
+            this.sound_hit.volume = 0;
+            this.sound_muted = true;
+            this.muteButton.loadTexture('mute_button_muted');
+        }
     },
 
     quitGame: function (pointer) {
@@ -727,7 +760,7 @@ BasicGame.Game.prototype = {
 
     restartGame: function (pointer) {
         this.sound_music.stop();
-        this.state.start('Game');        
+        this.state.start('Game');
     },
 
     lose: function (pointer) {
