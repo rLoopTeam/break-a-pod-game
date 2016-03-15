@@ -734,11 +734,13 @@ BasicGame.Game.prototype = {
             this.sound_music.volume = this.music_volume;
             this.sound_explosion.volume = this.sound_volume;
             this.sound_hit.volume = this.sound_volume;
+            this.muteButton.loadTexture('mute_button');
         } else {
             this.sound_music.volume = 0;
             this.sound_explosion.volume = 0;
             this.sound_hit.volume = 0;
             this.sound_muted = true;
+            this.muteButton.loadTexture('mute_button_muted');
         }
     },
 
