@@ -40,6 +40,11 @@ BasicGame.Preloader.prototype = {
 		this.load.atlas('start_button', 'assets/GUI/start_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 
+		// Fonts
+		this.load.bitmapFont('basic_font_white', 'assets/fonts/font.png', 'assets/fonts/font.xml');
+		this.load.image('basic_font_retro_white', 'assets/fonts/basic_font_retro.png');
+
+
 
 		///////////
 		// WORLD
