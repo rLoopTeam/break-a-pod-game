@@ -162,8 +162,11 @@ BasicGame.Game.prototype = {
         this.sound_music = this.add.sound('level1Music');
         this.sound_explosion = this.add.sound('explosion');
         this.sound_hit = this.add.sound('hit');
-        this.music_volume = 1;
-        this.sound_volume = 1;
+        this.music_volume = 0.25;
+        this.sound_volume = 0.15;
+        this.sound_music.volume = this.music_volume;
+        this.sound_explosion.volume = this.sound_volume;
+        this.sound_hit.volume = this.sound_volume;
         this.sound_muted = false;
         this.sound_music.play();    
 
