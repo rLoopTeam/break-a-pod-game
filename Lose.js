@@ -23,51 +23,24 @@ BasicGame.Lose.prototype = {
 		//this.music = this.add.audio('titleMusic');
 		//this.music.play();
 
-	    
-	    this.rudEvent_button = this.add.text(this.camera.width / 2, 100, 'You should leave the Hyperloop to us, click here to support!', {
-	        font: "24px Arial",
-	        fill: "#ffffff",
-            decoration: "underline",
-	        align: "center"
-	    })
-	    .addColor("#1569C7", 38)
-	    .addColor("#ffffff", 60);
-
+	    this.rudEvent_button = this.add.bitmapText(this.camera.width / 2, 100, 'basic_font_white', 'You should leave the Hyperloop to us, click here to support!', 30)
 	    this.rudEvent_button.anchor.set(0.5, 0.5);
 	    this.rudEvent_button.inputEnabled = true;
 	    this.rudEvent_button.events.onInputDown.add(this.supportUs, this);
 
 	    // score  
-	    this.postScore_button = this.add.text(this.camera.width / 2, 150, 'You scored ' + this.score.substring(0, 13) + ((this.score.length > 13)?"...":""), {
-	        font: "50px Arial",
-	        fill: "#ffffff",
-	        align: "center"
-	    })
-	    .anchor.set(0.5,0.5)
+	    this.score = this.add.bitmapText(this.camera.width / 2, 150, 'basic_font_white', 'You scored ' + this.score.substring(0, 13) + ((this.score.length > 13)?"...":""), 60)
+	    this.score.anchor.set(0.5,0.5)
 	    
 	    // create score board table from external data
 	    this.createScoreBoard();
-
-
-	    this.postScore_button = this.add.text(this.camera.width / 2 - 90, 500, 'Share your score', {
-	        font: "24px Arial",
-	        fill: "#ffffff",
-	        align: "center"
-	    })
-	    .addColor("#43C6DB", 0)
-
+		
+		this.postScore_button = this.add.bitmapText(this.camera.width / 2 - 90, 500, 'basic_font_white', 'Share your score', 30)
         this.postScore_button.anchor.set(0.5, 0.5);
         this.postScore_button.inputEnabled = true;
         this.postScore_button.events.onInputDown.add(this.postScore, this);
 
-	    this.playAgain_button = this.add.text(this.camera.width / 2 + 80, 500, 'or, Try Again', {
-	        font: "24px Arial",
-	        fill: "#ffffff",
-	        align: "center"
-	    })
-	    .addColor("#43C6DB", 4)
-	    .addColor("#ffffff", 13);
-
+        this.playAgain_button = this.add.bitmapText(this.camera.width / 2 + 80, 500, 'basic_font_white', 'or, Try Again', 30)
         this.playAgain_button.anchor.set(0.5, 0.5);
         this.playAgain_button.inputEnabled = true;
         this.playAgain_button.events.onInputDown.add(this.startGame, this);
@@ -138,17 +111,11 @@ BasicGame.Lose.prototype = {
 				"score":6
 			}
 		]
-	    var style = {
-			font: "24px Arial",
-			fill: "#ffffff",
-			decoration: "underline",
-			align: "center"
-		}
 
 	    for (var c = 0; c < 13; c++)
 	    {
-	        var name = this.add.text(this.camera.width / 2 - 180, 200 + (c*20), scores[c].name.substring(0, 13) + ((scores[c].name.length > 13)?"...":""), style);
-	        var score = this.add.text(this.camera.width / 2 + 100 , 200 + (c*20), String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), style);
+	        var name = this.add.bitmapText(this.camera.width / 2 - 180, 200 + (c*20), 'basic_font_white', scores[c].name.substring(0, 13) + ((scores[c].name.length > 13)?"...":""), 30);
+	        var score = this.add.bitmapText(this.camera.width / 2 + 100 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
 	    }
 	},
 	supportUs: function (pointer) {

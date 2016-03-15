@@ -203,49 +203,15 @@ BasicGame.Game.prototype = {
         this.muteButton.scale.set(0.4, 0.4);
 
         // Displays
-        this.Level_text = this.add.text(this.camera.x + this.camera.width - 100, this.camera.y + 10, 'Level ' + this.game['GameData'].cLevel, {
-            font: "24px Arial",
-            fill: "#ffffff",
-            align: "center"
-        });
-        //this.Timer_text = this.add.bitmapText(200, 100, 'desyrel', 'Phaser & Pixi\nrocking!', 64);
-        this.Timer_text = this.add.bitmapText(this.camera.x + 15, this.camera.y + 550, 'basic_font_white', "00:00:00", 15);
-        // this.Timer_text = this.add.text(this.camera.x + 15, this.camera.y + 550, "00:00:00", {
-        //     font: "24px Arial",
-        //     fill: "#ffffff",
-        //     align: "center"
-        // });
-        this.Speed_text = this.add.bitmapText(this.camera.x + 15, this.camera.y + 530, 'basic_font_white', "0 m/s", 15);
-        // this.Speed_text = this.add.text(this.camera.x + 15, this.camera.y + 530, "0 m/s", {
-        //     font: "24px Arial",
-        //     fill: "#ffffff",
-        //     align: "center"
-        // });
-        this.Health_text = this.add.text(this.camera.x + this.camera.width - 135, this.camera.height - 50, "Health: 100%", {
-            font: "24px Arial",
-            fill: "#ffffff",
-            align: "center"
-        });
-
-        this.slowDown_text = this.add.text(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, "Slow down!", {
-            font: "50px Arial",
-            fill: "#FF0000",
-            align: "center"
-        })
+        this.Level_text = this.add.bitmapText(this.camera.x + this.camera.width - 130, this.camera.y + 10, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 40);
+        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 550, 'basic_font_white', "00:00:00", 30);
+        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 530, 'basic_font_white', "0 m/s", 30);
+        this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
+        this.slowDown_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Slow down!", 30);
         this.slowDown_text.anchor.set(0.5, 0.5);
-
-        this.speedUp_text = this.add.text(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, "Speed up!", {
-            font: "50px Arial",
-            fill: "#FF0000",
-            align: "center",
-        })
+        this.speedUp_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Speed up!", 30);
         this.speedUp_text.anchor.set(0.5, 0.5);
-
-        this.pause_text = this.add.text(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, "Game paused", {
-            font: "50px Arial",
-            fill: "#FF0000",
-            align: "center",
-        })
+        this.pause_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Game paused", 30);
         this.pause_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
