@@ -35,7 +35,7 @@ BasicGame.Lose.prototype = {
 	    // create score board table from external data
 	    this.createScoreBoard();
 		
-		this.postScore_button = this.add.bitmapText(this.camera.width / 2 - 90, 500, 'basic_font_white', 'Share your score', 30)
+		this.postScore_button = this.add.bitmapText(this.camera.width / 2 - 105, 500, 'basic_font_white', 'Share your score', 30)
         this.postScore_button.anchor.set(0.5, 0.5);
         this.postScore_button.inputEnabled = true;
         this.postScore_button.events.onInputDown.add(this.postScore, this);
