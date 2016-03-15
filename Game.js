@@ -41,6 +41,9 @@ BasicGame.Game = function (game) {
     this.tunnelPhysicsData;
     this.CG_world;
 
+    this.playedBefore;
+    this.showInstructions;
+
     // environment
     this.environment;
     this.background;
@@ -76,6 +79,7 @@ BasicGame.Game = function (game) {
     this.slowDown_text;
     this.speedUp_text;
     this.pause_text;
+
 
     //Audio
     this.sound_music;
@@ -115,6 +119,7 @@ BasicGame.Game.prototype = {
         this.death_speed = this.game['GameData'].death_speed;
         this.min_speed = this.game['GameData'].min_speed;
         this.max_speed = this.game['GameData'].max_speed;
+        this.playedBefore = this.game['GameData'].playedBefore;
 
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -146,8 +151,6 @@ BasicGame.Game.prototype = {
         this.physics.p2.gravity.y = 800;
         this.physics.p2.restitution = 0.2;
         //this.physics.p2.setImpactEvents(true);
-        
-        this.time.desiredFps = 30;
 
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
@@ -202,6 +205,9 @@ BasicGame.Game.prototype = {
         this.muteButton = this.add.button(this.camera.x + 10, this.camera.y + 30, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
         this.muteButton.scale.set(0.4, 0.4);
 
+        this.instructions = this.add.sprite(this.camera.x + this.camera.width/2,this.camera.y + this.camera.height/2, 'instructions');
+        this.instructions.anchor.set(0.5, 0.5);
+
         // Displays
         this.Level_text = this.add.bitmapText(this.camera.x + this.camera.width - 130, this.camera.y + 10, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 40);
         this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 550, 'basic_font_white', "00:00:00", 30);
@@ -219,6 +225,7 @@ BasicGame.Game.prototype = {
         this.trackProgressorMarker.fixedToCamera = false;
         this.menuButton.fixedToCamera = true;
         this.muteButton.fixedToCamera = true;
+        this.instructions.fixedToCamera = true;
         this.Level_text.fixedToCamera = true;
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
@@ -233,6 +240,7 @@ BasicGame.Game.prototype = {
         this.slowDown_text.visible = false;
         this.speedUp_text.visible = false;
         this.pause_text.visible = false;
+        this.showInstructions = (this.playedBefore)?false:true;
 
         // Snow 
         if (this.is_snowing) {
@@ -378,9 +386,16 @@ BasicGame.Game.prototype = {
             this.carBody.body.force.x = 50000;
         } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
             this.pusherBody.body.force.x = -50000;
+        } else {
+            this.showInstructions = false;
+        }
+
+        if (this.showInstructions) {
+            this.instructions.visible = true;
+        } else {
+            this.instructions.visible = false;
         }
     },
-
     changeWindDirection: function () {
 
         var multi = Math.floor((this.max + 200) / 4),
@@ -426,7 +441,6 @@ BasicGame.Game.prototype = {
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();
         for (var key in environmentMidground) {
-            console.log(key)
             if (environmentMidground.hasOwnProperty(key)) {
 
                 if (environmentMidground[key].type === "unique") {
@@ -445,8 +459,6 @@ BasicGame.Game.prototype = {
                     tileable['offset'] = environmentMidground[key].tilePosition;
                     tileable['velocity'] = environmentMidground[key].velocity;
                     midgroundGroup.add(tileable);
-                    console.log("Added tileable:")
-                    console.log(tileable)
 
                 } else if (environmentMidground[key].type === "repeat_unique_randomized") {
 
@@ -471,9 +483,6 @@ BasicGame.Game.prototype = {
                     group['velocity'] = environmentMidground[key].velocity;
 
                     midgroundGroup.add(group);
-                    console.log("Added repeat unique to group:")
-                    console.log(group)
-
                 }
 
             }
@@ -762,6 +771,8 @@ BasicGame.Game.prototype = {
         this.sound_music.stop();
 
         this.game['GameData'].cLevel += 1;
+        this.game['GameData'].playedBefore = true;
+        this.instructions.visible = false;
         this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
         this.winStage_graphic.anchor.set(0.5, 0.5);
 

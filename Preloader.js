@@ -34,6 +34,7 @@ BasicGame.Preloader.prototype = {
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
         // GUI assets
+        this.load.image('instructions', 'assets/GUI/instructions.png');
         this.load.image('progressorBackground', 'assets/GUI/track-progress.png');
         this.load.image('progressorMarker', 'assets/GUI/track-progress-marker.png');
 
@@ -44,7 +45,6 @@ BasicGame.Preloader.prototype = {
 
 		// Fonts
 		this.load.bitmapFont('basic_font_white', 'assets/fonts/font.png', 'assets/fonts/font.xml');
-		this.load.image('basic_font_retro_white', 'assets/fonts/basic_font_retro.png');
 		
 
 		///////////
