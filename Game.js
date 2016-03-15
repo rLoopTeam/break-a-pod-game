@@ -208,16 +208,19 @@ BasicGame.Game.prototype = {
             fill: "#ffffff",
             align: "center"
         });
-        this.Timer_text = this.add.text(this.camera.x + 15, this.camera.y + 550, "00:00:00", {
-            font: "24px Arial",
-            fill: "#ffffff",
-            align: "center"
-        });
-        this.Speed_text = this.add.text(this.camera.x + 15, this.camera.y + 530, "0 m/s", {
-            font: "24px Arial",
-            fill: "#ffffff",
-            align: "center"
-        });
+        //this.Timer_text = this.add.bitmapText(200, 100, 'desyrel', 'Phaser & Pixi\nrocking!', 64);
+        this.Timer_text = this.add.bitmapText(this.camera.x + 15, this.camera.y + 550, 'basic_font_white', "00:00:00", 15);
+        // this.Timer_text = this.add.text(this.camera.x + 15, this.camera.y + 550, "00:00:00", {
+        //     font: "24px Arial",
+        //     fill: "#ffffff",
+        //     align: "center"
+        // });
+        this.Speed_text = this.add.bitmapText(this.camera.x + 15, this.camera.y + 530, 'basic_font_white', "0 m/s", 15);
+        // this.Speed_text = this.add.text(this.camera.x + 15, this.camera.y + 530, "0 m/s", {
+        //     font: "24px Arial",
+        //     fill: "#ffffff",
+        //     align: "center"
+        // });
         this.Health_text = this.add.text(this.camera.x + this.camera.width - 135, this.camera.height - 50, "Health: 100%", {
             font: "24px Arial",
             fill: "#ffffff",
