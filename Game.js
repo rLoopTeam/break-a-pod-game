@@ -19,8 +19,9 @@ BasicGame.Game = function (game) {
     this.physics;	//	the physics manager
     this.rnd;		//	the repeatable random number generator
 
-    //
-    this.isRunning = true;
+    // statuses
+    this.isRunning;
+    this.isDead;
 
     // world settings
     this.levelLength;
@@ -78,6 +79,7 @@ BasicGame.Game = function (game) {
     this.Speed_text;
     this.Health_text;
     this.slowDown_text;
+    this.stabilise_text;
     this.speedUp_text;
     this.pause_text;
 
@@ -104,7 +106,7 @@ BasicGame.Game = function (game) {
 
 BasicGame.Game.prototype = {
     init: function () {
-
+        console.log("init")
         // use debug plugin
         this.add.plugin(Phaser.Plugin.Debug);
 
@@ -135,6 +137,10 @@ BasicGame.Game.prototype = {
         var spacekey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spacekey.onDown.add(this.restartGame , this); 
 
+
+        //
+        //
+        //
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
@@ -144,6 +150,7 @@ BasicGame.Game.prototype = {
         this.time.reset();
         this.loseflag = false;
         this.winflag = false;
+        this.isDead = false;
         this.pusherCounter = 0;
 
         //gametime
@@ -162,17 +169,19 @@ BasicGame.Game.prototype = {
     },
 
     create: function () {
+        console.log("create")
         //Audio
         this.sound_music = this.add.sound('level1Music');
         this.sound_explosion = this.add.sound('explosion');
         this.sound_hit = this.add.sound('hit');
-        this.music_volume = 0.25;
+        this.music_volume = 1;
         this.sound_volume = 0.15;
         this.sound_music.volume = this.music_volume;
         this.sound_explosion.volume = this.sound_volume;
         this.sound_hit.volume = this.sound_volume;
         this.sound_muted = false;
         this.sound_music.play();    
+
 
 
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
@@ -216,8 +225,13 @@ BasicGame.Game.prototype = {
         this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
         this.slowDown_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Slow down!", 30);
         this.slowDown_text.anchor.set(0.5, 0.5);
+        this.slowDown_text.tint = 0xFF0000;
         this.speedUp_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Speed up!", 30);
         this.speedUp_text.anchor.set(0.5, 0.5);
+        this.speedUp_text.tint = 0xFF0000;
+        this.stabilise_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Stabilize the pod now!", 30);
+        this.stabilise_text.anchor.set(0.5, 0.5);
+        this.stabilise_text.tint = 0xFF0000;
         this.pause_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Game paused", 30);
         this.pause_text.anchor.set(0.5, 0.5);
 
@@ -234,6 +248,7 @@ BasicGame.Game.prototype = {
         this.rudEvent_graphic.fixedToCamera = true;
         this.slowDown_text.fixedToCamera = true;
         this.speedUp_text.fixedToCamera = true;
+        this.stabilise_text.fixedToCamera = true;
         this.pause_text.fixedToCamera = true;
 
         // GUI Initial visibility
@@ -241,6 +256,7 @@ BasicGame.Game.prototype = {
         this.slowDown_text.visible = false;
         this.speedUp_text.visible = false;
         this.pause_text.visible = false;
+        this.stabilise_text.visible = false;
         this.showInstructions = (this.playedBefore)?false:true;
 
         // Snow 
@@ -283,13 +299,13 @@ BasicGame.Game.prototype = {
             this.back_emitter.start(false, 14000, 20);
             this.mid_emitter.start(false, 12000, 40);
             this.front_emitter.start(false, 6000, 1000);
-            
+
         }
     },
 
     update: function () {
         // handle inputs
-        if (!this.loseflag) { this.handleInput(); };
+        if (!this.loseflag ) { this.handleInput(); };
 
         // camera follow pod
         this.camera.x = this.carBody.body.x - 200;
@@ -317,22 +333,51 @@ BasicGame.Game.prototype = {
             }
         })
 
-        // update fore ground
-
         // update GUI
 
-        // set visibility of slowdown/speedup text
-        this.slowDown_text.visible = (this.carBody.body.velocity.x >= this.max_speed);
-        this.speedUp_text.visible = (this.carBody.body.velocity.x <= this.min_speed && this.pusherCounter > 50);
-
+        //---------------------
+        // Pod status check
+        //---------------------
         // if below death speed, the player is stranded so go to lose state
         if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50) {
-            this.loseflag = true;
+            console.log("You're stranded");
+            //this.loseflag = true;
             this.speedUp_text.visible = false;
-            this.lose();
+            this.slowDown_text.visible = false;
+            this.stabilise_text.visible = false; 
+            this.loseStranded();
         }
         
+        
+        if (!this.isDead) {
+            // set visibility of slowdown/speedup text
+            this.slowDown_text.visible = (this.carBody.body.velocity.x >= this.max_speed);
+            this.speedUp_text.visible = (this.carBody.body.velocity.x <= this.min_speed && this.pusherCounter > 50);
 
+            // Check pod's angle, explode if out of bounds
+            if ( this.carBody.body.angle < 50 && this.carBody.body.angle > -50) {
+                this.stabilise_text.visible = false;  
+            } else {
+                this.stabilise_text.visible = true;  
+            }
+
+            if ( this.carBody.body.angle > 135 || this.carBody.body.angle < -135) {
+                console.log('You exploded!');
+                this.loseExplode();
+            } 
+        }
+
+
+        // check if pod reached end
+        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag & !this.isDead) {
+            // this.winflag = true;
+            this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
+            this.winStage();
+        }
+
+        //---------------------
+        // Marker progress
+        //---------------------
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
@@ -359,19 +404,6 @@ BasicGame.Game.prototype = {
             this.Speed_text.setText('Signal Lost!');
         }
 
-        // Check pod's angle, explode if out of bounds
-        if (!this.loseflag && !this.winflag && (this.carBody.body.angle > 135 || this.carBody.body.angle < -135)) {
-            console.log('You exploded!');
-            this.loseflag = true;
-            this.lose();
-        }
-
-        // check if pod reached end
-        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag) {
-            this.winflag = true;
-            this.winStage();
-        }
-
         // Snow
         if (this.is_snowing) {
             this.snow_var++;
@@ -385,7 +417,6 @@ BasicGame.Game.prototype = {
         if (this.pusherCounter++ <= 50) {
             this.pusherBody.body.force.x = 7000;
             this.carGroup.setAll('body.force.x', 4000);
-            //this.carBody.body.force.x = 50000;
         } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
             this.pusherBody.body.force.x = -50000;
         } else {
@@ -640,7 +671,7 @@ BasicGame.Game.prototype = {
         polygonCollisionSprite.name = 'wall_bot';
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
-        polygonCollisionSprite.body.debug = true;
+        polygonCollisionSprite.body.debug = false;
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
         polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
         polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -651,7 +682,7 @@ BasicGame.Game.prototype = {
         top_polygonCollisionSprite.name = 'wall_top';
         top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
         top_polygonCollisionSprite.body.static = true;
-        top_polygonCollisionSprite.body.debug = true;
+        top_polygonCollisionSprite.body.debug = false;
         top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
         top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
         top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -743,30 +774,41 @@ BasicGame.Game.prototype = {
         this.state.start('Game');
     },
 
-    lose: function (pointer) {
+    loseStranded: function (pointer) {
+        this.lose();
+    },
 
-        console.log("You lost!")
+    loseExplode: function (pointer) {
         this.rudEvent_graphic.visible = true;
+        this.explode();
+        this.lose();
+    },
 
-        this.sound_music.stop();
+    lose: function (pointer) {
+        this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
+        this.loseflag = true;
+        this.rudEvent_graphic.visible = false;
+        this.instructions.visible = false;
+        this.stabilise_text.visible = false;  
+        this.speedUp_text.visible = false;
+        this.slowDown_text.visible = false;
+
+
+        var loseTimeout = setTimeout(function (state, music) {
+            music.stop();
+            state.start('Lose');
+        }, 3000, this.state, this.sound_music);
+    },
+
+    explode: function (pointer) {
         this.sound_explosion.play();
-
         this.carBody.body.velocity.x = 0;
         this.carBody.body.velocity.y = 0;
-
         this.carBody.loadTexture('kaboom');
         this.carBody.scale.set(1, 1);
         this.carBody.animations.add('kaboom');
         this.carBody.animations.play('kaboom', 30, false, false); //play(name, frameRate, loop, killOnComplete) 
-
-        this.game['GameData'].currentStageScore = this.carBody.body.x; 
-
-        var loseTimeout = setTimeout(function (state) {
-            this.loseflag = false;
-            this.pusherCounter = 0;
-            state.start('Lose');
-        }, 3000, this.state);
-
+        this.isDead = true;
     },
 
     winStage: function (pointer) {
@@ -785,8 +827,8 @@ BasicGame.Game.prototype = {
         this.game['GameData'].score += stageScore; 
 
         setTimeout(function (state) {
-            this.winflag = false;
-            this.pusherCounter = 0;
+            // this.winflag = false;
+            // this.pusherCounter = 0;
             state.start('Game')
         }, 3000, this.state);
         
@@ -805,18 +847,18 @@ BasicGame.Game.prototype = {
     },
 
     podCollision: function (body, bodyB, shapeA, shapeB, equation) {
-        if (!this.loseflag) {
-            var damage = Math.abs(body.velocity.y) / 5000;
+        if (/*!this.loseflag ||*/ !this.isDead) {
+            var damage = Math.abs(body.velocity.y) / 500;
             if (damage < .01) { damage = .01; }
             this.carBody.health -= damage;
             if (this.carBody.health > 0) {
                 this.sound_hit.play();
                 console.log('Colision! rPod Health is ' + this.carBody.health);
             } else {
-                if (!this.loseflag && !this.winflag) {
+                // if (!this.loseflag && !this.winflag) {
                     console.log('You exploded!');
-                    this.lose();
-                }
+                    this.loseExplode();
+                // }
             }
             var health_percentage = Math.round(this.carBody.health * 100);
             if (health_percentage < 0) { health_percentage = 0; }

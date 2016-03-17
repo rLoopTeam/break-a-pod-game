@@ -123,7 +123,8 @@ BasicGame.Lose.prototype = {
 	},
 
 	startGame: function (pointer) {
-		this.state.start('Game');
+		console.log("restart game")
+		this.game.state.start('Game');
 	},
 	postScore: function() {
 	    // get player name
@@ -134,6 +135,6 @@ BasicGame.Lose.prototype = {
         // ... Post "data" somewhere ...
 
         // go back to main menu
-        this.state.start('MainMenu');
+        this.game.state.start('MainMenu');
 	}
 };
