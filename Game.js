@@ -339,7 +339,7 @@ BasicGame.Game.prototype = {
         // Pod status check
         //---------------------
         // if below death speed, the player is stranded so go to lose state
-        if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50) {
+        if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50 && !this.loseflag) {
             console.log("You're stranded");
             //this.loseflag = true;
             this.speedUp_text.visible = false;
