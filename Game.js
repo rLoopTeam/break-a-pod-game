@@ -215,7 +215,7 @@ BasicGame.Game.prototype = {
         this.muteButton = this.add.button(this.camera.x + 10, this.camera.y + 30, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
         this.muteButton.scale.set(0.4, 0.4);
 
-        this.instructions = this.add.sprite(this.camera.x + this.camera.width/2,this.camera.y + this.camera.height/2, 'instructions');
+        this.instructions = this.add.sprite(this.camera.x + this.camera.width/2,this.camera.y + 430, 'instructions');
         this.instructions.anchor.set(0.5, 0.5);
 
         this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 42, 'health_indicator');

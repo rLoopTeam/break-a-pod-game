@@ -58,24 +58,26 @@ BasicGame.MainMenu.prototype = {
         this.add.tween(title_image).to( { alpha: 1 }, 500, "Linear", true );
 	    //this.title_image.scale.setTo(1, 1);
 
-        var playButton = this.add.button(this.game.width/2, (this.game.height/2) + 200, 'start_button', this.startGame, this, 'over', 'out', 'down');
+        var playButton = this.add.bitmapText(this.game.width/2, (this.game.height/2) + 200, "basic_font_white", "START", 40);
+        playButton.hitArea = new PIXI.Rectangle(-playButton.width/2, -playButton.height/2, playButton.width, playButton.height);
+        playButton.inputEnabled = true;
+        playButton.events.onInputDown.add(this.startGame, this);
+        playButton.events.onInputOver.add(buttonHighlightOn, this);
+        playButton.events.onInputOut.add(buttonHighlightOut, this);
         playButton.anchor.set(0.5, 0.5);
         playButton.alpha = 0.1;
         this.add.tween(playButton).to( { alpha: 1 }, 500, "Linear", true );
 
-
+        function buttonHighlightOn(a) {
+            a.tint = 0x003399;
+        }
+        function buttonHighlightOut(a) {
+            a.tint = 0xFFFFFF;
+        }
 	},
 
 	update: function () {
 
-		// camera follow pod
-        //this.camera.x += this.cameraSpeed;
-
-        // update background
-        //this.background.x = this.camera.x;
-
-        // update midground
-        //var camera = this.camera;
         this.pos += this.cameraSpeed;
        	var pos = this.pos;
         this.midground.forEach(function (item) {
