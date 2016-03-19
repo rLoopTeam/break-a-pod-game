@@ -35,8 +35,9 @@ BasicGame.Preloader.prototype = {
 
         // GUI assets
         this.load.image('instructions', 'assets/GUI/instructions.png');
-        this.load.image('progressorBackground', 'assets/GUI/track-progress.png');
-        this.load.image('progressorMarker', 'assets/GUI/track-progress-marker.png');
+        this.load.image('progressorBackground', 'assets/GUI/UI.png');
+        this.load.image('progressorMarker', 'assets/GUI/distance_marker.png');
+        this.load.image('health_indicator', 'assets/GUI/health_percent.png');
 
 		this.load.atlas('start_button', 'assets/GUI/start_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');

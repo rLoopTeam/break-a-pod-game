@@ -201,9 +201,9 @@ BasicGame.Game.prototype = {
         //window.graphics = graphics;
 
         // GUI - create this last so it overlays on top of everything else
-        this.trackProgressorBackground = this.add.sprite(this.camera.x + ((this.camera.height) / 4), this.camera.y + 560, 'progressorBackground');
-        this.trackProgressorBackground.anchor.setTo(0, 0.5);
-        this.trackProgressorMarker = this.add.sprite(this.trackProgressorBackground.x, this.trackProgressorBackground.y, 'progressorMarker');
+        this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 520, 'progressorBackground');
+        this.trackProgressorBackground.anchor.setTo(0, 0);
+        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 38, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
 
         this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
@@ -218,11 +218,17 @@ BasicGame.Game.prototype = {
         this.instructions = this.add.sprite(this.camera.x + this.camera.width/2,this.camera.y + this.camera.height/2, 'instructions');
         this.instructions.anchor.set(0.5, 0.5);
 
+        this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 42, 'health_indicator');
+        this.Health_indicator.anchor.set(1, 0.5);
+        this.Health_indicator.scale.set(100,1)
+
         // Displays
         this.Level_text = this.add.bitmapText(this.camera.x + this.camera.width - 130, this.camera.y + 10, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 40);
-        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 550, 'basic_font_white', "00:00:00", 30);
-        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 530, 'basic_font_white', "0 m/s", 30);
-        this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
+        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 555, 'basic_font_white', "00:00:00", 30);
+        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 548, 'basic_font_white', "0 m/s", 30);
+        this.Speed_text.anchor.set(0, 0.5);
+
+        //this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
         this.slowDown_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Slow down!", 30);
         this.slowDown_text.anchor.set(0.5, 0.5);
         this.slowDown_text.tint = 0xFF0000;
@@ -236,15 +242,15 @@ BasicGame.Game.prototype = {
         this.pause_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
-        this.trackProgressorBackground.fixedToCamera = false; // Setting this to true made the indicator go backwards/slow when accelerating
-        this.trackProgressorMarker.fixedToCamera = false;
+        this.trackProgressorBackground.fixedToCamera = true; // Setting this to true made the indicator go backwards/slow when accelerating
+        this.trackProgressorMarker.fixedToCamera = true;
         this.menuButton.fixedToCamera = true;
         this.muteButton.fixedToCamera = true;
         this.instructions.fixedToCamera = true;
+        this.Health_indicator.fixedToCamera = true;
         this.Level_text.fixedToCamera = true;
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
-        this.Health_text.fixedToCamera = true;
         this.rudEvent_graphic.fixedToCamera = true;
         this.slowDown_text.fixedToCamera = true;
         this.speedUp_text.fixedToCamera = true;
@@ -381,11 +387,11 @@ BasicGame.Game.prototype = {
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
-        this.trackProgressorBackground.x = this.camera.x + ((this.camera.height) / 4);
-        this.trackProgressorMarker.x = this.trackProgressorBackground.x + (ProgressMultiplier * this.trackProgressorBackground.width);
-        this.trackProgressorMarker.y = this.trackProgressorBackground.y;
+        //this.trackProgressorBackground.x = this.camera.x;
+        this.trackProgressorMarker.cameraOffset.x = 120 + (ProgressMultiplier * 410);
 
         if (ProgressMultiplier != 1 && !this.loseflag) {
+            
             // Timer
             var minutes = Math.floor(this.game.time.totalElapsedSeconds() / 60);
             var seconds = Math.floor(this.game.time.totalElapsedSeconds()) % 60;
@@ -400,8 +406,10 @@ BasicGame.Game.prototype = {
             pod_velcity = pod_velcity / 6; // could set this as a constant somewhere...pixels/meter
             pod_velcity = Math.floor(pod_velcity);
             this.Speed_text.setText(pod_velcity + ' m/s');
+
         } else if (this.loseflag) {
             this.Speed_text.setText('Signal Lost!');
+            this.Speed_text.fontSize = 20;
         }
 
         // Snow
@@ -879,9 +887,10 @@ BasicGame.Game.prototype = {
             }
             var health_percentage = Math.round(this.carBody.health * 100);
             if (health_percentage < 0) { health_percentage = 0; }
-            this.Health_text.setText('Health: ' + health_percentage + '%');
+            //this.Health_text.setText('Health: ' + health_percentage + '%');
+            this.Health_indicator.scale.set(health_percentage,1)
         } else {
-            this.Health_text.setText('Health: 0%');
+            //this.Health_text.setText('Health: 0%');
         }
     },
 
