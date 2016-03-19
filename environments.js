@@ -601,5 +601,367 @@ var environments = [
 	            }
 	        }
 	    }
+	},
+	{ // Mountains
+	    'name': 'Mountains',
+	    'background': {
+	        'skyObj': {
+	            'type': 'unique', // types :- unqique, repeat
+	            'texture': 'mountain_sky',
+	            'parallax': 1,
+	            'fixedToCamera': true,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    },
+	    'midground': {
+	    	'clouds' : {
+				'type': 'repeat',
+				'texture' : 'mountain_clouds',
+				'parallax': 0.01,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':200
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':-0.2,
+					'y':0
+				}
+			},
+			'mountains' : {
+				'type': 'repeat',
+				'texture' : 'mountain_mountains',
+				'parallax': 0.01,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':390
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills_far' : {
+				'type': 'repeat',
+				'texture' : 'mountain_hills2',
+				'parallax': 0.05,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':530
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills' : {
+				'type': 'repeat',
+				'texture' : 'mountain_hills',
+				'parallax': 0.1,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':490
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+	        'dirt': {
+	            'type': 'repeat',
+	            'texture': 'mountain_dirt',
+	            'parallax': 1,
+	            'fixedToCamera': false,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 570
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    }
+	},
+	{ // skyline - night
+	    'name': 'Skyline',
+	    'background': {
+	        'skyObj': {
+	            'type': 'unique_randomized', // types :- unqique, repeat
+	            'textures': ['skyline_dawn', 'skyline_dusk'],
+	            'parallax': 1,
+	            'fixedToCamera': true,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    },
+	    'midground': {
+	    	'skylinefar' : {
+				'type': 'repeat',
+				'texture' : 'skyline_far',
+				'parallax': 0.01,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':380
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'skylinemid' : {
+				'type': 'repeat',
+				'texture' : 'skyline_mid',
+				'parallax': 0.02,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':360
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'skylineclsoe' : {
+				'type': 'repeat',
+				'texture' : 'skyline_close',
+				'parallax': 0.02,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':320
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills_far' : {
+				'type': 'repeat',
+				'texture' : 'skyline_hills_far',
+				'parallax': 0.02,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':390
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills_mid' : {
+				'type': 'repeat',
+				'texture' : 'skyline_hills_mid',
+				'parallax': 0.02,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':450
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills' : {
+				'type': 'repeat',
+				'texture' : 'skyline_hills',
+				'parallax': 0.02,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':510
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+	        'ground': {
+	            'type': 'repeat',
+	            'texture': 'skyline_ground',
+	            'parallax': 1,
+	            'fixedToCamera': false,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 570
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    }
 	}
 ];

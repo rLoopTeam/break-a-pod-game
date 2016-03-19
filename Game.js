@@ -113,7 +113,7 @@ BasicGame.Game.prototype = {
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
         var levelSelect = Math.floor(Math.random() * totalEnvs);
-        // levelSelect = 2
+        levelSelect = totalEnvs - 1
         
         this.environment = envs[levelSelect];
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
@@ -462,9 +462,20 @@ BasicGame.Game.prototype = {
         var backgroundGroup = this.background = this.add.group();
         for (var key in environmentBackground) {
             if (environmentBackground.hasOwnProperty(key)) {
-                //alert(key + " -> " + background[key]);
-                var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, environmentBackground[key].texture);
-                unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+                if (environmentBackground[key].type === "unique") {
+
+                    var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, environmentBackground[key].texture);
+                    unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+
+                } else if (environmentBackground[key].type === "unique_randomized") {
+
+                    var textures = environmentBackground[key].textures;
+                    var texture_index = Math.floor(textures.length*Math.random());
+                    var texture_name = textures[texture_index];
+                    var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, texture_name);
+                    unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+                
+                }
             }
         }
     },
@@ -516,6 +527,12 @@ BasicGame.Game.prototype = {
                     group['velocity'] = environmentMidground[key].velocity;
 
                     midgroundGroup.add(group);
+
+                } else if (environmentMidground[key].type === "unique_randomized") {
+                    var textures = environmentMidground[key].textures;
+                    var texture_index = Math.floor(textures.length*Math.random());
+                    var texture_name = textures[texture_index];
+                    midgroundGroup.create(environmentMidground[key].position.x, environmentMidground[key].position.y, texture_name);
                 }
 
             }

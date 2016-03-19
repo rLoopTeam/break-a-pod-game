@@ -123,6 +123,27 @@ BasicGame.Preloader.prototype = {
         this.load.image('fish_left', 'assets/environment/ocean/fish_left.png'); 
         this.load.image('fish_right', 'assets/environment/ocean/fish_right.png'); 
 
+         //Mountain
+	    this.load.image('mountain_sky', 'assets/environment/mountain/sky.png'); 
+        this.load.image('mountain_clouds', 'assets/environment/mountain/clouds.png');
+        this.load.image('mountain_dirt', 'assets/environment/mountain/dirt.png'); 
+        this.load.image('mountain_hills', 'assets/environment/mountain/hills.png'); 
+        this.load.image('mountain_hills2', 'assets/environment/mountain/hills_far.png'); 
+        this.load.image('mountain_mountains', 'assets/environment/mountain/mountains.png'); 
+
+        //Mountain
+	    this.load.image('skyline_dawn', 'assets/environment/skyline/sky_dawn.png'); 
+	    this.load.image('skyline_dusk', 'assets/environment/skyline/sky_dusk.png'); 
+        this.load.image('skyline_ground', 'assets/environment/skyline/ground.png');
+        this.load.image('skyline_hills', 'assets/environment/skyline/hills.png'); 
+        this.load.image('skyline_hills_mid', 'assets/environment/skyline/hills_mid.png'); 
+        this.load.image('skyline_hills_far', 'assets/environment/skyline/hills_far.png'); 
+        this.load.image('skyline_far', 'assets/environment/skyline/skyline_far.png'); 
+        this.load.image('skyline_mid', 'assets/environment/skyline/skyline_mid.png'); 
+        this.load.image('skyline_close', 'assets/environment/skyline/skyline_close.png'); 
+
+
+
 	},
 
 	create: function () {

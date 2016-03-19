@@ -103,9 +103,20 @@ BasicGame.MainMenu.prototype = {
         var backgroundGroup = this.background = this.add.group();
         for (var key in environmentBackground) {
             if (environmentBackground.hasOwnProperty(key)) {
-                //alert(key + " -> " + background[key]);
-                var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, environmentBackground[key].texture);
-                unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+                if (environmentBackground[key].type === "unique") {
+
+                    var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, environmentBackground[key].texture);
+                    unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+
+                } else if (environmentBackground[key].type === "unique_randomized") {
+
+                    var textures = environmentBackground[key].textures;
+                    var texture_index = Math.floor(textures.length*Math.random());
+                    var texture_name = textures[texture_index];
+                    var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, texture_name);
+                    unique.fixedToCamera = environmentBackground[key].fixedToCamera;
+                
+                }
             }
         }
     },
