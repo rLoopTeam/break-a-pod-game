@@ -22,6 +22,8 @@ BasicGame.Game = function (game) {
     // statuses
     this.isRunning;
     this.isDead;
+    this.loseTimeout;
+    this.winTimeout;
 
     // world settings
     this.levelLength;
@@ -795,6 +797,8 @@ BasicGame.Game.prototype = {
     },
 
     restartGame: function (pointer) {
+        clearTimeout(this.winTimeout);
+        clearTimeout(this.loseTimeout);
         this.sound_music.stop();
         this.state.start('Game');
     },
@@ -819,10 +823,10 @@ BasicGame.Game.prototype = {
         this.slowDown_text.visible = false;
 
 
-        var loseTimeout = setTimeout(function (state, music) {
+        this.loseTimeout = setTimeout(function (state, music) {
             music.stop();
             state.start('Lose');
-        }, 3000, this.state, this.sound_music);
+        }, 2000, this.state, this.sound_music);
     },
 
     explode: function (pointer) {
@@ -851,7 +855,7 @@ BasicGame.Game.prototype = {
         this.game['GameData'].currentStageScore = stageScore;
         this.game['GameData'].score += stageScore; 
 
-        setTimeout(function (state) {
+        this.winTimeout = setTimeout(function (state) {
             // this.winflag = false;
             // this.pusherCounter = 0;
             state.start('Game')
