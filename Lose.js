@@ -120,27 +120,36 @@ BasicGame.Lose.prototype = {
 
 	postScore: function() {
 	    // get player name
-		var url = "http://eu.furcode.co:8080/api/UpsertUserScore"
+		var url = "http://eu.furcode.co:8080/api/UpsertUserScore";
         var playerName = prompt("Please enter your name", "name");
-		
-		var payload = {
-			// "playerName": playerName, 
-			// "score": this.score
+		var score = this.score;
+
+		if ( playerName && isSafeCharacters(playerName) ) {
+			var payload = {
+				"playerName": playerName, 
+				"score": score
+			}
+
+			// call api
+			//this.callAPI(url, payload, success, failure);
+
+			function success(data) {
+				console.log("Successfully submitted score")
+			}
+
+			function failure() {
+				console.log("Something went wrong")
+			}
+
+	        // go back to main menu
+	        this.game.state.start('MainMenu');
+	    } else {
+	    	alert("Only letters, numbers and underscores are allowed")
+	    }
+
+	    function isSafeCharacters(str) {
+			return str.match(/^[a-z0-9_]+$/)
 		}
-
-		// call api
-		this.callAPI(url, payload, success, failure);
-
-		function success(data) {
-			console.log("Successfully submitted score")
-		}
-
-		function failure() {
-			console.log("Something went wrong")
-		}
-
-        // go back to main menu
-        this.game.state.start('MainMenu');
 	},
 
 	callAPI: function (url, payload, callbacksuccess, callbackfailure) {
