@@ -267,7 +267,7 @@ BasicGame.Game.prototype = {
         this.stabilise_text.tint = 0xFF0000;
         this.pause_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Game paused", 30);
         this.pause_text.anchor.set(0.5, 0.5);
-        this.stranded_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'You\'re stranded!', 30);
+        this.stranded_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'You are stranded!', 30);
         this.stranded_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
