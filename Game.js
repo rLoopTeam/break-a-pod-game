@@ -30,6 +30,7 @@ BasicGame.Game = function (game) {
     this.tubeHeight = 200;
     this.flatStartLength = 2500;
     this.flatEndLength = 500;
+    this.pixelStep = 300;
     this.startPos;
 
     this.bottomWall;
@@ -107,6 +108,7 @@ BasicGame.Game = function (game) {
 
 
 BasicGame.Game.prototype = {
+
     init: function () {
         console.log("init")
         // use debug plugin
@@ -140,9 +142,6 @@ BasicGame.Game.prototype = {
         spacekey.onDown.add(this.restartGame , this); 
 
 
-        //
-        //
-        //
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
@@ -168,10 +167,24 @@ BasicGame.Game.prototype = {
         this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 0.1, restitution: 0 });
         this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 0.1, restitution: 0 });
 
+        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, this.pixelStep);
+        console.log(this.tunnelPhysicsData);
+        //this.load.physics('physicsData', "", this.tunnelPhysicsData);
+
+        /*this.tunnelPhysicsData['blocks'] = [];
+        var blocks = this.getBlocks();
+        for (var i = 0; i < blocks; i++) {
+            this.tunnelPhysicsData['blocks']
+        }*/
+
     },
 
     create: function () {
         console.log("create")
+        
+        this.tube_collisionGroup = this.physics.p2.createCollisionGroup();
+
         //Audio
         this.sound_music = this.add.sound('level1Music');
         this.sound_explosion = this.add.sound('explosion');
@@ -184,19 +197,13 @@ BasicGame.Game.prototype = {
         this.sound_muted = false;
         this.sound_music.play();    
 
-
-
-        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
-        this.load.physics('physicsData', "", this.tunnelPhysicsData);
-
         // create background first so that it goes to the back most position
         this.addBackground();
         this.addMidground();
         var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
         this.addCar();
         this.addPusher();
-        this.drawTube(graphics, this.tunnelPhysicsData);
+        //this.drawTube(graphics, this.tunnelPhysicsData);
         this.carBody.body.onBeginContact.add(this.podCollision, this);
         this.addForeground();
 
@@ -225,6 +232,8 @@ BasicGame.Game.prototype = {
         this.Health_indicator.scale.set(100,1)
 
         // Displays
+        this.currentblock = this.add.bitmapText(this.camera.width/2, this.camera.height/2, 'basic_font_white', this.getBlockIndex() + "/" + this.getBlocks(), 30);
+
         this.Level_text = this.add.bitmapText(this.camera.x + this.camera.width - 130, this.camera.y + 10, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 40);
         this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 555, 'basic_font_white', "00:00:00", 30);
         this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 548, 'basic_font_white', "0 m/s", 30);
@@ -244,6 +253,7 @@ BasicGame.Game.prototype = {
         this.pause_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
+        this.currentblock.fixedToCamera = true;
         this.trackProgressorBackground.fixedToCamera = true; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = true;
         this.menuButton.fixedToCamera = true;
@@ -312,6 +322,9 @@ BasicGame.Game.prototype = {
     },
 
     update: function () {
+        this.currentblock.text = this.getBlocks() + "/" + this.getBlocks();
+        this.updateTunnel();
+
         // handle inputs
         if (!this.loseflag ) { this.handleInput(); };
 
@@ -424,14 +437,14 @@ BasicGame.Game.prototype = {
             }
         }
 
-        if (this.pusherCounter++ <= 50) {
+        /*if (this.pusherCounter++ <= 50) {
             this.pusherBody.body.force.x = 7000;
             this.carGroup.setAll('body.force.x', 4000);
         } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
             this.pusherBody.body.force.x = -50000;
         } else {
             this.showInstructions = false;
-        }
+        }*/
 
         if (this.showInstructions) {
             this.instructions.visible = true;
@@ -439,6 +452,119 @@ BasicGame.Game.prototype = {
             this.instructions.visible = false;
         }
     },
+
+    updateTunnel: function () {
+
+        var blockIndex = this.getBlockIndex();
+        var advanceBlocks = 2;
+        for (var i = 0; i <= advanceBlocks; i++) {
+            blockIndex += i;
+            var currentBlock = this.tunnelPhysicsData['bottom'][blockIndex];
+            var currentBlockTop = this.tunnelPhysicsData['top'][blockIndex];
+
+            if (!currentBlock['drawn']) {
+        
+                var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
+                this.physics.p2.enable(polygonCollisionSprite);
+                polygonCollisionSprite.name = 'wall_bot';
+                polygonCollisionSprite.body.addPolygon({}, currentBlock.shape);
+                polygonCollisionSprite.body.static = true;
+                polygonCollisionSprite.body.debug = true;
+                polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+                polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+                polygonCollisionSprite.body.collides(this.car_collisionGroup);
+                
+                var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
+                this.physics.p2.enable(top_polygonCollisionSprite);
+                top_polygonCollisionSprite.name = 'wall_top';
+                top_polygonCollisionSprite.body.addPolygon({}, currentBlockTop.shape);
+                top_polygonCollisionSprite.body.static = true;
+                top_polygonCollisionSprite.body.debug = true;
+                top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+                top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+                top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
+
+
+                //==================//
+                // draw tube
+                //==================//
+                // var totalPoints = points['bottom'].length;
+                // var totalPylons = points['pylons'].length;
+
+                // graphics.beginFill(0xAAAAAA, 0.1);
+                // btm_prevx = points['bottom'][0]['shape'][4];
+                // btm_prevy = points['bottom'][0]['shape'][5];
+                // top_prevx = points['top'][0]['shape'][4];
+                // top_prevy = points['top'][0]['shape'][5];
+                // for (var i = 1; i < totalPoints; i++) {
+                //     var btm_x = points['bottom'][i]['shape'][4],
+                //         btm_y = points['bottom'][i]['shape'][5],
+                //         top_x = points['top'][i]['shape'][4],
+                //         top_y = points['top'][i]['shape'][5];
+
+                //     // Solid gray background
+                //     graphics.lineStyle(6, 0x273b53, 0);
+                //     graphics.drawPolygon([btm_prevx, btm_prevy, top_prevx, top_prevy, top_x, top_y, btm_x, btm_y]);
+
+                //     // Black outline
+                //     graphics.lineStyle(6, 0x273b53, 1);
+                //     graphics.moveTo(btm_prevx, btm_prevy);
+                //     graphics.lineTo(btm_x, btm_y);
+                //     graphics.moveTo(top_prevx, top_prevy);
+                //     graphics.lineTo(top_x, top_y);
+                //     btm_prevx = btm_x;
+                //     btm_prevy = btm_y;
+                //     top_prevx = top_x;
+                //     top_prevy = top_y;
+                // }
+
+                //==================//
+                // add physics
+                //==================//s
+                this.carBody.body.collides(this.tube_collisionGroup);
+                this.wheel_front.body.collides(this.tube_collisionGroup);
+                this.wheel_back.body.collides(this.tube_collisionGroup);
+
+                currentBlock['drawn'] = true;
+
+            }
+        }
+    },
+
+    getBlockIndex: function () {
+        var blocks = this.tunnelPhysicsData['bottom'];
+        var position = this.carBody.x
+        var length = blocks.length;
+        var diffMidIndex;
+
+        function mid(minIndex, maxIndex) { // left/right array index
+            var diffIndex = maxIndex + minIndex
+            diffMidIndex = (diffIndex%2 == 0) ? (diffIndex / 2) : ( ((diffIndex - 1) / 2)); // handle odd/even array length
+            midPosWorld = blocks[diffMidIndex]['shape'][2];
+
+            if (diffIndex == 1 || diffIndex == 2 || position === midPosWorld || minIndex === diffMidIndex) {
+                return diffMidIndex;
+            } else if ( position > midPosWorld ) {
+                return mid( diffMidIndex, maxIndex);
+            } else if ( position < midPosWorld ){
+                return mid( minIndex, diffMidIndex);
+            }
+        }
+        return mid(0, length-1);
+    },
+
+    getBlocks: function () {
+        /*this.tubeHeight = 200;
+        this.flatStartLength = 2500;
+        this.flatEndLength = 500;*/
+
+        return Math.floor( (this.levelLength + this.flatStartLength + this.flatEndLength) / this.pixelStep );
+    },
+
+    generateBlock: function () {
+
+    },
+
     changeWindDirection: function () {
 
         var multi = Math.floor((this.max + 200) / 4),
@@ -698,7 +824,7 @@ BasicGame.Game.prototype = {
         polygonCollisionSprite.name = 'wall_bot';
         polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
         polygonCollisionSprite.body.static = true;
-        polygonCollisionSprite.body.debug = false;
+        polygonCollisionSprite.body.debug = true;
         polygonCollisionSprite.body.setMaterial(this.groundMaterial);
         polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
         polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -709,7 +835,7 @@ BasicGame.Game.prototype = {
         top_polygonCollisionSprite.name = 'wall_top';
         top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
         top_polygonCollisionSprite.body.static = true;
-        top_polygonCollisionSprite.body.debug = false;
+        top_polygonCollisionSprite.body.debug = true;
         top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
         top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
         top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
