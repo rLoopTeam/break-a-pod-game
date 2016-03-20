@@ -15,10 +15,10 @@ BasicGame.Preloader.prototype = {
 
 		//	These are the assets we loaded in Boot.js
 		//	A nice sparkly background and a loading progress bar
-		var graphic = this.loadingGraphic = this.add.sprite(this.camera.width/2, this.camera.height/2, 'loading');
-		graphic.anchor.set(0.5, 0.5);
-		this.background = this.add.sprite(this.camera.width/2 - 70, this.camera.height/2 + 35, 'preloaderBackground');
-		this.preloadBar = this.add.sprite(this.camera.width/2 - 70, this.camera.height/2 + 35, 'preloaderBar');
+		this.background = this.add.sprite(this.camera.width/2, this.camera.height/2 + 35, 'preloaderBackground');
+        this.background.anchor.set(0.5,0.5)
+		this.preloadBar = this.add.sprite(this.camera.width/2 - 107, this.camera.height/2 + 44, 'preloaderBar');
+        this.preloadBar.scale.set(1,1)
 
 		//	This sets the preloadBar sprite as a loader sprite.
 		//	What that does is automatically crop the sprite from 0 to full-width
@@ -38,6 +38,7 @@ BasicGame.Preloader.prototype = {
         this.load.image('progressorBackground', 'assets/GUI/UI.png');
         this.load.image('progressorMarker', 'assets/GUI/distance_marker.png');
         this.load.image('health_indicator', 'assets/GUI/health_percent.png');
+        this.load.image('power_indicator', 'assets/GUI/power_bar.png');
 
 		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('mute_button', 'assets/GUI/mute_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
