@@ -210,6 +210,8 @@ BasicGame.Game.prototype = {
         this.addTunnel(graphics);
         this.addCar();
         this.addPusher();
+        this.addPylons();
+
         //this.drawTube(graphics, this.tunnelPhysicsData);
         this.carBody.body.onBeginContact.add(this.podCollision, this);
         this.addForeground();
@@ -501,7 +503,6 @@ BasicGame.Game.prototype = {
         graphics.beginFill(0xAAAAAA, 0.1);
 
         var totalPoints = points['bottom'].length;
-        var totalPylons = points['pylons'].length;
 
         graphics.beginFill(0xAAAAAA, 0.1);
         btm_prevx = points['bottom'][0]['shape'][4];
@@ -530,17 +531,17 @@ BasicGame.Game.prototype = {
             top_prevx = top_x;
             top_prevy = top_y;
         }
+    },
 
-        //==================//
-        // draw pylons
-        //==================//
+    addPylons: function () {
+        var points = this.tunnelPhysicsData;
+        var totalPylons = points['pylons'].length;
         for (var i = 0; i < totalPylons; i++) {
             var x = points['pylons'][i]['position'].x,
                 y = points['pylons'][i]['position'].y;
             var pylon = this.add.sprite(x, y - this.tubeHeight - 20, 'pylon');
             //pylon.anchor.setTo(0.5, 0.1);
         }
-
     },
 
     updateTunnel: function () {
