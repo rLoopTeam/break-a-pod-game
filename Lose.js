@@ -62,7 +62,7 @@ BasicGame.Lose.prototype = {
 		this.noHighscores.visible = false;
 
         function buttonHighlightOn(a) {
-        	a.tint = 0x003399;
+        	a.tint = 0x015975;
         }
         function buttonHighlightOut(a) {
         	a.tint = 0xFFFFFF;
