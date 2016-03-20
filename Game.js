@@ -71,6 +71,7 @@ BasicGame.Game = function (game) {
     this.wheel_front;
     this.wheel_back;
     this.wheelSpeed = 10;
+    this.totalPower = 68;
 
     // pusher settings
     this.pusherBody;
@@ -208,8 +209,9 @@ BasicGame.Game.prototype = {
         this.addMidground();
         var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
         this.addTunnel(graphics);
+        //this.addPickups();
         this.addCar();
-        this.addPusher();
+        //this.addPusher();
         this.addPylons();
 
         this.carBody.body.onBeginContact.add(this.podCollision, this);
@@ -218,9 +220,10 @@ BasicGame.Game.prototype = {
         //window.graphics = graphics;
 
         // GUI - create this last so it overlays on top of everything else
-        this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 500, 'progressorBackground');
+        this.topUI = this.add.sprite(0, 0, 'topUI');
+        this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 517, 'progressorBackground');
         this.trackProgressorBackground.anchor.setTo(0, 0);
-        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 58, 'progressorMarker');
+        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 64, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
 
         this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
@@ -229,27 +232,28 @@ BasicGame.Game.prototype = {
         this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
         this.menuButton.scale.set(0.5, 0.5);
 
-        this.muteButton = this.add.button(this.camera.x + 10, this.camera.y + 30, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
+        this.muteButton = this.add.button(this.camera.x + 8, this.camera.y + 43, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
         this.muteButton.scale.set(0.4, 0.4);
 
         this.instructions = this.add.sprite(this.camera.x + this.camera.width/2,this.camera.y + 430, 'instructions');
         this.instructions.anchor.set(0.5, 0.5);
 
-        this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 62, 'health_indicator');
+        this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 45, 'health_indicator');
         this.Health_indicator.anchor.set(1, 0.5);
         this.Health_indicator.scale.set(100,1)
 
-        this.power_indicator = this.add.sprite(this.camera.x + this.camera.width - 200, this.camera.height - 54, 'power_indicator');
-        // this.power_indicator.anchor.set(1, 0.5);
-        // this.power_indicator.scale.set(100,1)
+        this.power_indicator = this.add.sprite(this.camera.x + this.camera.width - 143, this.camera.height - 13, 'health_indicator');
+        this.power_indicator.tint = 0x00FF00;
+        this.power_indicator.scale.set(this.totalPower,0.5)
+        this.power_indicator.anchor.set(0, 0.5);
 
         // Displays
-        this.currentblock = this.add.bitmapText(this.camera.width/2, this.camera.height/2, 'basic_font_white', this.getBlockIndex() + "/" + this.getBlocks(), 30);
+        //this.currentblock = this.add.bitmapText(this.camera.width/2, this.camera.height/2, 'basic_font_white', this.getBlockIndex() + "/" + this.getBlocks(), 30);
 
-        this.Level_text = this.add.bitmapText(this.camera.x + this.camera.width - 130, this.camera.y + 10, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 40);
-        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 555, 'basic_font_white', "00:00:00", 30);
-        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 548, 'basic_font_white', "0 m/s", 30);
+        this.Level_text = this.add.bitmapText(this.camera.x + 85, this.camera.y + 9, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 25);
+        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 558, 'basic_font_white', "0 m/s", 30);
         this.Speed_text.anchor.set(0, 0.5);
+        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 565, 'basic_font_white', "00:00:00", 30);
 
         //this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
         this.slowDown_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Slow down!", 30);
@@ -265,7 +269,8 @@ BasicGame.Game.prototype = {
         this.pause_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
-        this.currentblock.fixedToCamera = true;
+        //this.currentblock.fixedToCamera = true;
+        this.topUI.fixedToCamera = true;
         this.trackProgressorBackground.fixedToCamera = true; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = true;
         this.menuButton.fixedToCamera = true;
@@ -335,7 +340,7 @@ BasicGame.Game.prototype = {
     },
 
     update: function () {
-        this.currentblock.text = this.getBlockIndex() + "/" + this.getBlocks();
+        //this.currentblock.text = this.getBlockIndex() + "/" + this.getBlocks();
         this.updateTunnel();
 
         // handle inputs
@@ -372,6 +377,9 @@ BasicGame.Game.prototype = {
         //---------------------
         // Pod status check
         //---------------------
+        this.power_indicator.x = this.camera.x + this.camera.width - 100;
+        this.power_indicator.y = this.camera.height - 48;
+
         // if below death speed, the player is stranded so go to lose state
         if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50 && !this.loseflag) {
             console.log("You're stranded");
@@ -449,14 +457,14 @@ BasicGame.Game.prototype = {
             }
         }
 
-        /*if (this.pusherCounter++ <= 50) {
-            this.pusherBody.body.force.x = 7000;
+        if (this.pusherCounter++ <= 50) {
+            //this.pusherBody.body.force.x = 8000;
             this.carGroup.setAll('body.force.x', 4000);
         } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
-            this.pusherBody.body.force.x = -50000;
+            //this.pusherBody.body.force.x = -50000;
         } else {
             this.showInstructions = false;
-        }*/
+        }
 
         if (this.showInstructions) {
             this.instructions.visible = true;
@@ -531,6 +539,27 @@ BasicGame.Game.prototype = {
         }
     },
 
+    addPickups: function (graphics) {
+        var blockIndex = 0;
+        var points = this.tunnelPhysicsData;
+        var totalPoints = points['bottom'].length;
+
+        btm_prevx = points['bottom'][0]['shape'][4];
+        btm_prevy = points['bottom'][0]['shape'][5];
+        
+        for (var i = 1; i < totalPoints; i++) {
+            var btm_x = points['bottom'][i]['shape'][4],
+                btm_y = points['bottom'][i]['shape'][5];
+
+            var pickup = this.add.sprite(btm_x, btm_y - 70, 'power_pickup');
+            pickup.anchor.set(0.5, 0);
+            pickup.scale.set(0.7, 0.7)
+
+            btm_prevx = btm_x;
+            btm_prevy = btm_y;
+        }
+    },
+
     addPylons: function () {
         var points = this.tunnelPhysicsData;
         var totalPylons = points['pylons'].length;
@@ -552,7 +581,7 @@ BasicGame.Game.prototype = {
             var currentBlock = this.tunnelPhysicsData['bottom'][blockIndex];
             var currentBlockTop = this.tunnelPhysicsData['top'][blockIndex];
 
-            if (!currentBlock['drawn']) {
+            if (currentBlock && !currentBlock['drawn']) {
         
                 //var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
                 var polygonCollisionSprite = this.tunnelGroup.create(0, 0, 'wall');
@@ -854,7 +883,22 @@ BasicGame.Game.prototype = {
     handleInput: function () {
         if (this.cursors.up.isDown) {
             // this.carGroup.body.force.x = 10000;
-            this.carGroup.setAll('body.force.x', 7000);
+            if (this.power_indicator.width > 0) {
+                this.power_indicator.width -= 1;
+                this.carGroup.setAll('body.force.x', 7000);
+
+                if (this.power_indicator.width > 50) {
+                    this.power_indicator.tint = 0x28fe1d;
+                } else if (this.power_indicator.width < 50) {
+                    this.power_indicator.tint = 0xFF9900;    
+                } else if (this.power_indicator.width < 20) {
+                    this.power_indicator.tint = 0xFF0000;    
+                }
+            } else {
+                this.power_indicator.width = 5;
+                this.power_indicator.tint = 0xFF0000;
+            }
+
         }
 
         if (this.cursors.down.isDown) {
@@ -1089,7 +1133,7 @@ BasicGame.Game.prototype = {
         var wheel_front_pos = [50, 10];
         var wheel_back_pos = [-50, 10];
 
-        var pusher_start_x = startPos.x-100;
+        var pusher_start_x = startPos.x-150;
 
         // create pod
         var carBody = this.add.sprite(pusher_start_x, startPos.y, 'pusher'); //CARBODY

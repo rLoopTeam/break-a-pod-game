@@ -35,6 +35,7 @@ BasicGame.Preloader.prototype = {
 
         // GUI assets
         this.load.image('instructions', 'assets/GUI/instructions2.png');
+        this.load.image('topUI', 'assets/GUI/topUI.png');
         this.load.image('progressorBackground', 'assets/GUI/UI.png');
         this.load.image('progressorMarker', 'assets/GUI/distance_marker.png');
         this.load.image('health_indicator', 'assets/GUI/health_percent.png');
@@ -43,6 +44,8 @@ BasicGame.Preloader.prototype = {
 		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('mute_button', 'assets/GUI/mute_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('mute_button_muted', 'assets/GUI/mute_button_muted_atlas.png', 'assets/GUI/button_texture_atlas.json');
+        this.load.atlas('start_button', 'assets/GUI/start_sprite_sheet.png', 'assets/GUI/button_texture_atlas.json');
+        this.load.spritesheet('start_button_spritesheet', 'assets/GUI/start_sprite_sheet.png', 150, 52);
 
 		// Fonts
 		this.load.bitmapFont('basic_font_white', 'assets/fonts/font.png', 'assets/fonts/font.xml');
@@ -60,6 +63,7 @@ BasicGame.Preloader.prototype = {
 	    this.load.image('booster', 'assets/sprites/booster.png');
 	    this.load.image('end_sign', 'assets/sprites/end_sign.png');
 		this.load.image('pylon', 'assets/sprites/pylon.png');
+        this.load.image('power_pickup', 'assets/sprites/power_pickup.png');
 
 		// environment
 		this.load.image('snowy_mountain', 'assets/environment/snowy_mountain.png');

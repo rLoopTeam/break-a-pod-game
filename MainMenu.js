@@ -56,23 +56,26 @@ BasicGame.MainMenu.prototype = {
 	    title_image.anchor.set(0.5, 0.5);
         title_image.alpha = 0.1;
         this.add.tween(title_image).to( { alpha: 1 }, 500, "Linear", true );
-	    //this.title_image.scale.setTo(1, 1);
 
-        var playButton = this.add.bitmapText(this.game.width/2, (this.game.height/2) + 200, "basic_font_white", "START", 40);
-        playButton.hitArea = new PIXI.Rectangle(-playButton.width/2, -playButton.height/2, playButton.width, playButton.height);
-        playButton.inputEnabled = true;
-        playButton.events.onInputDown.add(this.startGame, this);
-        playButton.events.onInputOver.add(buttonHighlightOn, this);
-        playButton.events.onInputOut.add(buttonHighlightOut, this);
-        playButton.anchor.set(0.5, 0.5);
-        playButton.alpha = 0.1;
-        this.add.tween(playButton).to( { alpha: 1 }, 500, "Linear", true );
+        var playerButtonA = this.add.sprite(this.game.width/2 -7, (this.game.height/2) + 200, 'start_button_spritesheet');
+        var playerButtonALoop = playerButtonA.animations.add('start_loop');
+        playerButtonA.animations.play('start_loop', 30, true);
+        playerButtonA.hitArea = new PIXI.Rectangle(-playerButtonA.width/2, -playerButtonA.height/2, playerButtonA.width, playerButtonA.height);
+        playerButtonA.inputEnabled = true;
+        playerButtonA.events.onInputDown.add(this.startGame, this);
+        playerButtonA.events.onInputOver.add(buttonHighlightOn, this);
+        playerButtonA.events.onInputOut.add(buttonHighlightOut, this);
+        playerButtonA.anchor.set(0.5, 0.5);
+        playerButtonA.alpha = 0.1;
+
+        this.add.tween(playerButtonA).to( { alpha: 1 }, 500, "Linear", true );
 
         function buttonHighlightOn(a) {
-            a.tint = 0x003399;
+            a.animations.stop('start_loop', false);
+            a.animations.frame = 7;
         }
         function buttonHighlightOut(a) {
-            a.tint = 0xFFFFFF;
+            a.animations.play('start_loop', 30, true);
         }
 	},
 
