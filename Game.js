@@ -220,7 +220,7 @@ BasicGame.Game.prototype = {
         // GUI - create this last so it overlays on top of everything else
         this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 500, 'progressorBackground');
         this.trackProgressorBackground.anchor.setTo(0, 0);
-        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 38, 'progressorMarker');
+        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 58, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
 
         this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
@@ -415,7 +415,6 @@ BasicGame.Game.prototype = {
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
-        //this.trackProgressorBackground.x = this.camera.x;
         this.trackProgressorMarker.cameraOffset.x = 120 + (ProgressMultiplier * 410);
 
         if (ProgressMultiplier != 1 && !this.loseflag) {
