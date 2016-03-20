@@ -81,6 +81,7 @@ BasicGame.Game = function (game) {
     // GUI
     this.rudEvent_graphic;
     this.winStage_graphic;
+    this.stranded_text;
     this.Level_text;
     this.Timer_text;
     this.Speed_text;
@@ -195,12 +196,16 @@ BasicGame.Game.prototype = {
         //Audio
         this.sound_music = this.add.sound('level1Music');
         this.sound_explosion = this.add.sound('explosion');
-        this.sound_hit = this.add.sound('hit');
+        this.sound_hit1 = this.add.sound('hit1');
+        this.sound_hit2 = this.add.sound('hit1');
+        this.sound_hit3 = this.add.sound('hit1');
         this.music_volume = 1;
         this.sound_volume = 0.15;
         this.sound_music.volume = this.music_volume;
         this.sound_explosion.volume = this.sound_volume;
-        this.sound_hit.volume = this.sound_volume;
+        this.sound_hit1.volume = this.sound_volume;
+        this.sound_hit2.volume = this.sound_volume;
+        this.sound_hit3.volume = this.sound_volume;
         this.sound_muted = false;
         this.sound_music.play();    
 
@@ -213,11 +218,8 @@ BasicGame.Game.prototype = {
         this.addCar();
         //this.addPusher();
         this.addPylons();
-
         this.carBody.body.onBeginContact.add(this.podCollision, this);
         this.addForeground();
-
-        //window.graphics = graphics;
 
         // GUI - create this last so it overlays on top of everything else
         this.topUI = this.add.sprite(0, 0, 'topUI');
@@ -229,8 +231,8 @@ BasicGame.Game.prototype = {
         this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
         this.rudEvent_graphic.anchor.set(0.5, 0.5);
 
-        this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
-        this.menuButton.scale.set(0.5, 0.5);
+        this.menuButton = this.add.button(this.camera.x + 2, this.camera.y + 5, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
+        //this.menuButton.scale.set(1, 1);
 
         this.muteButton = this.add.button(this.camera.x + 8, this.camera.y + 43, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
         this.muteButton.scale.set(0.4, 0.4);
@@ -239,23 +241,21 @@ BasicGame.Game.prototype = {
         this.instructions.anchor.set(0.5, 0.5);
 
         this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 45, 'health_indicator');
+        this.Health_indicator.tint = 0x970000;
         this.Health_indicator.anchor.set(1, 0.5);
         this.Health_indicator.scale.set(100,1)
 
         this.power_indicator = this.add.sprite(this.camera.x + this.camera.width - 143, this.camera.height - 13, 'health_indicator');
-        this.power_indicator.tint = 0x00FF00;
+        this.power_indicator.tint = 0x008a00;
         this.power_indicator.scale.set(this.totalPower,0.5)
         this.power_indicator.anchor.set(0, 0.5);
 
         // Displays
-        //this.currentblock = this.add.bitmapText(this.camera.width/2, this.camera.height/2, 'basic_font_white', this.getBlockIndex() + "/" + this.getBlocks(), 30);
-
         this.Level_text = this.add.bitmapText(this.camera.x + 85, this.camera.y + 9, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 25);
         this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 558, 'basic_font_white', "0 m/s", 30);
         this.Speed_text.anchor.set(0, 0.5);
         this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 565, 'basic_font_white', "00:00:00", 30);
 
-        //this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
         this.slowDown_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Slow down!", 30);
         this.slowDown_text.anchor.set(0.5, 0.5);
         this.slowDown_text.tint = 0xFF0000;
@@ -267,9 +267,10 @@ BasicGame.Game.prototype = {
         this.stabilise_text.tint = 0xFF0000;
         this.pause_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Game paused", 30);
         this.pause_text.anchor.set(0.5, 0.5);
+        this.stranded_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'You\'re stranded!', 30);
+        this.stranded_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
-        //this.currentblock.fixedToCamera = true;
         this.topUI.fixedToCamera = true;
         this.trackProgressorBackground.fixedToCamera = true; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = true;
@@ -286,6 +287,7 @@ BasicGame.Game.prototype = {
         this.speedUp_text.fixedToCamera = true;
         this.stabilise_text.fixedToCamera = true;
         this.pause_text.fixedToCamera = true;
+        this.stranded_text.fixedToCamera = true;
 
         // GUI Initial visibility
         this.rudEvent_graphic.visible = false;
@@ -294,6 +296,7 @@ BasicGame.Game.prototype = {
         this.pause_text.visible = false;
         this.stabilise_text.visible = false;
         this.showInstructions = (this.playedBefore)?false:true;
+        this.stranded_text.visible = false;
 
         // Snow 
         if (this.is_snowing) {
@@ -372,8 +375,6 @@ BasicGame.Game.prototype = {
             }
         })
 
-        // update GUI
-
         //---------------------
         // Pod status check
         //---------------------
@@ -381,17 +382,18 @@ BasicGame.Game.prototype = {
         this.power_indicator.y = this.camera.height - 48;
 
         // if below death speed, the player is stranded so go to lose state
-        if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50 && !this.loseflag) {
+        if ( (this.carBody.body.velocity.x <= this.death_speed || this.power_indicator.width <= 10) && this.pusherCounter > 50 && !this.loseflag) {
             console.log("You're stranded");
-            //this.loseflag = true;
+            this.loseflag = true;
             this.speedUp_text.visible = false;
             this.slowDown_text.visible = false;
             this.stabilise_text.visible = false; 
+            this.stranded_text.visible = true;
             this.loseStranded();
         }
         
         
-        if (!this.isDead) {
+        if (!this.isDead && !this.loseflag) {
             // set visibility of slowdown/speedup text
             this.slowDown_text.visible = (this.carBody.body.velocity.x >= this.max_speed);
             this.speedUp_text.visible = (this.carBody.body.velocity.x <= this.min_speed && this.pusherCounter > 50);
@@ -659,10 +661,6 @@ BasicGame.Game.prototype = {
     },
 
     getBlocks: function () {
-        /*this.tubeHeight = 200;
-        this.flatStartLength = 2500;
-        this.flatEndLength = 500;*/
-
         return Math.floor( (this.levelLength + this.flatStartLength + this.flatEndLength) / this.pixelStep );
     },
 
@@ -882,33 +880,28 @@ BasicGame.Game.prototype = {
 
     handleInput: function () {
         if (this.cursors.up.isDown) {
-            // this.carGroup.body.force.x = 10000;
-            if (this.power_indicator.width > 0) {
+            if (this.power_indicator.width > 10) {
                 this.power_indicator.width -= 1;
                 this.carGroup.setAll('body.force.x', 7000);
-
-                if (this.power_indicator.width > 50) {
-                    this.power_indicator.tint = 0x28fe1d;
-                } else if (this.power_indicator.width < 50) {
+                if (this.power_indicator.width > 80) {
+                    this.power_indicator.tint = 0x008a00;
+                } else if (this.power_indicator.width > 50) {
                     this.power_indicator.tint = 0xFF9900;    
-                } else if (this.power_indicator.width < 20) {
+                } else if (this.power_indicator.width > 20) {
                     this.power_indicator.tint = 0xFF0000;    
                 }
             } else {
                 this.power_indicator.width = 5;
                 this.power_indicator.tint = 0xFF0000;
             }
-
         }
 
         if (this.cursors.down.isDown) {
-            //this.carBody.body.force.x = -25000;
-            this.carGroup.setAll('body.velocity.x', this.carBody.body.velocity.x*0.95);
+            this.carGroup.setAll('body.velocity.x', this.carBody.body.velocity.x*0.98);
         }
         if (this.carBody.body.velocity.x < 0) {
             this.carBody.body.velocity.x = 0;
         }
-
 
         if (this.cursors.right.isDown) {
             this.carBody.body.angularVelocity = 2;
@@ -935,12 +928,16 @@ BasicGame.Game.prototype = {
             this.sound_muted = false;
             this.sound_music.volume = this.music_volume;
             this.sound_explosion.volume = this.sound_volume;
-            this.sound_hit.volume = this.sound_volume;
+            this.sound_hit1.volume = this.sound_volume;
+            this.sound_hit2.volume = this.sound_volume;
+            this.sound_hit3.volume = this.sound_volume;
             this.muteButton.loadTexture('mute_button');
         } else {
             this.sound_music.volume = 0;
             this.sound_explosion.volume = 0;
-            this.sound_hit.volume = 0;
+            this.sound_hit1.volume = 0;
+            this.sound_hit2.volume = 0;
+            this.sound_hit3.volume = 0;
             this.sound_muted = true;
             this.muteButton.loadTexture('mute_button_muted');
         }
@@ -1039,7 +1036,13 @@ BasicGame.Game.prototype = {
             if (damage < .01) { damage = .01; }
             this.carBody.health -= damage;
             if (this.carBody.health > 0) {
-                this.sound_hit.play();
+                if (this.carBody.health < 20) {
+                    this.sound_hit1.play();
+                } else if (this.carBody.health < 50) {
+                    this.sound_hit2.play();
+                } else if (this.carBody.health <= 100) {
+                    this.sound_hit3.play();
+                }
                 console.log('Colision! rPod Health is ' + this.carBody.health);
             } else {
                 // if (!this.loseflag && !this.winflag) {

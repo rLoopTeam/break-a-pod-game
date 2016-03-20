@@ -39,9 +39,9 @@ BasicGame.Preloader.prototype = {
         this.load.image('progressorBackground', 'assets/GUI/UI.png');
         this.load.image('progressorMarker', 'assets/GUI/distance_marker.png');
         this.load.image('health_indicator', 'assets/GUI/health_percent.png');
-        this.load.image('power_indicator', 'assets/GUI/power_bar.png');
 
-		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
+		//this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
+        this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas2.png', 'assets/GUI/button_texture_atlas2.json');
 		this.load.atlas('mute_button', 'assets/GUI/mute_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('mute_button_muted', 'assets/GUI/mute_button_muted_atlas.png', 'assets/GUI/button_texture_atlas.json');
         this.load.atlas('start_button', 'assets/GUI/start_sprite_sheet.png', 'assets/GUI/button_texture_atlas.json');
@@ -87,8 +87,12 @@ BasicGame.Preloader.prototype = {
         // Sound
         this.load.audio('titleMusic', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
         this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
-        this.load.audio('explosion', 'assets/sound/player_death.wav');
-        this.load.audio('hit', 'assets/sound/squit.wav');
+        //this.load.audio('explosion', 'assets/sound/player_death.wav');
+        this.load.audio('explosion', 'assets/sound/explosion.wav');
+        //this.load.audio('hit', 'assets/sound/squit.wav');
+        this.load.audio('hit1', 'assets/sound/hit1.wav');
+        this.load.audio('hit2', 'assets/sound/hit2.wav');
+        this.load.audio('hit3', 'assets/sound/hit3.wav');
 
         /////// environment set /////
         //night grass
