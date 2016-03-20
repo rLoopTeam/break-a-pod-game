@@ -212,7 +212,6 @@ BasicGame.Game.prototype = {
         this.addPusher();
         this.addPylons();
 
-        //this.drawTube(graphics, this.tunnelPhysicsData);
         this.carBody.body.onBeginContact.add(this.podCollision, this);
         this.addForeground();
 
@@ -842,94 +841,6 @@ BasicGame.Game.prototype = {
         tunnelPhysicsData['top'].push(topRect);
 
         return tunnelPhysicsData;
-    },
-    drawTube: function (graphics, points) {
-
-        var totalPoints = points['bottom'].length;
-        var prevx = points['bottom'][0]['shape'][2];
-        var prevy = points['bottom'][0]['shape'][3];
-
-        var totalPylons = points['pylons'].length;
-
-        //==================//
-        // draw tube
-        //==================//
-        graphics.beginFill(0xAAAAAA, 0.1);
-        btm_prevx = points['bottom'][0]['shape'][4];
-        btm_prevy = points['bottom'][0]['shape'][5];
-        top_prevx = points['top'][0]['shape'][4];
-        top_prevy = points['top'][0]['shape'][5];
-        for (var i = 1; i < totalPoints; i++) {
-            var btm_x = points['bottom'][i]['shape'][4],
-                btm_y = points['bottom'][i]['shape'][5],
-                top_x = points['top'][i]['shape'][4],
-                top_y = points['top'][i]['shape'][5];
-
-            // Solid gray background
-            graphics.lineStyle(6, 0x273b53, 0);
-            graphics.drawPolygon([btm_prevx, btm_prevy, top_prevx, top_prevy, top_x, top_y, btm_x, btm_y]);
-
-            // Black outline
-            graphics.lineStyle(6, 0x273b53, 1);
-            graphics.moveTo(btm_prevx, btm_prevy);
-            graphics.lineTo(btm_x, btm_y);
-            graphics.moveTo(top_prevx, top_prevy);
-            graphics.lineTo(top_x, top_y);
-            btm_prevx = btm_x;
-            btm_prevy = btm_y;
-            top_prevx = top_x;
-            top_prevy = top_y;
-        }
-
-
-        //==================//
-        // draw pylons
-        //==================//
-        for (var i = 0; i < totalPylons; i++) {
-            var x = points['pylons'][i]['position'].x,
-                y = points['pylons'][i]['position'].y;
-            var pylon = this.add.sprite(x, y - this.tubeHeight - 20, 'pylon');
-            //pylon.anchor.setTo(0.5, 0.1);
-        }
-
-        this.tube_collisionGroup = this.physics.p2.createCollisionGroup();
-
-        //==================//
-        // load physics data
-        //==================//
-        var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
-        this.physics.p2.enable(polygonCollisionSprite);
-        polygonCollisionSprite.name = 'wall_bot';
-        polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
-        polygonCollisionSprite.body.static = true;
-        polygonCollisionSprite.body.debug = true;
-        polygonCollisionSprite.body.setMaterial(this.groundMaterial);
-        polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
-        polygonCollisionSprite.body.collides(this.car_collisionGroup);
-        polygonCollisionSprite.body.collides(this.pusher_collisionGroup);
-
-        var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
-        this.physics.p2.enable(top_polygonCollisionSprite);
-        top_polygonCollisionSprite.name = 'wall_top';
-        top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
-        top_polygonCollisionSprite.body.static = true;
-        top_polygonCollisionSprite.body.debug = true;
-        top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
-        top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
-        top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
-        top_polygonCollisionSprite.body.collides(this.pusher_collisionGroup);
-
-        this.carBody.body.collides(this.tube_collisionGroup);
-        this.wheel_front.body.collides(this.tube_collisionGroup);
-        this.wheel_back.body.collides(this.tube_collisionGroup);
-
-        this.pusherBody.body.collides(this.tube_collisionGroup);
-        this.pusher_wheel_front.body.collides(this.tube_collisionGroup);
-        this.pusher_wheel_back.body.collides(this.tube_collisionGroup);
-
-        
-
-        this.bottomWall = polygonCollisionSprite;
     },
 
     render: function () {
