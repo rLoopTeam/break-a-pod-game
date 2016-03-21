@@ -25,6 +25,8 @@ BasicGame.Lose.prototype = {
 		//this.music = this.add.audio('titleMusic');
 		//this.music.play();
 
+		this.add.sprite(0, 0, 'highscore_screen');
+
 	    this.rudEvent_button = this.add.bitmapText(this.camera.width / 2, 100, 'basic_font_white', 'You should leave the Hyperloop to us, click here to support!', 30)
 	    this.rudEvent_button.hitArea = new PIXI.Rectangle(-this.rudEvent_button.width/2, -this.rudEvent_button.height/2, this.rudEvent_button.width, this.rudEvent_button.height);
 	    this.rudEvent_button.anchor.set(0.5, 0.5);
@@ -34,7 +36,7 @@ BasicGame.Lose.prototype = {
 	    this.rudEvent_button.events.onInputOut.add(buttonHighlightOut, this);
 
 	    // score  
-	    this.score = this.add.bitmapText(this.camera.width / 2, 150, 'basic_font_white', 'You scored ' + this.score.substring(0, 13) + ((this.score.length > 13)?"...":""), 60)
+	    this.score = this.add.bitmapText(this.camera.width / 2, 140, 'basic_font_white', 'You scored ' + this.score.substring(0, 13) + ((this.score.length > 13)?"...":""), 60)
 	    this.score.anchor.set(0.5,0.5)
 	    
 	    // create score board table from external data
@@ -78,15 +80,15 @@ BasicGame.Lose.prototype = {
 		// this should be replaced by a call to a web service
 	    var scores = [
 			{
-				"name":"Paul",
+				"playerName":"Paul",
 				"score":50050
 			}, 
 			{
-				"name":"Hello world!",
+				"playerName":"Hello world!",
 				"score":45007
 			},
 			{
-				"name":"Blah",
+				"playerName":"Blah",
 				"score":35350
 			}
 		]
@@ -108,11 +110,11 @@ BasicGame.Lose.prototype = {
 			console.log(scores)
 			for (var c = 0; c < scores.length && c < 13; c++)
 			{
-				self.add.bitmapText(camera.width / 2 - 180, 200 + (c*20), 'basic_font_white', scores[c].playerName.substring(0, 13) + ((scores[c].playerName.length > 13)?"...":""), 30);
+				self.add.bitmapText(camera.width / 2 - 160, 200 + (c*20), 'basic_font_white', scores[c].playerName.substring(0, 13) + ((scores[c].playerName.length > 13)?"...":""), 30);
 		        self.add.bitmapText(camera.width / 2 + 100 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
 		    }
 		}
-
+		success();
 		function failure() {
 			self.noHighscores.visible = true;
 		}

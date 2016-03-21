@@ -36,6 +36,7 @@ BasicGame.Preloader.prototype = {
         // GUI assets
         this.load.image('instructions', 'assets/GUI/instructions2.png');
         this.load.image('topUI', 'assets/GUI/topUI.png');
+        this.load.image('highscore_screen', 'assets/GUI/highscore_screen.png');
         this.load.image('progressorBackground', 'assets/GUI/UI.png');
         this.load.image('progressorMarker', 'assets/GUI/distance_marker.png');
         this.load.image('health_indicator', 'assets/GUI/health_percent.png');
@@ -93,6 +94,7 @@ BasicGame.Preloader.prototype = {
         this.load.audio('hit1', 'assets/sound/hit1.wav');
         this.load.audio('hit2', 'assets/sound/hit2.wav');
         this.load.audio('hit3', 'assets/sound/hit3.wav');
+        this.load.audio('click', 'assets/sound/click.wav');
 
         /////// environment set /////
         //night grass
@@ -151,7 +153,7 @@ BasicGame.Preloader.prototype = {
         this.load.image('skyline_mid', 'assets/environment/skyline/skyline_mid.png'); 
         this.load.image('skyline_close', 'assets/environment/skyline/skyline_close.png'); 
 
-
+        //Snow 
 
 	},
 

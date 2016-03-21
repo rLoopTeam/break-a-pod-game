@@ -93,6 +93,7 @@ BasicGame.Game = function (game) {
 
 
     //Audio
+    this.sound_click;
     this.sound_music;
     this.sound_explosion;
     this.sound_hit;
@@ -194,6 +195,7 @@ BasicGame.Game.prototype = {
         this.sound_hit1 = this.add.sound('hit1');
         this.sound_hit2 = this.add.sound('hit1');
         this.sound_hit3 = this.add.sound('hit1');
+        this.sound_click = this.add.sound('click');
         this.music_volume = 1;
         this.sound_volume = 0.15;
         this.sound_music.volume = this.music_volume;
@@ -586,7 +588,7 @@ BasicGame.Game.prototype = {
                 polygonCollisionSprite.name = 'wall_bot';
                 polygonCollisionSprite.body.addPolygon({}, currentBlock.shape);
                 polygonCollisionSprite.body.static = true;
-                polygonCollisionSprite.body.debug = true;
+                polygonCollisionSprite.body.debug = false;
                 polygonCollisionSprite.body.setMaterial(this.groundMaterial);
                 polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
                 polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -597,7 +599,7 @@ BasicGame.Game.prototype = {
                 top_polygonCollisionSprite.name = 'wall_top';
                 top_polygonCollisionSprite.body.addPolygon({}, currentBlockTop.shape);
                 top_polygonCollisionSprite.body.static = true;
-                top_polygonCollisionSprite.body.debug = true;
+                top_polygonCollisionSprite.body.debug = false;
                 top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
                 top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
                 top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -908,6 +910,7 @@ BasicGame.Game.prototype = {
     },
     
     togglePauseGame: function (pointer) {
+        this.sound_click.play();
         var res = true;
         this.sound_music.pause();
         if (this.game.paused) {
@@ -920,6 +923,7 @@ BasicGame.Game.prototype = {
 
     toggleMuteAudio: function(pointer) {
         if (this.sound_muted) {
+            this.sound_click.play();
             this.sound_muted = false;
             this.sound_music.volume = this.music_volume;
             this.sound_explosion.volume = this.sound_volume;
@@ -928,6 +932,7 @@ BasicGame.Game.prototype = {
             this.sound_hit3.volume = this.sound_volume;
             this.muteButton.loadTexture('mute_button');
         } else {
+            this.sound_click.play();
             this.sound_music.volume = 0;
             this.sound_explosion.volume = 0;
             this.sound_hit1.volume = 0;
@@ -942,6 +947,7 @@ BasicGame.Game.prototype = {
 
         //	Here you should destroy anything you no longer need.
         //	Stop music, delete sprites, purge caches, free resources, all that good stuff.
+        this.sound_click.play();
         this.sound_music.stop();
         this.state.start('MainMenu');
     },
@@ -1081,21 +1087,21 @@ BasicGame.Game.prototype = {
 
         //carBody.body.addRectangle(50, 20) // use simple rectangle for performance reasons
         carBody.body.addPolygon({}, [1, 20, 1, 11, 16, 1, 94, 1, 113, 11, 125, 20, 128, 26, 116, 31, 106, 32, 94, 40, 20, 42, 13, 40, 10, 31]);
-        carBody.body.debug = true; //this adds the pink box
+        carBody.body.debug = false; //this adds the pink box
         carBody.body.mass = 1;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
         carBody.body.setCollisionGroup(this.car_collisionGroup);
 
         wheel_front.body.setCircle(10);
-        wheel_front.body.debug = true;
+        wheel_front.body.debug = false;
         wheel_front.body.mass = 1;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
         wheel_front.body.setCollisionGroup(this.car_collisionGroup);
 
         wheel_back.body.setCircle(10);
-        wheel_back.body.debug = true;
+        wheel_back.body.debug = false;
         wheel_back.body.mass = 1;
         wheel_back.body.setMaterial(this.wheelMaterial);
         wheel_back.renderable = false;
