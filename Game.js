@@ -409,7 +409,7 @@ BasicGame.Game.prototype = {
 
         // check if pod reached end
         if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag & !this.isDead) {
-            // this.winflag = true;
+            this.winflag = true;
             this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
             this.winStage();
         }
@@ -1055,6 +1055,7 @@ BasicGame.Game.prototype = {
     },
 
     addCar: function () {
+                console.log("add car")
         // basic settings
         var startPos = this.startPos;
         startPos.y += -20;
@@ -1063,19 +1064,23 @@ BasicGame.Game.prototype = {
 
         // create pod
         var carBody = this.add.sprite(startPos.x, startPos.y, 'pod'); //CARBODY
+        carBody.anchor.set(0.5, 0.5);
         carBody.name = 'carBody';
         carBody.scale.set(0.5, 0.5);
 
-        var wheel_front = this.add.sprite(startPos.x + carBody.width / 2 + wheel_front_pos[0], startPos.y + carBody.height / 2 + wheel_front_pos[1]); //FRONT WHEEL
+        var wheel_front = this.add.sprite(startPos.x + wheel_front_pos[0], startPos.y + wheel_front_pos[1]); //FRONT WHEEL
+        wheel_front.anchor.set(0.5, 0.5);
         wheel_front.name = 'wheel_front';
-        var wheel_back = this.add.sprite(startPos.x + carBody.width / 2 + wheel_back_pos[0], startPos.y + carBody.height / 2 + wheel_back_pos[1]); //BACK WHEEL 
-        wheel_front.name = 'wheel_back';
+        var wheel_back = this.add.sprite(startPos.x + wheel_back_pos[0], startPos.y + wheel_back_pos[1]); //BACK WHEEL 
+        wheel_back.anchor.set(0.5, 0.5);
+        wheel_back.name = 'wheel_back';
 
         
 
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
-        carBody.body.addRectangle(50, 20) // use simple rectangle for performance reasons
+        //carBody.body.addRectangle(50, 20) // use simple rectangle for performance reasons
+        carBody.body.addPolygon({}, [1, 20, 1, 11, 16, 1, 94, 1, 113, 11, 125, 20, 128, 26, 116, 31, 106, 32, 94, 40, 20, 42, 13, 40, 10, 31]);
         carBody.body.debug = true; //this adds the pink box
         carBody.body.mass = 1;
         carBody.body.angle = 0;
@@ -1112,12 +1117,12 @@ BasicGame.Game.prototype = {
 
         var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0, 0], [0, 1]);
         constraint.lowerLimitEnabled = constraint.upperLimitEnabled = true;
-        //constraint.upperLimit = -1;
+        constraint.upperLimit = -1;
         constraint.lowerLimit = -30;
 
         var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0, 0], [0, 1]);
         constraint_1.lowerLimitEnabled = constraint_1.upperLimitEnabled = true;
-        //constraint_1.upperLimit = -1;
+        constraint_1.upperLimit = -1;
         constraint_1.lowerLimit = -30;
 
         this.carBody = carBody;
@@ -1126,6 +1131,7 @@ BasicGame.Game.prototype = {
     },
 
     addPusher: function () {
+
         // basic settings
         var startPos = this.startPos;
         var wheel_front_pos = [50, 10];
