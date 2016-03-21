@@ -32,6 +32,7 @@ BasicGame.Game = function (game) {
     this.flatEndLength = 500;
     this.pixelStep = 300;
     this.startPos;
+    this.distanceFromEnd;
 
     this.bottomWall;
 
@@ -133,7 +134,7 @@ BasicGame.Game.prototype = {
         this.min_speed = this.game['GameData'].min_speed;
         this.max_speed = this.game['GameData'].max_speed;
         this.playedBefore = this.game['GameData'].playedBefore;
-
+        this.distanceFromEnd = this.game['GameData'].distanceFromEnd;
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -410,7 +411,7 @@ BasicGame.Game.prototype = {
 
 
         // check if pod reached end
-        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag & !this.isDead) {
+        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength - this.distanceFromEnd) & !this.winflag & !this.isDead) {
             this.winflag = true;
             this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
             this.winStage();

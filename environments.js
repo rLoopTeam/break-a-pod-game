@@ -1,8 +1,10 @@
 var environments = [
 	{ // savannah
 		'name' : 'Savannah',
-		'tunnel_background_colour': 0x273b53,
-		'tunnel_colour': 0x273b53,
+		//'tunnel_background_colour': 0x273b53,
+		//'tunnel_colour': 0x273b53,
+		'tunnel_background_colour': 0xffda72,
+		'tunnel_colour': 0x7b5d15,
 		'background': {
 			'skyObj' : {
 				'type': 'unique', // types :- unqique, repeat
@@ -201,8 +203,8 @@ var environments = [
 	},
 	{ // Forest Night
 	    'name': 'Forest Night',
-	    'tunnel_background_colour': 0x273b53,
-	    'tunnel_colour': 0x273b53,
+	    'tunnel_background_colour': 0x6291a5,
+	    'tunnel_colour': 0x19495e,
 	    'background': {
 	        'skyObj': {
 	            'type': 'unique', // types :- unqique, repeat
@@ -381,8 +383,8 @@ var environments = [
 	},
 	{ // Ocean
 	    'name': 'Ocean',
-	    'tunnel_background_colour': 0x273b53,
-	    'tunnel_colour': 0x273b53,
+	    'tunnel_background_colour': 0x96dbff,
+	    'tunnel_colour': 0x3786b0,
 	    'background': {
 	        'skyObj': {
 	            'type': 'unique', // types :- unqique, repeat
@@ -612,8 +614,8 @@ var environments = [
 	},
 	{ // Mountains
 	    'name': 'Mountains',
-	    'tunnel_background_colour': 0x273b53,
-	    'tunnel_colour': 0x273b53,
+	    'tunnel_background_colour': 0x5bb3d5,
+	    'tunnel_colour': 0x487c8c,
 	    'background': {
 	        'skyObj': {
 	            'type': 'unique', // types :- unqique, repeat
@@ -769,8 +771,8 @@ var environments = [
 	},
 	{ // skyline - night
 	    'name': 'Skyline',
-	    'tunnel_background_colour': 0x273b53,
-	    'tunnel_colour': 0x273b53,
+	    'tunnel_background_colour': 0x346bca,
+	    'tunnel_colour': 0x597ec0 ,
 	    'background': {
 	        'skyObj': {
 	            'type': 'unique_randomized', // types :- unqique, repeat
@@ -976,8 +978,8 @@ var environments = [
 	        }
 	    }
 	},
-		{ // skyline - night
-	    'name': 'Skyline',
+	{ // Snow 
+	    'name': 'Snow',
 	    'tunnel_background_colour': 0x273b53,
 	    'tunnel_colour': 0x273b53,
 	    'background': {
