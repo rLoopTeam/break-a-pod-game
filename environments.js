@@ -975,5 +975,136 @@ var environments = [
 	            }
 	        }
 	    }
+	},
+		{ // skyline - night
+	    'name': 'Skyline',
+	    'tunnel_background_colour': 0x273b53,
+	    'tunnel_colour': 0x273b53,
+	    'background': {
+	        'skyObj': {
+	            'type': 'unique', // types :- unqique, repeat
+	            'texture': 'snow_background',
+	            'parallax': 1,
+	            'fixedToCamera': true,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    },
+	    'midground': {
+			'hills_far' : {
+				'type': 'repeat',
+				'texture' : 'snow_hills_far',
+				'parallax': 0.02,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':450
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills_mid' : {
+				'type': 'repeat',
+				'texture' : 'snow_hills_middle',
+				'parallax': 0.08,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':478
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+			'hills' : {
+				'type': 'repeat',
+				'texture' : 'snow_hills_close',
+				'parallax': 0.2,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':510
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0,
+					'y':0
+				}
+			},
+	        'ground': {
+	            'type': 'repeat',
+	            'texture': 'snow_ground',
+	            'parallax': 1,
+	            'fixedToCamera': false,
+	            'scale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+	            'position': {
+	                'x': 0,
+	                'y': 570
+	            },
+	            'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+	            'velocity': {
+	                'x': 0,
+	                'y': 0
+	            }
+	        }
+	    }
 	}
 ];

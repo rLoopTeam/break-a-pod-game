@@ -154,6 +154,14 @@ BasicGame.Preloader.prototype = {
         this.load.image('skyline_close', 'assets/environment/skyline/skyline_close.png'); 
 
         //Snow 
+        this.load.image('snow_ground', 'assets/environment/snow/snow_ground.png'); 
+        this.load.image('snow_hills_close', 'assets/environment/snow/hills_close.png'); 
+        this.load.image('snow_hills_middle', 'assets/environment/snow/hills_middle.png'); 
+        this.load.image('snow_hills_far', 'assets/environment/snow/hills_far.png'); 
+        this.load.image('snow_light', 'assets/environment/snow/snow_light.png'); 
+        this.load.image('snow_dark', 'assets/environment/snow/snow_dark.png'); 
+        this.load.image('snow_background', 'assets/environment/snow/snow_background.png'); 
+        this.load.image('snow_clouds', 'assets/environment/snow/clouds.png'); 
 
 	},
 
