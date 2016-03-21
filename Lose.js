@@ -17,6 +17,9 @@ BasicGame.Lose.prototype = {
 	init: function () {
 		this.stage.backgroundColor = "#000000";
 		this.score = String( Math.floor(this.game['GameData'].score + this.game['GameData'].currentStageScore) );
+		
+		var enterKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+        enterKey.onDown.add(this.startGame, this);
 	},
 
 	create: function () {
