@@ -173,14 +173,6 @@ BasicGame.Game.prototype = {
 
         // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
         this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, this.pixelStep);
-        console.log(this.tunnelPhysicsData);
-        //this.load.physics('physicsData', "", this.tunnelPhysicsData);
-
-        /*this.tunnelPhysicsData['blocks'] = [];
-        var blocks = this.getBlocks();
-        for (var i = 0; i < blocks; i++) {
-            this.tunnelPhysicsData['blocks']
-        }*/
 
     },
 
@@ -194,7 +186,10 @@ BasicGame.Game.prototype = {
         this.tunnelGroup = this.add.group();
 
         //Audio
-        this.sound_music = this.add.sound('level1Music');
+        //this.sound_music = this.add.sound('level1Music');
+        if (!this.sound_music || !this.sound_music.isPlaying) {  
+            this.sound_music = this.game.add.sound('level1Music', 1, true);
+        }
         this.sound_explosion = this.add.sound('explosion');
         this.sound_hit1 = this.add.sound('hit1');
         this.sound_hit2 = this.add.sound('hit1');
@@ -591,7 +586,7 @@ BasicGame.Game.prototype = {
                 polygonCollisionSprite.name = 'wall_bot';
                 polygonCollisionSprite.body.addPolygon({}, currentBlock.shape);
                 polygonCollisionSprite.body.static = true;
-                polygonCollisionSprite.body.debug = false;
+                polygonCollisionSprite.body.debug = true;
                 polygonCollisionSprite.body.setMaterial(this.groundMaterial);
                 polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
                 polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -602,7 +597,7 @@ BasicGame.Game.prototype = {
                 top_polygonCollisionSprite.name = 'wall_top';
                 top_polygonCollisionSprite.body.addPolygon({}, currentBlockTop.shape);
                 top_polygonCollisionSprite.body.static = true;
-                top_polygonCollisionSprite.body.debug = false;
+                top_polygonCollisionSprite.body.debug = true;
                 top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
                 top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
                 top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
@@ -849,7 +844,7 @@ BasicGame.Game.prototype = {
             hillStartY = hillStartY + randomHeight;
         }
 
-        prevx += pixelStep;
+        //prevx += pixelStep;
 
         // Generate flat at end
         var rect = {
@@ -1081,21 +1076,21 @@ BasicGame.Game.prototype = {
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
         carBody.body.addRectangle(50, 20) // use simple rectangle for performance reasons
-        carBody.body.debug = false; //this adds the pink box
+        carBody.body.debug = true; //this adds the pink box
         carBody.body.mass = 1;
         carBody.body.angle = 0;
         carBody.body.setMaterial(this.playerMaterial);
         carBody.body.setCollisionGroup(this.car_collisionGroup);
 
         wheel_front.body.setCircle(10);
-        wheel_front.body.debug = false;
+        wheel_front.body.debug = true;
         wheel_front.body.mass = 1;
         wheel_front.body.setMaterial(this.wheelMaterial);
         wheel_front.renderable = false;
         wheel_front.body.setCollisionGroup(this.car_collisionGroup);
 
         wheel_back.body.setCircle(10);
-        wheel_back.body.debug = false;
+        wheel_back.body.debug = true;
         wheel_back.body.mass = 1;
         wheel_back.body.setMaterial(this.wheelMaterial);
         wheel_back.renderable = false;
