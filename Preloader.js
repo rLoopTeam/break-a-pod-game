@@ -66,13 +66,6 @@ BasicGame.Preloader.prototype = {
 		this.load.image('pylon', 'assets/sprites/pylon.png');
         this.load.image('power_pickup', 'assets/sprites/power_pickup.png');
 
-		// environment
-		this.load.image('snowy_mountain', 'assets/environment/snowy_mountain.png');
-		this.load.image('mountain', 'assets/environment/mountain.png');
-		this.load.image('grassy_hill', 'assets/environment/grassy_hill.png');
-		this.load.image('grassy_hill_night', 'assets/environment/grassy_hill_night.png');
-		this.load.image('snowy_hill', 'assets/environment/snowy_hill.png');
-
 		// skies
         this.load.image('sunny_sky', 'assets/skies/sunny_sky.png'); 
         this.load.image('sun', 'assets/skies/sun.png'); 
