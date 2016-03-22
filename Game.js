@@ -26,6 +26,7 @@ BasicGame.Game = function (game) {
     this.winTimeout;
 
     // world settings
+    this.endingEnvironment;
     this.levelLength;
     this.tubeHeight = 200;
     this.flatStartLength = 2500;
@@ -122,10 +123,20 @@ BasicGame.Game.prototype = {
 
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
-        var levelSelect = Math.floor(Math.random() * totalEnvs);
+        //var levelSelect = Math.floor(Math.random() * totalEnvs);
+        var levelSelect = 0;
+        if (this.game['GameData'].cLevel == 1) {
+            console.log("First level!")
+            levelSelect = this.game['GameData'].startingEnvironment;
+        } else {
+            levelSelect = Math.floor(Math.random() * totalEnvs);
+        }
         //levelSelect = totalEnvs - 1
-        
+        this.game['GameData'].endingEnvironment = levelSelect;
         this.environment = envs[levelSelect];
+
+        console.log("Level: "+levelSelect)
+
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
 
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
@@ -146,7 +157,6 @@ BasicGame.Game.prototype = {
         // ESC pause game
         var spacekey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spacekey.onDown.add(this.restartGame , this); 
-
 
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
@@ -562,7 +572,7 @@ BasicGame.Game.prototype = {
         for (var i = 0; i < totalPylons; i++) {
             var x = points['pylons'][i]['position'].x,
                 y = points['pylons'][i]['position'].y;
-            var pylon = this.add.sprite(x, y - this.tubeHeight - 20, 'pylon');
+            var pylon = this.add.sprite(x, y - this.tubeHeight - 6, 'pylon');
             //pylon.anchor.setTo(0.5, 0.1);
         }
     },

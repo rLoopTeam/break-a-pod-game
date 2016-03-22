@@ -26,7 +26,10 @@ BasicGame.MainMenu.prototype = {
         var levelSelect = Math.floor(Math.random() * totalEnvs);
         //levelSelect=1
         this.environment = envs[levelSelect];
+        this.game['GameData'].startingEnvironment = levelSelect;
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+        
+        console.log("Level: "+levelSelect)
 
         // Non real time controls
         // ESC pause game
