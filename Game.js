@@ -205,6 +205,7 @@ BasicGame.Game.prototype = {
         this.sound_hit2.volume = this.sound_volume;
         this.sound_hit3.volume = this.sound_volume;
         this.sound_muted = false;
+        this.sound_music.loop = true;
         this.sound_music.play();    
 
         // create background first so that it goes to the back most position

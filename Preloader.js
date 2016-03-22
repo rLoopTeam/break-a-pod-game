@@ -79,6 +79,7 @@ BasicGame.Preloader.prototype = {
         // tracks
         //this.load.audio('titleMusic', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg'); // title song
         this.load.audio('titleMusic', 'assets/sound/music/07_Home_at_Last.ogg'); // title song
+        this.load.audio('endMusic', 'assets/sound/music/we_are_resistors.ogg');
         this.load.audio('track1', 'assets/sound/music/01_Super_Secret_Tune.ogg');
         this.load.audio('track2', 'assets/sound/music/01_The_Misadventure_Begins.ogg');
         this.load.audio('track3', 'assets/sound/music/02_Dont_be_a_Bitch_Remix.ogg');
@@ -89,8 +90,7 @@ BasicGame.Preloader.prototype = {
         this.load.audio('track8', 'assets/sound/music/chibi_ninja_EDIT.ogg');
         this.load.audio('track9', 'assets/sound/music/HHavok-main.ogg');
         this.load.audio('track10', 'assets/sound/music/Jumpshot.ogg');
-        this.load.audio('track11', 'assets/sound/music/we_are_resistors.ogg');
-        this.load.audio('track12', 'assets/sound/music/Weareallunderstars_EDIT.ogg');
+        this.load.audio('track11', 'assets/sound/music/Weareallunderstars_EDIT.ogg');
 
 
         //this.load.audio('explosion', 'assets/sound/player_death.wav');

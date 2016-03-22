@@ -25,8 +25,13 @@ BasicGame.Lose.prototype = {
 	create: function () {
 
 		// add music
-		//this.music = this.add.audio('titleMusic');
-		//this.music.play();
+		//this.music = this.add.audio('endMusic');
+		var trackIndex = Math.floor(12*Math.random() + 1); // select random index for track
+        if (!this.sound_music || !this.sound_music.isPlaying) {  
+            this.sound_music = this.game.add.sound('endMusic', 0.5, true);
+        }
+        this.sound_music.loop = true;
+        this.sound_music.play();  
 
 		this.add.sprite(0, 0, 'highscore_screen');
 
@@ -181,11 +186,13 @@ BasicGame.Lose.prototype = {
 	},
 
 	supportUs: function (pointer) {
+	    this.sound_music.stop(); 
 	    window.open("https://www.indiegogo.com/projects/help-build-rloop-s-pod-for-spacex-hyperloop-comp#/", "_blank");
 	},
 
 	startGame: function (pointer) {
 		console.log("restart game")
+		this.sound_music.stop(); 
 		this.game.state.start('Game');
 	}
 };
