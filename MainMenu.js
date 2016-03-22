@@ -73,7 +73,7 @@ BasicGame.MainMenu.prototype = {
 
         function buttonHighlightOn(a) {
             a.animations.stop('start_loop', false);
-            a.animations.frame = 7;
+            a.animations.frame = 14;
         }
         function buttonHighlightOut(a) {
             a.animations.play('start_loop', 30, true);

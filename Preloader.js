@@ -29,7 +29,6 @@ BasicGame.Preloader.prototype = {
 		//	Here we load the rest of the assets our game needs.
 		//	You can find all of these assets in the Phaser Examples repository
 		this.load.image('title_image', 'assets/sprites/title_image.png');
-		this.load.image('rud_event', 'assets/sprites/rud_event.png');
 		this.load.image('win_stage', 'assets/sprites/win_stage.png');
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
@@ -61,8 +60,6 @@ BasicGame.Preloader.prototype = {
 	    // props
         this.load.image('pusher', 'assets/sprites/pusher.png');
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
-	    this.load.image('booster', 'assets/sprites/booster.png');
-	    this.load.image('end_sign', 'assets/sprites/end_sign.png');
 		this.load.image('pylon', 'assets/sprites/pylon.png');
         this.load.image('power_pickup', 'assets/sprites/power_pickup.png');
 
@@ -79,8 +76,23 @@ BasicGame.Preloader.prototype = {
 
 
         // Sound
-        this.load.audio('titleMusic', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
-        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
+        // tracks
+        //this.load.audio('titleMusic', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg'); // title song
+        this.load.audio('titleMusic', 'assets/sound/music/07_Home_at_Last.ogg'); // title song
+        this.load.audio('track1', 'assets/sound/music/01_Super_Secret_Tune.ogg');
+        this.load.audio('track2', 'assets/sound/music/01_The_Misadventure_Begins.ogg');
+        this.load.audio('track3', 'assets/sound/music/02_Dont_be_a_Bitch_Remix.ogg');
+        this.load.audio('track4', 'assets/sound/music/04_Delicious_Keys.ogg');
+        this.load.audio('track5', 'assets/sound/music/05_No_Fight_but_Cool.ogg');
+        this.load.audio('track6', 'assets/sound/music/07_Waterski_Me.ogg');
+        this.load.audio('track7', 'assets/sound/music/08_Chip_Woke_up_This_Morning.ogg');
+        this.load.audio('track8', 'assets/sound/music/chibi_ninja_EDIT.ogg');
+        this.load.audio('track9', 'assets/sound/music/HHavok-main.ogg');
+        this.load.audio('track10', 'assets/sound/music/Jumpshot.ogg');
+        this.load.audio('track11', 'assets/sound/music/we_are_resistors.ogg');
+        this.load.audio('track12', 'assets/sound/music/Weareallunderstars_EDIT.ogg');
+
+
         //this.load.audio('explosion', 'assets/sound/player_death.wav');
         this.load.audio('explosion', 'assets/sound/explosion.wav');
         //this.load.audio('hit', 'assets/sound/squit.wav');

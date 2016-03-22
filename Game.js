@@ -80,7 +80,6 @@ BasicGame.Game = function (game) {
     this.pusher_wheel_back;
 
     // GUI
-    this.rudEvent_graphic;
     this.winStage_graphic;
     this.stranded_text;
     this.Level_text;
@@ -189,16 +188,17 @@ BasicGame.Game.prototype = {
 
         //Audio
         //this.sound_music = this.add.sound('level1Music');
+        var trackIndex = Math.floor(12*Math.random() + 1); // select random index for track
         if (!this.sound_music || !this.sound_music.isPlaying) {  
-            this.sound_music = this.game.add.sound('level1Music', 1, true);
+            this.sound_music = this.game.add.sound('track'+trackIndex, 1, true);
         }
         this.sound_explosion = this.add.sound('explosion');
         this.sound_hit1 = this.add.sound('hit1');
         this.sound_hit2 = this.add.sound('hit1');
         this.sound_hit3 = this.add.sound('hit1');
         this.sound_click = this.add.sound('click');
-        this.music_volume = 1;
-        this.sound_volume = 0.15;
+        this.music_volume = 0.5;
+        this.sound_volume = 0.3;
         this.sound_music.volume = this.music_volume;
         this.sound_explosion.volume = this.sound_volume;
         this.sound_hit1.volume = this.sound_volume;
@@ -225,9 +225,6 @@ BasicGame.Game.prototype = {
         this.trackProgressorBackground.anchor.setTo(0, 0);
         this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 64, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
-
-        this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
-        this.rudEvent_graphic.anchor.set(0.5, 0.5);
 
         this.menuButton = this.add.button(this.camera.x + 2, this.camera.y + 5, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
         //this.menuButton.scale.set(1, 1);
@@ -280,7 +277,6 @@ BasicGame.Game.prototype = {
         this.Level_text.fixedToCamera = true;
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
-        this.rudEvent_graphic.fixedToCamera = true;
         this.slowDown_text.fixedToCamera = true;
         this.speedUp_text.fixedToCamera = true;
         this.stabilise_text.fixedToCamera = true;
@@ -288,7 +284,6 @@ BasicGame.Game.prototype = {
         this.stranded_text.fixedToCamera = true;
 
         // GUI Initial visibility
-        this.rudEvent_graphic.visible = false;
         this.slowDown_text.visible = false;
         this.speedUp_text.visible = false;
         this.pause_text.visible = false;
@@ -348,7 +343,7 @@ BasicGame.Game.prototype = {
         if (!this.loseflag ) { this.handleInput(); };
 
         // camera follow pod
-        this.camera.x = this.carBody.body.x - 200;
+        if (!this.loseflag ) { this.camera.x = this.carBody.body.x - 200; };
 
         // update background
         //this.background.x = this.camera.x;
@@ -380,7 +375,7 @@ BasicGame.Game.prototype = {
         this.power_indicator.y = this.camera.height - 48;
 
         // if below death speed, the player is stranded so go to lose state
-        if ( (this.carBody.body.velocity.x <= this.death_speed || this.power_indicator.width <= 10) && this.pusherCounter > 50 && !this.loseflag) {
+        if ( (this.carBody.body.velocity.x <= this.death_speed && this.power_indicator.width <= 10) && this.pusherCounter > 50 && !this.loseflag) {
             console.log("You're stranded");
             this.loseflag = true;
             this.speedUp_text.visible = false;
@@ -965,7 +960,6 @@ BasicGame.Game.prototype = {
     },
 
     loseExplode: function (pointer) {
-        this.rudEvent_graphic.visible = true;
         this.explode();
         this.lose();
     },
@@ -973,7 +967,6 @@ BasicGame.Game.prototype = {
     lose: function (pointer) {
         this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
         this.loseflag = true;
-        this.rudEvent_graphic.visible = false;
         this.instructions.visible = false;
         this.stabilise_text.visible = false;  
         this.speedUp_text.visible = false;
