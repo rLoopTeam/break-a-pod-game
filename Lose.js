@@ -63,7 +63,7 @@ BasicGame.Lose.prototype = {
 
 		this.add.sprite(0, 0, 'highscore_screen');
 
-	    this.rudEvent_button = this.add.bitmapText(this.camera.width / 2, 100, 'basic_font_white', 'You should leave the Hyperloop to us, click here to support!', 30)
+	    this.rudEvent_button = this.add.bitmapText(this.camera.width / 2, 100, 'basic_font_white', 'The Hyperloop is tough. Join us to help make it a reality.', 30)
 	    this.rudEvent_button.hitArea = new PIXI.Rectangle(-this.rudEvent_button.width/2, -this.rudEvent_button.height/2, this.rudEvent_button.width, this.rudEvent_button.height);
 	    this.rudEvent_button.anchor.set(0.5, 0.5);
 	    this.rudEvent_button.inputEnabled = true;
@@ -94,7 +94,7 @@ BasicGame.Lose.prototype = {
         this.postScore_button.events.onInputOver.add(buttonHighlightOn, this);
         this.postScore_button.events.onInputOut.add(buttonHighlightOut, this);
 
-        this.noHighscores = this.add.bitmapText(this.camera.width / 2, 220, "basic_font_white", "No highscores yet. Be the first!", 30);
+        this.noHighscores = this.add.bitmapText(this.camera.width / 2, 220, "basic_font_white", "No highscores yet. Be the first!", 20);
 		this.noHighscores.anchor.set(0.5, 0.5);
 		this.noHighscores.tint = 0x00AA00;
 		this.noHighscores.visible = false;
@@ -193,16 +193,16 @@ BasicGame.Lose.prototype = {
 		]
 
 		console.log("create score board")
-		var url = "https://soemthing", // change this to list of scores url
+		var url = "https://eu.furcode.co:8080/api/GetNearUsers", // change this to list of scores url
 			self = this,
 			camera = this.camera;
 
 		var payload = {
-			"playerName": "foxlet"
+			//"playerName": "foxlet"
 		}
 
 		// call api
-		//this.callAPI(url, payload, success, failure);
+		this.callAPI(url, payload, success, failure);
 
 		function success(scores_new) {
 			console.log("api results")
@@ -213,7 +213,7 @@ BasicGame.Lose.prototype = {
 		        self.add.bitmapText(camera.width / 2 + 100 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
 		    }
 		}
-		success();
+
 		function failure() {
 			self.noHighscores.visible = true;
 		}
