@@ -104,7 +104,7 @@ BasicGame.MainMenu.prototype = {
 		this.sound_music.stop();
 
 		//	And start the actual game
-		this.game.state.start('Game');
+		this.game.state.start('Instructions');
 
 	},
 
