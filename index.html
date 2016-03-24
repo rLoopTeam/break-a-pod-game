@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
-	<title>Break-a-Pod</title>
+	<title>Break a Pod</title>
 	<script src="phaser.min.js"></script>
 	<script src="phaser-debug.js"></script>
 	<script src="Boot.js"></script>
@@ -32,13 +32,15 @@ window.onload = function() {
 	game['GameData'] = {
 		'playedBefore':false,
 		'cLevel': 1,
+		'startingEnvironment': 1,
 		'baseLevelLength': '60000',
 		'death_speed': 50,
 		'min_speed': 200,
 		'max_speed': 5000,
 		'environments': environments,
 		'currentStageScore':0,
-		'score':0
+		'score':0,
+		'distanceFromEnd': 1000
 	};
 
 	//	Add the States your game has.

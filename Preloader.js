@@ -15,10 +15,10 @@ BasicGame.Preloader.prototype = {
 
 		//	These are the assets we loaded in Boot.js
 		//	A nice sparkly background and a loading progress bar
-		var graphic = this.loadingGraphic = this.add.sprite(this.camera.width/2, this.camera.height/2, 'loading');
-		graphic.anchor.set(0.5, 0.5);
-		this.background = this.add.sprite(this.camera.width/2 - 70, this.camera.height/2 + 35, 'preloaderBackground');
-		this.preloadBar = this.add.sprite(this.camera.width/2 - 70, this.camera.height/2 + 35, 'preloaderBar');
+		this.background = this.add.sprite(this.camera.width/2, this.camera.height/2 + 35, 'preloaderBackground');
+        this.background.anchor.set(0.5,0.5)
+		this.preloadBar = this.add.sprite(this.camera.width/2 - 107, this.camera.height/2 + 44, 'preloaderBar');
+        this.preloadBar.scale.set(1,1)
 
 		//	This sets the preloadBar sprite as a loader sprite.
 		//	What that does is automatically crop the sprite from 0 to full-width
@@ -29,19 +29,23 @@ BasicGame.Preloader.prototype = {
 		//	Here we load the rest of the assets our game needs.
 		//	You can find all of these assets in the Phaser Examples repository
 		this.load.image('title_image', 'assets/sprites/title_image.png');
-		this.load.image('rud_event', 'assets/sprites/rud_event.png');
 		this.load.image('win_stage', 'assets/sprites/win_stage.png');
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
         // GUI assets
         this.load.image('instructions', 'assets/GUI/instructions2.png');
+        this.load.image('topUI', 'assets/GUI/topUI.png');
+        this.load.image('highscore_screen', 'assets/GUI/highscore_screen.png');
         this.load.image('progressorBackground', 'assets/GUI/UI.png');
         this.load.image('progressorMarker', 'assets/GUI/distance_marker.png');
         this.load.image('health_indicator', 'assets/GUI/health_percent.png');
 
-		this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
+		//this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
+        this.load.atlas('menu_button', 'assets/GUI/menu_button_atlas2.png', 'assets/GUI/button_texture_atlas2.json');
 		this.load.atlas('mute_button', 'assets/GUI/mute_button_atlas.png', 'assets/GUI/button_texture_atlas.json');
 		this.load.atlas('mute_button_muted', 'assets/GUI/mute_button_muted_atlas.png', 'assets/GUI/button_texture_atlas.json');
+        this.load.atlas('start_button', 'assets/GUI/start_sprite_sheet.png', 'assets/GUI/button_texture_atlas.json');
+        this.load.spritesheet('start_button_spritesheet', 'assets/GUI/start_sprite_sheet.png', 150, 52);
 
 		// Fonts
 		this.load.bitmapFont('basic_font_white', 'assets/fonts/font.png', 'assets/fonts/font.xml');
@@ -56,16 +60,8 @@ BasicGame.Preloader.prototype = {
 	    // props
         this.load.image('pusher', 'assets/sprites/pusher.png');
 	    this.load.image('wall', 'assets/sprites/wall.jpg');
-	    this.load.image('booster', 'assets/sprites/booster.png');
-	    this.load.image('end_sign', 'assets/sprites/end_sign.png');
 		this.load.image('pylon', 'assets/sprites/pylon.png');
-
-		// environment
-		this.load.image('snowy_mountain', 'assets/environment/snowy_mountain.png');
-		this.load.image('mountain', 'assets/environment/mountain.png');
-		this.load.image('grassy_hill', 'assets/environment/grassy_hill.png');
-		this.load.image('grassy_hill_night', 'assets/environment/grassy_hill_night.png');
-		this.load.image('snowy_hill', 'assets/environment/snowy_hill.png');
+        this.load.image('power_pickup', 'assets/sprites/power_pickup.png');
 
 		// skies
         this.load.image('sunny_sky', 'assets/skies/sunny_sky.png'); 
@@ -80,10 +76,30 @@ BasicGame.Preloader.prototype = {
 
 
         // Sound
-        this.load.audio('titleMusic', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
-        this.load.audio('level1Music', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg');
-        this.load.audio('explosion', 'assets/sound/player_death.wav');
-        this.load.audio('hit', 'assets/sound/squit.wav');
+        // tracks
+        //this.load.audio('titleMusic', 'assets/sound/Totta-HeroQuest-Pophousedub-remix.ogg'); // title song
+        this.load.audio('titleMusic', 'assets/sound/music/07_Home_at_Last.ogg'); // title song
+        this.load.audio('endMusic', 'assets/sound/music/we_are_resistors.ogg');
+        this.load.audio('track1', 'assets/sound/music/01_Super_Secret_Tune.ogg');
+        this.load.audio('track2', 'assets/sound/music/01_The_Misadventure_Begins.ogg');
+        this.load.audio('track3', 'assets/sound/music/02_Dont_be_a_Bitch_Remix.ogg');
+        this.load.audio('track4', 'assets/sound/music/04_Delicious_Keys.ogg');
+        this.load.audio('track5', 'assets/sound/music/05_No_Fight_but_Cool.ogg');
+        this.load.audio('track6', 'assets/sound/music/07_Waterski_Me.ogg');
+        this.load.audio('track7', 'assets/sound/music/08_Chip_Woke_up_This_Morning.ogg');
+        this.load.audio('track8', 'assets/sound/music/chibi_ninja_EDIT.ogg');
+        this.load.audio('track9', 'assets/sound/music/HHavok-main.ogg');
+        this.load.audio('track10', 'assets/sound/music/Jumpshot.ogg');
+        this.load.audio('track11', 'assets/sound/music/Weareallunderstars_EDIT.ogg');
+
+
+        //this.load.audio('explosion', 'assets/sound/player_death.wav');
+        this.load.audio('explosion', 'assets/sound/explosion.wav');
+        //this.load.audio('hit', 'assets/sound/squit.wav');
+        this.load.audio('hit1', 'assets/sound/hit1.wav');
+        this.load.audio('hit2', 'assets/sound/hit2.wav');
+        this.load.audio('hit3', 'assets/sound/hit3.wav');
+        this.load.audio('click', 'assets/sound/click.wav');
 
         /////// environment set /////
         //night grass
@@ -142,7 +158,15 @@ BasicGame.Preloader.prototype = {
         this.load.image('skyline_mid', 'assets/environment/skyline/skyline_mid.png'); 
         this.load.image('skyline_close', 'assets/environment/skyline/skyline_close.png'); 
 
-
+        //Snow 
+        this.load.image('snow_ground', 'assets/environment/snow/snow_ground.png'); 
+        this.load.image('snow_hills_close', 'assets/environment/snow/hills_close.png'); 
+        this.load.image('snow_hills_middle', 'assets/environment/snow/hills_middle.png'); 
+        this.load.image('snow_hills_far', 'assets/environment/snow/hills_far.png'); 
+        this.load.image('snow_light', 'assets/environment/snow/snow_light.png'); 
+        this.load.image('snow_dark', 'assets/environment/snow/snow_dark.png'); 
+        this.load.image('snow_background', 'assets/environment/snow/snow_background.png'); 
+        this.load.image('snow_clouds', 'assets/environment/snow/clouds.png'); 
 
 	},
 

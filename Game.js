@@ -26,11 +26,14 @@ BasicGame.Game = function (game) {
     this.winTimeout;
 
     // world settings
+    this.endingEnvironment;
     this.levelLength;
     this.tubeHeight = 200;
     this.flatStartLength = 2500;
     this.flatEndLength = 500;
+    this.pixelStep = 300;
     this.startPos;
+    this.distanceFromEnd;
 
     this.bottomWall;
 
@@ -61,12 +64,16 @@ BasicGame.Game = function (game) {
     this.winflag;
     this.pusherCounter;
 
+    // tunnel
+    this.tunnelGroup;
+
     // pod settings
     this.carGroup;
     this.carBody;
     this.wheel_front;
     this.wheel_back;
     this.wheelSpeed = 10;
+    this.totalPower = 68;
 
     // pusher settings
     this.pusherBody;
@@ -74,8 +81,8 @@ BasicGame.Game = function (game) {
     this.pusher_wheel_back;
 
     // GUI
-    this.rudEvent_graphic;
     this.winStage_graphic;
+    this.stranded_text;
     this.Level_text;
     this.Timer_text;
     this.Speed_text;
@@ -87,6 +94,7 @@ BasicGame.Game = function (game) {
 
 
     //Audio
+    this.sound_click;
     this.sound_music;
     this.sound_explosion;
     this.sound_hit;
@@ -107,6 +115,7 @@ BasicGame.Game = function (game) {
 
 
 BasicGame.Game.prototype = {
+
     init: function () {
         console.log("init")
         // use debug plugin
@@ -114,10 +123,20 @@ BasicGame.Game.prototype = {
 
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
-        var levelSelect = Math.floor(Math.random() * totalEnvs);
-        levelSelect = totalEnvs - 1
-        
+        //var levelSelect = Math.floor(Math.random() * totalEnvs);
+        var levelSelect = 0;
+        if (this.game['GameData'].cLevel == 1) {
+            console.log("First level!")
+            levelSelect = this.game['GameData'].startingEnvironment;
+        } else {
+            levelSelect = Math.floor(Math.random() * totalEnvs);
+        }
+        //levelSelect = totalEnvs - 1
+        this.game['GameData'].endingEnvironment = levelSelect;
         this.environment = envs[levelSelect];
+
+        console.log("Level: "+levelSelect)
+
         this.is_snowing = this.environment.isSnowing || false; // set the snowing flag
 
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
@@ -125,7 +144,7 @@ BasicGame.Game.prototype = {
         this.min_speed = this.game['GameData'].min_speed;
         this.max_speed = this.game['GameData'].max_speed;
         this.playedBefore = this.game['GameData'].playedBefore;
-
+        this.distanceFromEnd = this.game['GameData'].distanceFromEnd;
         //control
         this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -139,14 +158,13 @@ BasicGame.Game.prototype = {
         var spacekey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         spacekey.onDown.add(this.restartGame , this); 
 
-
-        //
-        //
-        //
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
-        this.world.setBounds(0, 0, this.levelLength + this.flatStartLength + this.flatEndLength, 500);
+        this.world.setBounds(0, 0, this.levelLength + this.flatStartLength + this.flatEndLength, 600);
+        this.physics.startSystem(Phaser.Physics.P2JS);
+        this.physics.p2.gravity.y = 800;
+        this.physics.p2.restitution = 0.2;
 
         // Variable setup
         this.time.reset();
@@ -157,10 +175,6 @@ BasicGame.Game.prototype = {
 
         //gametime
         this.time.advancedTiming = true;
-        this.physics.startSystem(Phaser.Physics.P2JS);
-        this.physics.p2.gravity.y = 800;
-        this.physics.p2.restitution = 0.2;
-        //this.physics.p2.setImpactEvents(true);
 
         this.groundMaterial = this.physics.p2.createMaterial('ground');
         this.playerMaterial = this.physics.p2.createMaterial('player');
@@ -168,69 +182,86 @@ BasicGame.Game.prototype = {
         this.physics.p2.createContactMaterial(this.playerMaterial, this.groundMaterial, { friction: 0.1, restitution: 0 });
         this.physics.p2.createContactMaterial(this.wheelMaterial, this.groundMaterial, { friction: 0.1, restitution: 0 });
 
+        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
+        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, this.pixelStep);
+
     },
 
     create: function () {
+
         console.log("create")
+        this.tube_collisionGroup = this.physics.p2.createCollisionGroup();
+        this.car_collisionGroup = this.physics.p2.createCollisionGroup();
+
+        // create normal group
+        this.tunnelGroup = this.add.group();
+
         //Audio
-        this.sound_music = this.add.sound('level1Music');
+        //this.sound_music = this.add.sound('level1Music');
+        var trackIndex = Math.floor(12*Math.random() + 1); // select random index for track
+        if (!this.sound_music || !this.sound_music.isPlaying) {  
+            this.sound_music = this.game.add.sound('track'+trackIndex, 1, true);
+        }
         this.sound_explosion = this.add.sound('explosion');
-        this.sound_hit = this.add.sound('hit');
-        this.music_volume = 1;
-        this.sound_volume = 0.15;
+        this.sound_hit1 = this.add.sound('hit1');
+        this.sound_hit2 = this.add.sound('hit1');
+        this.sound_hit3 = this.add.sound('hit1');
+        this.sound_click = this.add.sound('click');
+        this.music_volume = 0.5;
+        this.sound_volume = 0.3;
         this.sound_music.volume = this.music_volume;
         this.sound_explosion.volume = this.sound_volume;
-        this.sound_hit.volume = this.sound_volume;
+        this.sound_hit1.volume = this.sound_volume;
+        this.sound_hit2.volume = this.sound_volume;
+        this.sound_hit3.volume = this.sound_volume;
         this.sound_muted = false;
+        this.sound_music.loop = true;
         this.sound_music.play();    
-
-
-
-        // numberOfHills, start_y, hill_max_height, tube_length, tube_height, pixelStep
-        this.tunnelPhysicsData = this.generateTubePoints(15, (this.world.height / 2) + 100, 580, this.levelLength, this.tubeHeight, 300);
-        this.load.physics('physicsData', "", this.tunnelPhysicsData);
 
         // create background first so that it goes to the back most position
         this.addBackground();
         this.addMidground();
         var graphics = this.add.graphics(0, 0); // create a graphics object and prepare generate tube and rest of environment
+        this.addTunnel(graphics);
+        //this.addPickups();
         this.addCar();
-        this.addPusher();
-        this.drawTube(graphics, this.tunnelPhysicsData);
+        //this.addPusher();
+        this.addPylons();
         this.carBody.body.onBeginContact.add(this.podCollision, this);
         this.addForeground();
 
-        //window.graphics = graphics;
-
         // GUI - create this last so it overlays on top of everything else
-        this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 520, 'progressorBackground');
+        this.topUI = this.add.sprite(0, 0, 'topUI');
+        this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 517, 'progressorBackground');
         this.trackProgressorBackground.anchor.setTo(0, 0);
-        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 38, 'progressorMarker');
+        this.trackProgressorMarker = this.add.sprite(120, this.trackProgressorBackground.y + 64, 'progressorMarker');
         this.trackProgressorMarker.anchor.setTo(0.5, 0.5);
 
-        this.rudEvent_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'rud_event');
-        this.rudEvent_graphic.anchor.set(0.5, 0.5);
+        this.menuButton = this.add.button(this.camera.x + 2, this.camera.y + 5, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
+        //this.menuButton.scale.set(1, 1);
 
-        this.menuButton = this.add.button(this.camera.x, this.camera.y, 'menu_button', this.quitGame, this, 'over', 'out', 'down');
-        this.menuButton.scale.set(0.5, 0.5);
-
-        this.muteButton = this.add.button(this.camera.x + 10, this.camera.y + 30, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
+        this.muteButton = this.add.button(this.camera.x + 8, this.camera.y + 43, 'mute_button', this.toggleMuteAudio, this, 'over', 'out', 'down');
         this.muteButton.scale.set(0.4, 0.4);
 
         this.instructions = this.add.sprite(this.camera.x + this.camera.width/2,this.camera.y + 430, 'instructions');
         this.instructions.anchor.set(0.5, 0.5);
 
-        this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 42, 'health_indicator');
+        this.Health_indicator = this.add.sprite(this.camera.x + this.camera.width - 8, this.camera.height - 45, 'health_indicator');
+        this.Health_indicator.tint = 0x970000;
         this.Health_indicator.anchor.set(1, 0.5);
         this.Health_indicator.scale.set(100,1)
 
-        // Displays
-        this.Level_text = this.add.bitmapText(this.camera.x + this.camera.width - 130, this.camera.y + 10, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 40);
-        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 555, 'basic_font_white', "00:00:00", 30);
-        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 548, 'basic_font_white', "0 m/s", 30);
-        this.Speed_text.anchor.set(0, 0.5);
+        this.power_indicator = this.add.sprite(this.camera.x + this.camera.width - 143, this.camera.height - 13, 'health_indicator');
+        this.power_indicator.tint = 0x008a00;
+        this.power_indicator.scale.set(this.totalPower,0.5)
+        this.power_indicator.anchor.set(0, 0.5);
 
-        //this.Health_text = this.add.bitmapText(this.camera.x + this.camera.width - 145, this.camera.height - 50, 'basic_font_white', "Health: 100%", 30);
+        // Displays
+        this.Level_text = this.add.bitmapText(this.camera.x + 85, this.camera.y + 9, 'basic_font_white', 'Level ' + this.game['GameData'].cLevel, 25);
+        this.Speed_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 558, 'basic_font_white', "0 m/s", 30);
+        this.Speed_text.anchor.set(0, 0.5);
+        this.Timer_text = this.add.bitmapText(this.camera.x + 10, this.camera.y + 565, 'basic_font_white', "00:00:00", 30);
+
         this.slowDown_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Slow down!", 30);
         this.slowDown_text.anchor.set(0.5, 0.5);
         this.slowDown_text.tint = 0xFF0000;
@@ -242,30 +273,34 @@ BasicGame.Game.prototype = {
         this.stabilise_text.tint = 0xFF0000;
         this.pause_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Game paused", 30);
         this.pause_text.anchor.set(0.5, 0.5);
+        this.stranded_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'You are stranded!', 30);
+        this.stranded_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
+        this.topUI.fixedToCamera = true;
         this.trackProgressorBackground.fixedToCamera = true; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = true;
         this.menuButton.fixedToCamera = true;
         this.muteButton.fixedToCamera = true;
         this.instructions.fixedToCamera = true;
         this.Health_indicator.fixedToCamera = true;
+        this.power_indicator.fixedToCamera = true;
         this.Level_text.fixedToCamera = true;
         this.Timer_text.fixedToCamera = true;
         this.Speed_text.fixedToCamera = true;
-        this.rudEvent_graphic.fixedToCamera = true;
         this.slowDown_text.fixedToCamera = true;
         this.speedUp_text.fixedToCamera = true;
         this.stabilise_text.fixedToCamera = true;
         this.pause_text.fixedToCamera = true;
+        this.stranded_text.fixedToCamera = true;
 
         // GUI Initial visibility
-        this.rudEvent_graphic.visible = false;
         this.slowDown_text.visible = false;
         this.speedUp_text.visible = false;
         this.pause_text.visible = false;
         this.stabilise_text.visible = false;
         this.showInstructions = (this.playedBefore)?false:true;
+        this.stranded_text.visible = false;
 
         // Snow 
         if (this.is_snowing) {
@@ -312,11 +347,14 @@ BasicGame.Game.prototype = {
     },
 
     update: function () {
+        //this.currentblock.text = this.getBlockIndex() + "/" + this.getBlocks();
+        this.updateTunnel();
+
         // handle inputs
         if (!this.loseflag ) { this.handleInput(); };
 
         // camera follow pod
-        this.camera.x = this.carBody.body.x - 200;
+        if (!this.loseflag ) { this.camera.x = this.carBody.body.x - 200; };
 
         // update background
         //this.background.x = this.camera.x;
@@ -341,23 +379,25 @@ BasicGame.Game.prototype = {
             }
         })
 
-        // update GUI
-
         //---------------------
         // Pod status check
         //---------------------
+        this.power_indicator.x = this.camera.x + this.camera.width - 100;
+        this.power_indicator.y = this.camera.height - 48;
+
         // if below death speed, the player is stranded so go to lose state
-        if (this.carBody.body.velocity.x <= this.death_speed && this.pusherCounter > 50 && !this.loseflag) {
+        if ( (this.carBody.body.velocity.x <= this.death_speed && this.power_indicator.width <= 10) && this.pusherCounter > 50 && !this.loseflag) {
             console.log("You're stranded");
-            //this.loseflag = true;
+            this.loseflag = true;
             this.speedUp_text.visible = false;
             this.slowDown_text.visible = false;
             this.stabilise_text.visible = false; 
+            this.stranded_text.visible = true;
             this.loseStranded();
         }
         
         
-        if (!this.isDead) {
+        if (!this.isDead && !this.loseflag) {
             // set visibility of slowdown/speedup text
             this.slowDown_text.visible = (this.carBody.body.velocity.x >= this.max_speed);
             this.speedUp_text.visible = (this.carBody.body.velocity.x <= this.min_speed && this.pusherCounter > 50);
@@ -377,8 +417,8 @@ BasicGame.Game.prototype = {
 
 
         // check if pod reached end
-        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength) & !this.winflag & !this.isDead) {
-            // this.winflag = true;
+        if (this.carBody.body.x >= (this.levelLength + this.flatStartLength + this.flatEndLength - this.distanceFromEnd) & !this.winflag & !this.isDead) {
+            this.winflag = true;
             this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
             this.winStage();
         }
@@ -389,7 +429,6 @@ BasicGame.Game.prototype = {
         // update marker on track progressor
         var ProgressMultiplier = this.carBody.x / (this.levelLength + this.flatStartLength + this.flatEndLength);
         if (ProgressMultiplier > 1) { ProgressMultiplier = 1; }
-        //this.trackProgressorBackground.x = this.camera.x;
         this.trackProgressorMarker.cameraOffset.x = 120 + (ProgressMultiplier * 410);
 
         if (ProgressMultiplier != 1 && !this.loseflag) {
@@ -425,10 +464,10 @@ BasicGame.Game.prototype = {
         }
 
         if (this.pusherCounter++ <= 50) {
-            this.pusherBody.body.force.x = 7000;
+            //this.pusherBody.body.force.x = 8000;
             this.carGroup.setAll('body.force.x', 4000);
         } else if (this.pusherCounter++ > 50 && this.pusherCounter <= 200) {
-            this.pusherBody.body.force.x = -50000;
+            //this.pusherBody.body.force.x = -50000;
         } else {
             this.showInstructions = false;
         }
@@ -439,6 +478,200 @@ BasicGame.Game.prototype = {
             this.instructions.visible = false;
         }
     },
+
+    addTunnel: function (graphics) {
+        var blockIndex = 0;
+        var points = this.tunnelPhysicsData;
+        var currentBlock = points['bottom'][blockIndex];
+        var currentBlockTop = points['top'][blockIndex];
+
+        //var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
+        var polygonCollisionSprite = this.tunnelGroup.create(0, 0, 'wall');
+        this.physics.p2.enable(polygonCollisionSprite);
+        polygonCollisionSprite.name = 'wall_bot';
+        polygonCollisionSprite.body.addPolygon({}, currentBlock.shape);
+        polygonCollisionSprite.body.static = true;
+        polygonCollisionSprite.body.debug = false;
+        polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+        polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+        polygonCollisionSprite.body.collides(this.car_collisionGroup);
+        
+        var top_polygonCollisionSprite = this.tunnelGroup.create(0, 0, 'wall');
+        this.physics.p2.enable(top_polygonCollisionSprite);
+        top_polygonCollisionSprite.name = 'wall_top';
+        top_polygonCollisionSprite.body.addPolygon({}, currentBlockTop.shape);
+        top_polygonCollisionSprite.body.static = true;
+        top_polygonCollisionSprite.body.debug = false;
+        top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+        top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+        top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
+
+        this.tunnelPhysicsData['bottom'][blockIndex]['drawn'] = true; // make sure it doesn't get redrawn later*/
+
+
+        //==================//
+        // draw tube
+        //==================//
+        graphics.beginFill(0xAAAAAA, 0.1);
+
+        var totalPoints = points['bottom'].length;
+
+        graphics.beginFill(0xAAAAAA, 0.1);
+        btm_prevx = points['bottom'][0]['shape'][4];
+        btm_prevy = points['bottom'][0]['shape'][5];
+        top_prevx = points['top'][0]['shape'][4];
+        top_prevy = points['top'][0]['shape'][5];
+        
+        for (var i = 1; i < totalPoints; i++) {
+            var btm_x = points['bottom'][i]['shape'][4],
+                btm_y = points['bottom'][i]['shape'][5],
+                top_x = points['top'][i]['shape'][4],
+                top_y = points['top'][i]['shape'][5];
+
+            // Solid gray background
+            graphics.lineStyle(6, this.environment.tunnel_background_colour, 0);
+            graphics.drawPolygon([btm_prevx, btm_prevy, top_prevx, top_prevy, top_x, top_y, btm_x, btm_y]);
+
+            // Black outline
+            graphics.lineStyle(6, this.environment.tunnel_colour, 1);
+            graphics.moveTo(btm_prevx, btm_prevy);
+            graphics.lineTo(btm_x, btm_y);
+            graphics.moveTo(top_prevx, top_prevy);
+            graphics.lineTo(top_x, top_y);
+            btm_prevx = btm_x;
+            btm_prevy = btm_y;
+            top_prevx = top_x;
+            top_prevy = top_y;
+        }
+    },
+
+    addPickups: function (graphics) {
+        var blockIndex = 0;
+        var points = this.tunnelPhysicsData;
+        var totalPoints = points['bottom'].length;
+
+        btm_prevx = points['bottom'][0]['shape'][4];
+        btm_prevy = points['bottom'][0]['shape'][5];
+        
+        for (var i = 1; i < totalPoints; i++) {
+            var btm_x = points['bottom'][i]['shape'][4],
+                btm_y = points['bottom'][i]['shape'][5];
+
+            var pickup = this.add.sprite(btm_x, btm_y - 70, 'power_pickup');
+            pickup.anchor.set(0.5, 0);
+            pickup.scale.set(0.7, 0.7)
+
+            btm_prevx = btm_x;
+            btm_prevy = btm_y;
+        }
+    },
+
+    addPylons: function () {
+        var points = this.tunnelPhysicsData;
+        var totalPylons = points['pylons'].length;
+        for (var i = 0; i < totalPylons; i++) {
+            var x = points['pylons'][i]['position'].x,
+                y = points['pylons'][i]['position'].y;
+            var pylon = this.add.sprite(x, y - this.tubeHeight - 6, 'pylon');
+            //pylon.anchor.setTo(0.5, 0.1);
+        }
+    },
+
+    updateTunnel: function () {
+
+        var blockIndex = this.getBlockIndex();
+        var advanceBlocks = 4;
+        
+        for (var i = 0; i <= advanceBlocks; i++) {
+            blockIndex += i;
+            var currentBlock = this.tunnelPhysicsData['bottom'][blockIndex];
+            var currentBlockTop = this.tunnelPhysicsData['top'][blockIndex];
+
+            if (currentBlock && !currentBlock['drawn']) {
+        
+                //var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
+                var polygonCollisionSprite = this.tunnelGroup.create(0, 0, 'wall');
+                this.physics.p2.enable(polygonCollisionSprite);
+                polygonCollisionSprite.name = 'wall_bot';
+                polygonCollisionSprite.body.addPolygon({}, currentBlock.shape);
+                polygonCollisionSprite.body.static = true;
+                polygonCollisionSprite.body.debug = false;
+                polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+                polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+                polygonCollisionSprite.body.collides(this.car_collisionGroup);
+                polygonCollisionSprite['blockIndex'] = blockIndex
+                
+                var top_polygonCollisionSprite = this.tunnelGroup.create(0, 0, 'wall');
+                this.physics.p2.enable(top_polygonCollisionSprite);
+                top_polygonCollisionSprite.name = 'wall_top';
+                top_polygonCollisionSprite.body.addPolygon({}, currentBlockTop.shape);
+                top_polygonCollisionSprite.body.static = true;
+                top_polygonCollisionSprite.body.debug = false;
+                top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
+                top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
+                top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
+                top_polygonCollisionSprite['blockIndex'] = blockIndex
+
+                //==================//
+                // add physics
+                //==================//s
+                this.carBody.body.collides(this.tube_collisionGroup);
+                this.wheel_front.body.collides(this.tube_collisionGroup);
+                this.wheel_back.body.collides(this.tube_collisionGroup);
+
+                currentBlock['drawn'] = true;
+
+            }
+        }
+
+        // clean up
+        this.tunnelGroup.forEach(function(child){
+            //console.log(child)
+            if (!isNaN(child.x)) {
+                //console.log("child:", child.x, ", camera:", this.camera.x)
+                if (child.x < (this.camera.x - 2800) && !child.inCamera) {
+
+                    child.destroy();
+                }
+            } else {
+                //console.log(child.blockIndex)
+            }
+        }, this, false)
+
+        //console.log(this.tunnelGroup)
+
+    },
+
+    getBlockIndex: function () {
+        var blocks = this.tunnelPhysicsData['bottom'];
+        var position = this.carBody.x
+        var length = blocks.length;
+        var diffMidIndex;
+
+        function mid(minIndex, maxIndex) { // left/right array index
+            var diffIndex = maxIndex + minIndex
+            diffMidIndex = (diffIndex%2 == 0) ? (diffIndex / 2) : ( ((diffIndex - 1) / 2)); // handle odd/even array length
+            midPosWorld = blocks[diffMidIndex]['shape'][2];
+
+            if (diffIndex == 1 || diffIndex == 2 || position === midPosWorld || minIndex === diffMidIndex) {
+                return diffMidIndex;
+            } else if ( position > midPosWorld ) {
+                return mid( diffMidIndex, maxIndex);
+            } else if ( position < midPosWorld ){
+                return mid( minIndex, diffMidIndex);
+            }
+        }
+        return mid(0, length-1);
+    },
+
+    getBlocks: function () {
+        return Math.floor( (this.levelLength + this.flatStartLength + this.flatEndLength) / this.pixelStep );
+    },
+
+    generateBlock: function () {
+
+    },
+
     changeWindDirection: function () {
 
         var multi = Math.floor((this.max + 200) / 4),
@@ -558,7 +791,7 @@ BasicGame.Game.prototype = {
             hillSlices = hillWidth / pixelStep,
             tunnelPhysicsData = { "top": [], "bottom": [], "pylons": [] },
             prevx,
-            prevy;
+            prevy;  
 
         // Generate flat at beginning
         var rect = {
@@ -620,7 +853,7 @@ BasicGame.Game.prototype = {
             hillStartY = hillStartY + randomHeight;
         }
 
-        prevx += pixelStep;
+        //prevx += pixelStep;
 
         // Generate flat at end
         var rect = {
@@ -639,94 +872,6 @@ BasicGame.Game.prototype = {
 
         return tunnelPhysicsData;
     },
-    drawTube: function (graphics, points) {
-
-        var totalPoints = points['bottom'].length;
-        var prevx = points['bottom'][0]['shape'][2];
-        var prevy = points['bottom'][0]['shape'][3];
-
-        var totalPylons = points['pylons'].length;
-
-        //==================//
-        // draw tube
-        //==================//
-        graphics.beginFill(0xAAAAAA, 0.1);
-        btm_prevx = points['bottom'][0]['shape'][4];
-        btm_prevy = points['bottom'][0]['shape'][5];
-        top_prevx = points['top'][0]['shape'][4];
-        top_prevy = points['top'][0]['shape'][5];
-        for (var i = 1; i < totalPoints; i++) {
-            var btm_x = points['bottom'][i]['shape'][4],
-                btm_y = points['bottom'][i]['shape'][5],
-                top_x = points['top'][i]['shape'][4],
-                top_y = points['top'][i]['shape'][5];
-
-            // Solid gray background
-            graphics.lineStyle(6, 0x273b53, 0);
-            graphics.drawPolygon([btm_prevx, btm_prevy, top_prevx, top_prevy, top_x, top_y, btm_x, btm_y]);
-
-            // Black outline
-            graphics.lineStyle(6, 0x273b53, 1);
-            graphics.moveTo(btm_prevx, btm_prevy);
-            graphics.lineTo(btm_x, btm_y);
-            graphics.moveTo(top_prevx, top_prevy);
-            graphics.lineTo(top_x, top_y);
-            btm_prevx = btm_x;
-            btm_prevy = btm_y;
-            top_prevx = top_x;
-            top_prevy = top_y;
-        }
-
-
-        //==================//
-        // draw pylons
-        //==================//
-        for (var i = 0; i < totalPylons; i++) {
-            var x = points['pylons'][i]['position'].x,
-                y = points['pylons'][i]['position'].y;
-            var pylon = this.add.sprite(x, y - this.tubeHeight - 20, 'pylon');
-            //pylon.anchor.setTo(0.5, 0.1);
-        }
-
-        this.tube_collisionGroup = this.physics.p2.createCollisionGroup();
-
-        //==================//
-        // load physics data
-        //==================//
-        var polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
-        this.physics.p2.enable(polygonCollisionSprite);
-        polygonCollisionSprite.name = 'wall_bot';
-        polygonCollisionSprite.body.loadPolygon('physicsData', 'bottom');
-        polygonCollisionSprite.body.static = true;
-        polygonCollisionSprite.body.debug = false;
-        polygonCollisionSprite.body.setMaterial(this.groundMaterial);
-        polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
-        polygonCollisionSprite.body.collides(this.car_collisionGroup);
-        polygonCollisionSprite.body.collides(this.pusher_collisionGroup);
-
-        var top_polygonCollisionSprite = this.add.sprite(0, 0, 'wall');
-        this.physics.p2.enable(top_polygonCollisionSprite);
-        top_polygonCollisionSprite.name = 'wall_top';
-        top_polygonCollisionSprite.body.loadPolygon('physicsData', 'top');
-        top_polygonCollisionSprite.body.static = true;
-        top_polygonCollisionSprite.body.debug = false;
-        top_polygonCollisionSprite.body.setMaterial(this.groundMaterial);
-        top_polygonCollisionSprite.body.setCollisionGroup(this.tube_collisionGroup);
-        top_polygonCollisionSprite.body.collides(this.car_collisionGroup);
-        top_polygonCollisionSprite.body.collides(this.pusher_collisionGroup);
-
-        this.carBody.body.collides(this.tube_collisionGroup);
-        this.wheel_front.body.collides(this.tube_collisionGroup);
-        this.wheel_back.body.collides(this.tube_collisionGroup);
-
-        this.pusherBody.body.collides(this.tube_collisionGroup);
-        this.pusher_wheel_front.body.collides(this.tube_collisionGroup);
-        this.pusher_wheel_back.body.collides(this.tube_collisionGroup);
-
-        
-
-        this.bottomWall = polygonCollisionSprite;
-    },
 
     render: function () {
         this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
@@ -739,18 +884,28 @@ BasicGame.Game.prototype = {
 
     handleInput: function () {
         if (this.cursors.up.isDown) {
-            // this.carGroup.body.force.x = 10000;
-            this.carGroup.setAll('body.force.x', 7000);
+            if (this.power_indicator.width > 10) {
+                this.power_indicator.width -= 1;
+                this.carGroup.setAll('body.force.x', 7000);
+                if (this.power_indicator.width > 80) {
+                    this.power_indicator.tint = 0x008a00;
+                } else if (this.power_indicator.width > 50) {
+                    this.power_indicator.tint = 0xFF9900;    
+                } else if (this.power_indicator.width > 20) {
+                    this.power_indicator.tint = 0xFF0000;    
+                }
+            } else {
+                this.power_indicator.width = 5;
+                this.power_indicator.tint = 0xFF0000;
+            }
         }
 
         if (this.cursors.down.isDown) {
-            //this.carBody.body.force.x = -25000;
-            this.carGroup.setAll('body.velocity.x', this.carBody.body.velocity.x*0.95);
+            this.carGroup.setAll('body.velocity.x', this.carBody.body.velocity.x*0.98);
         }
         if (this.carBody.body.velocity.x < 0) {
             this.carBody.body.velocity.x = 0;
         }
-
 
         if (this.cursors.right.isDown) {
             this.carBody.body.angularVelocity = 2;
@@ -762,6 +917,7 @@ BasicGame.Game.prototype = {
     },
     
     togglePauseGame: function (pointer) {
+        this.sound_click.play();
         var res = true;
         this.sound_music.pause();
         if (this.game.paused) {
@@ -774,15 +930,21 @@ BasicGame.Game.prototype = {
 
     toggleMuteAudio: function(pointer) {
         if (this.sound_muted) {
+            this.sound_click.play();
             this.sound_muted = false;
             this.sound_music.volume = this.music_volume;
             this.sound_explosion.volume = this.sound_volume;
-            this.sound_hit.volume = this.sound_volume;
+            this.sound_hit1.volume = this.sound_volume;
+            this.sound_hit2.volume = this.sound_volume;
+            this.sound_hit3.volume = this.sound_volume;
             this.muteButton.loadTexture('mute_button');
         } else {
+            this.sound_click.play();
             this.sound_music.volume = 0;
             this.sound_explosion.volume = 0;
-            this.sound_hit.volume = 0;
+            this.sound_hit1.volume = 0;
+            this.sound_hit2.volume = 0;
+            this.sound_hit3.volume = 0;
             this.sound_muted = true;
             this.muteButton.loadTexture('mute_button_muted');
         }
@@ -792,6 +954,7 @@ BasicGame.Game.prototype = {
 
         //	Here you should destroy anything you no longer need.
         //	Stop music, delete sprites, purge caches, free resources, all that good stuff.
+        this.sound_click.play();
         this.sound_music.stop();
         this.state.start('MainMenu');
     },
@@ -808,7 +971,6 @@ BasicGame.Game.prototype = {
     },
 
     loseExplode: function (pointer) {
-        this.rudEvent_graphic.visible = true;
         this.explode();
         this.lose();
     },
@@ -816,7 +978,6 @@ BasicGame.Game.prototype = {
     lose: function (pointer) {
         this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
         this.loseflag = true;
-        this.rudEvent_graphic.visible = false;
         this.instructions.visible = false;
         this.stabilise_text.visible = false;  
         this.speedUp_text.visible = false;
@@ -881,7 +1042,13 @@ BasicGame.Game.prototype = {
             if (damage < .01) { damage = .01; }
             this.carBody.health -= damage;
             if (this.carBody.health > 0) {
-                this.sound_hit.play();
+                if (this.carBody.health < 20) {
+                    this.sound_hit1.play();
+                } else if (this.carBody.health < 50) {
+                    this.sound_hit2.play();
+                } else if (this.carBody.health <= 100) {
+                    this.sound_hit3.play();
+                }
                 console.log('Colision! rPod Health is ' + this.carBody.health);
             } else {
                 // if (!this.loseflag && !this.winflag) {
@@ -899,6 +1066,7 @@ BasicGame.Game.prototype = {
     },
 
     addCar: function () {
+                console.log("add car")
         // basic settings
         var startPos = this.startPos;
         startPos.y += -20;
@@ -907,19 +1075,23 @@ BasicGame.Game.prototype = {
 
         // create pod
         var carBody = this.add.sprite(startPos.x, startPos.y, 'pod'); //CARBODY
+        carBody.anchor.set(0.5, 0.5);
         carBody.name = 'carBody';
         carBody.scale.set(0.5, 0.5);
 
-        var wheel_front = this.add.sprite(startPos.x + carBody.width / 2 + wheel_front_pos[0], startPos.y + carBody.height / 2 + wheel_front_pos[1]); //FRONT WHEEL
+        var wheel_front = this.add.sprite(startPos.x + wheel_front_pos[0], startPos.y + wheel_front_pos[1]); //FRONT WHEEL
+        wheel_front.anchor.set(0.5, 0.5);
         wheel_front.name = 'wheel_front';
-        var wheel_back = this.add.sprite(startPos.x + carBody.width / 2 + wheel_back_pos[0], startPos.y + carBody.height / 2 + wheel_back_pos[1]); //BACK WHEEL 
-        wheel_front.name = 'wheel_back';
+        var wheel_back = this.add.sprite(startPos.x + wheel_back_pos[0], startPos.y + wheel_back_pos[1]); //BACK WHEEL 
+        wheel_back.anchor.set(0.5, 0.5);
+        wheel_back.name = 'wheel_back';
 
-        this.car_collisionGroup = this.physics.p2.createCollisionGroup();
+        
 
         this.physics.p2.enable([wheel_front, wheel_back, carBody]);
 
-        carBody.body.addRectangle(50, 20) // use simple rectangle for performance reasons
+        //carBody.body.addRectangle(50, 20) // use simple rectangle for performance reasons
+        carBody.body.addPolygon({}, [1, 20, 1, 11, 16, 1, 94, 1, 113, 11, 125, 20, 128, 26, 116, 31, 106, 32, 94, 40, 20, 42, 13, 40, 10, 31]);
         carBody.body.debug = false; //this adds the pink box
         carBody.body.mass = 1;
         carBody.body.angle = 0;
@@ -956,12 +1128,12 @@ BasicGame.Game.prototype = {
 
         var constraint = this.physics.p2.createPrismaticConstraint(carBody, wheel_front, false, wheel_front_pos, [0, 0], [0, 1]);
         constraint.lowerLimitEnabled = constraint.upperLimitEnabled = true;
-        //constraint.upperLimit = -1;
+        constraint.upperLimit = -1;
         constraint.lowerLimit = -30;
 
         var constraint_1 = this.physics.p2.createPrismaticConstraint(carBody, wheel_back, false, wheel_back_pos, [0, 0], [0, 1]);
         constraint_1.lowerLimitEnabled = constraint_1.upperLimitEnabled = true;
-        //constraint_1.upperLimit = -1;
+        constraint_1.upperLimit = -1;
         constraint_1.lowerLimit = -30;
 
         this.carBody = carBody;
@@ -970,12 +1142,13 @@ BasicGame.Game.prototype = {
     },
 
     addPusher: function () {
+
         // basic settings
         var startPos = this.startPos;
         var wheel_front_pos = [50, 10];
         var wheel_back_pos = [-50, 10];
 
-        var pusher_start_x = startPos.x-100;
+        var pusher_start_x = startPos.x-150;
 
         // create pod
         var carBody = this.add.sprite(pusher_start_x, startPos.y, 'pusher'); //CARBODY

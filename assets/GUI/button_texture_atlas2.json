@@ -1,0 +1,36 @@
+{"frames": [
+
+{
+	"filename": "down",
+	"frame": {"x":0,"y":48,"w":70,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":72},
+	"sourceSize": {"w":70,"h":72}
+},
+{
+	"filename": "out",
+	"frame": {"x":0,"y":24,"w":70,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":72},
+	"sourceSize": {"w":70,"h":72}
+},
+{
+	"filename": "over",
+	"frame": {"x":0,"y":0,"w":70,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":72},
+	"sourceSize": {"w":70,"h":72}
+}],
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "button_texture_atlas.png",
+	"format": "RGBA8888",
+	"size": {"w":70,"h":72},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:94df81041404a206a4e9cd597a1e3495$"
+}
+}

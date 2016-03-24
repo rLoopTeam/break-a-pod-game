@@ -26,7 +26,10 @@ BasicGame.MainMenu.prototype = {
         var levelSelect = Math.floor(Math.random() * totalEnvs);
         //levelSelect=1
         this.environment = envs[levelSelect];
+        this.game['GameData'].startingEnvironment = levelSelect;
         this.levelLength = this.game['GameData'].baseLevelLength * (Math.random() + 1);
+        
+        console.log("Level: "+levelSelect)
 
         // Non real time controls
         // ESC pause game
@@ -38,6 +41,7 @@ BasicGame.MainMenu.prototype = {
 
         //Audio
         this.sound_music = this.add.sound('titleMusic');
+        this.sound_click = this.add.sound('click');
         this.sound_music.play();   
 
         // set world settings and player start position
@@ -56,23 +60,26 @@ BasicGame.MainMenu.prototype = {
 	    title_image.anchor.set(0.5, 0.5);
         title_image.alpha = 0.1;
         this.add.tween(title_image).to( { alpha: 1 }, 500, "Linear", true );
-	    //this.title_image.scale.setTo(1, 1);
 
-        var playButton = this.add.bitmapText(this.game.width/2, (this.game.height/2) + 200, "basic_font_white", "START", 40);
-        playButton.hitArea = new PIXI.Rectangle(-playButton.width/2, -playButton.height/2, playButton.width, playButton.height);
-        playButton.inputEnabled = true;
-        playButton.events.onInputDown.add(this.startGame, this);
-        playButton.events.onInputOver.add(buttonHighlightOn, this);
-        playButton.events.onInputOut.add(buttonHighlightOut, this);
-        playButton.anchor.set(0.5, 0.5);
-        playButton.alpha = 0.1;
-        this.add.tween(playButton).to( { alpha: 1 }, 500, "Linear", true );
+        var playerButtonA = this.add.sprite(this.game.width/2 -7, (this.game.height/2) + 200, 'start_button_spritesheet');
+        var playerButtonALoop = playerButtonA.animations.add('start_loop');
+        playerButtonA.animations.play('start_loop', 30, true);
+        playerButtonA.hitArea = new PIXI.Rectangle(-playerButtonA.width/2, -playerButtonA.height/2, playerButtonA.width, playerButtonA.height);
+        playerButtonA.inputEnabled = true;
+        playerButtonA.events.onInputDown.add(this.startGame, this);
+        playerButtonA.events.onInputOver.add(buttonHighlightOn, this);
+        playerButtonA.events.onInputOut.add(buttonHighlightOut, this);
+        playerButtonA.anchor.set(0.5, 0.5);
+        playerButtonA.alpha = 0.1;
+
+        this.add.tween(playerButtonA).to( { alpha: 1 }, 500, "Linear", true );
 
         function buttonHighlightOn(a) {
-            a.tint = 0x003399;
+            a.animations.stop('start_loop', false);
+            a.animations.frame = 14;
         }
         function buttonHighlightOut(a) {
-            a.tint = 0xFFFFFF;
+            a.animations.play('start_loop', 30, true);
         }
 	},
 
@@ -91,7 +98,8 @@ BasicGame.MainMenu.prototype = {
 
 
 	startGame: function (pointer) {
-
+        
+        this.sound_click.play();
 		//	Ok, the Play Button has been clicked or touched, so let's stop the music (otherwise it'll carry on playing)
 		this.sound_music.stop();
 
