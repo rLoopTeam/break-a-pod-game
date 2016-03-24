@@ -275,6 +275,9 @@ BasicGame.Game.prototype = {
         this.pause_text.anchor.set(0.5, 0.5);
         this.stranded_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'You are stranded!', 30);
         this.stranded_text.anchor.set(0.5, 0.5);
+        this.power_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'Low on power!', 30);
+        this.power_text.anchor.set(0.5, 0.5);
+        this.power_text.tint = 0xFF0000;
 
         //fix  elements to camera
         this.topUI.fixedToCamera = true;
@@ -293,6 +296,7 @@ BasicGame.Game.prototype = {
         this.stabilise_text.fixedToCamera = true;
         this.pause_text.fixedToCamera = true;
         this.stranded_text.fixedToCamera = true;
+        this.power_text.fixedToCamera = true;
 
         // GUI Initial visibility
         this.slowDown_text.visible = false;
@@ -301,6 +305,7 @@ BasicGame.Game.prototype = {
         this.stabilise_text.visible = false;
         this.showInstructions = (this.playedBefore)?false:true;
         this.stranded_text.visible = false;
+        this.power_text.visible = false;
 
         // Snow 
         if (this.is_snowing) {
@@ -895,6 +900,12 @@ BasicGame.Game.prototype = {
                     this.power_indicator.tint = 0xFF0000;    
                 }
             } else {
+                this.speedUp_text.visible = false;
+                this.slowDown_text.visible = false;
+                this.stabilise_text.visible = false; 
+                this.stranded_text.visible = false;
+                this.power_text.visible = true;
+
                 this.power_indicator.width = 5;
                 this.power_indicator.tint = 0xFF0000;
             }
