@@ -41,8 +41,9 @@ BasicGame.MainMenu.prototype = {
 
         //Audio
         this.sound_music = this.add.sound('titleMusic');
-        this.sound_click = this.add.sound('click');
+        this.sound_music.loop = true;
         this.sound_music.play();   
+        this.sound_click = this.add.sound('click');
 
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
@@ -98,10 +99,6 @@ BasicGame.MainMenu.prototype = {
 
 
 	startGame: function (pointer) {
-        
-        this.sound_click.play();
-		//	Ok, the Play Button has been clicked or touched, so let's stop the music (otherwise it'll carry on playing)
-		this.sound_music.stop();
 
 		//	And start the actual game
 		this.game.state.start('Instructions');

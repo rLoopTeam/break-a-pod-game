@@ -40,15 +40,6 @@ BasicGame.Instructions.prototype = {
 	},
 
 	create: function () {
-
-		// add music
-		//this.music = this.add.audio('endMusic');
-		var trackIndex = Math.floor(12*Math.random() + 1); // select random index for track
-        if (!this.sound_music || !this.sound_music.isPlaying) {  
-            this.sound_music = this.game.add.sound('endMusic', 0.5, true);
-        }
-        this.sound_music.loop = true;
-        this.sound_music.play(); 
        
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
@@ -65,26 +56,27 @@ BasicGame.Instructions.prototype = {
 	    var instructions = this.add.sprite(this.camera.width/2, this.camera.height/2, 'instructions1')	    
 	    instructions.anchor.set(0.5, 0.5);
 
-	    var pod1 = this.add.sprite(this.camera.width/2, this.camera.height/2 - 100, 'pod');
+	    var pod1 = this.add.sprite(this.camera.width/2, this.camera.height/2 - 150, 'pod');
 	    pod1.scale.set(0.25, 0.25);
 	    pod1.x = this.camera.width/2;
 	    var pod1tween = this.add.tween(pod1).to( { x: pod1.x + 100 }, 500, Phaser.Easing.Exponential.In, true, 0, 0);
 	    pod1tween.onComplete.add(pod1Complete, this);
 
-	    var pod2 = this.add.sprite(this.camera.width/2 - 50, this.camera.height/2 - 50, 'pod');
+	    var pod2 = this.add.sprite(this.camera.width/2 - 50, this.camera.height/2 - 110, 'pod');
 	    pod2.scale.set(0.25, 0.25);
 	    pod2.x = this.camera.width/2;
 	    var pod2tween = this.add.tween(pod2).to( { x: pod2.x + 50 }, 500, Phaser.Easing.Exponential.Out, true, 0, 0);
 	    pod2tween.onComplete.add(pod2Complete, this);
 
-	    var pod3 = this.add.sprite(this.camera.width/2, this.camera.height/2, 'pod');
+	    var pod3 = this.add.sprite(this.camera.width/2 + 33, this.camera.height/2 - 50, 'pod');
+        pod3.anchor.set(0.5, 0.5);
 	    pod3.scale.set(0.25, 0.25);
 	    pod3.angle = 0;
-	    var pod3tween = this.add.tween(pod3).to( { angle: 45 }, 500, Phaser.Easing.Exponential.Out, true, 0, 0);
+	    var pod3tween = this.add.tween(pod3).to( { angle: 0 }, 0, Phaser.Easing.Exponential.Out, true, 0, 0);
 	    pod3tween.onComplete.add(pod3Complete, this);
 
 	    // create score board table from external data		
-        this.playAgain_button = this.add.bitmapText(this.camera.width / 2, 500, 'basic_font_white', 'Play now!', 40)
+        this.playAgain_button = this.add.bitmapText(this.camera.width / 2, 440, 'basic_font_white', 'Play now!', 40)
         this.playAgain_button.hitArea = new PIXI.Rectangle(-this.playAgain_button.width/2, -this.playAgain_button.height/2, this.playAgain_button.width, this.playAgain_button.height);
         this.playAgain_button.anchor.set(0.5, 0.5);
         this.playAgain_button.inputEnabled = true;
@@ -106,17 +98,16 @@ BasicGame.Instructions.prototype = {
 
 		var i = 0;
 		function pod3Complete() {
-			console.log("end loop")
-			
+
 		    if (i%2 == 0) {
-			    pod3tween = this.add.tween(pod3).to( { angle: 45 }, 0, Phaser.Easing.Exponential.Out, true, 0, 0);
+			    pod3tween = this.add.tween(pod3).to( { angle: 30 }, 0, Phaser.Easing.Exponential.Out, true, 0, 0);
 		    } else {
-			   	pod3tween = this.add.tween(pod3).to( { angle: -45 }, 0, Phaser.Easing.Exponential.Out, true, 0, 0);
+			   	pod3tween = this.add.tween(pod3).to( { angle: -30 }, 0, Phaser.Easing.Exponential.Out, true, 0, 0);
 		    }
 		    pod3tween.onComplete.add(pod3Complete, this);
+
+            i++;
 		}
-
-
 
 
         //buttons
@@ -197,8 +188,6 @@ BasicGame.Instructions.prototype = {
 
 
 	startGame: function (pointer) {
-		console.log("restart game")
-		this.sound_music.stop(); 
 		this.game.state.start('Game');
 	}
 };

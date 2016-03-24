@@ -119,7 +119,7 @@ BasicGame.Game.prototype = {
     init: function () {
         console.log("init")
         // use debug plugin
-        this.add.plugin(Phaser.Plugin.Debug);
+        //this.add.plugin(Phaser.Plugin.Debug);
 
         var envs = this.game['GameData'].environments,
             totalEnvs = envs.length;
