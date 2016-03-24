@@ -920,8 +920,11 @@ BasicGame.Game.prototype = {
         this.sound_click.play();
         var res = true;
         this.sound_music.pause();
+        this.instructions.visible = true;
+
         if (this.game.paused) {
             res = false;
+            this.instructions.visible = false;
             this.sound_music.resume()
         }
         this.game.paused = res;

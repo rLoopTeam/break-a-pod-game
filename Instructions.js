@@ -188,6 +188,7 @@ BasicGame.Instructions.prototype = {
 
 
 	startGame: function (pointer) {
+        this.game['SoundManager'].music.stop()
 		this.game.state.start('Game');
 	}
 };

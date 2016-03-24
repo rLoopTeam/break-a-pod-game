@@ -13,7 +13,6 @@ BasicGame.MainMenu = function (game) {
     this.midground;
     this.foreground;
 
-	this.music = null;
 	this.playButton = null;
 
 	this.cursors;
@@ -40,9 +39,9 @@ BasicGame.MainMenu.prototype = {
 	create: function () {
 
         //Audio
-        this.sound_music = this.add.sound('titleMusic');
-        this.sound_music.loop = true;
-        this.sound_music.play();   
+        this.game['SoundManager'].music = this.add.sound('titleMusic');
+        this.game['SoundManager'].music.loop = true;
+        this.game['SoundManager'].music.play();   
         this.sound_click = this.add.sound('click');
 
         // set world settings and player start position
