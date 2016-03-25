@@ -33,8 +33,9 @@ BasicGame.Lose.prototype = {
 
 
 		this.stage.backgroundColor = "#000000";
-		this.score = String( Math.floor(this.game['GameData'].score + this.game['GameData'].currentStageScore) );
-		
+		this.score_int = Math.floor(this.game['GameData'].score + this.game['GameData'].currentStageScore);
+		this.score = String( this.score_int );
+
 		var enterKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
         enterKey.onDown.add(this.startGame, this);
 	},
@@ -43,12 +44,12 @@ BasicGame.Lose.prototype = {
 
 		// add music
 		//this.music = this.add.audio('endMusic');
-        if (!this.sound_music || !this.sound_music.isPlaying) {  
+        if (!this.sound_music || !this.sound_music.isPlaying) {
             this.sound_music = this.game.add.sound('endMusic', 0.5, true);
         }
         this.sound_music.loop = true;
-        this.sound_music.play(); 
-       
+        this.sound_music.play();
+
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
@@ -70,13 +71,13 @@ BasicGame.Lose.prototype = {
 	    this.rudEvent_button.events.onInputOver.add(buttonHighlightOn, this);
 	    this.rudEvent_button.events.onInputOut.add(buttonHighlightOut, this);
 
-	    // score  
+	    // score
 	    this.score = this.add.bitmapText(this.camera.width / 2, 140, 'basic_font_white', 'You scored ' + this.score.substring(0, 13) + ((this.score.length > 13)?"...":""), 60)
 	    this.score.anchor.set(0.5,0.5)
-	    
+
 	    // create score board table from external data
 	    this.createScoreBoard();
-		
+
         this.playAgain_button = this.add.bitmapText(this.camera.width / 2, 500, 'basic_font_white', 'Try Again', 40)
         this.playAgain_button.hitArea = new PIXI.Rectangle(-this.playAgain_button.width/2, -this.playAgain_button.height/2, this.playAgain_button.width, this.playAgain_button.height);
         this.playAgain_button.anchor.set(0.5, 0.5);
@@ -134,14 +135,14 @@ BasicGame.Lose.prototype = {
                     var texture_name = textures[texture_index];
                     var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, texture_name);
                     unique.fixedToCamera = environmentBackground[key].fixedToCamera;
-                
+
                 }
             }
         }
     },
 
     addMidground: function () {
-        
+
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();
         for (var key in environmentMidground) {
@@ -174,64 +175,48 @@ BasicGame.Lose.prototype = {
     },
 
 	createScoreBoard: function() {
-		
-		// this should be replaced by a call to a web service
-	    var scores = [
-			{
-				"playerName":"Paul",
-				"score":50050
-			}, 
-			{
-				"playerName":"Hello world!",
-				"score":45007
-			},
-			{
-				"playerName":"Blah",
-				"score":35350
-			}
-		]
-
-		console.log("create score board")
-		var url = "https://eu.furcode.co:8080/api/GetNearUsers", // change this to list of scores url
+		console.log("create score board");
+		var endpoint = "GetTopUsers",
 			self = this,
 			camera = this.camera;
 
 		var payload = {
-			//"playerName": "foxlet"
-		}
+		};
 
-		// call api
-		this.callAPI(url, payload, success, failure);
-
-		function success(scores_new) {
-			console.log("api results")
-			console.log(scores)
+		function success(raw) {
+			var scores = raw['scores'];
+			console.log("api results");
+			console.log(scores);
+			if (scores.length !== 0) self.noHighscores.visible = false;
 			for (var c = 0; c < scores.length && c < 13; c++)
 			{
-				self.add.bitmapText(camera.width / 2 - 160, 200 + (c*20), 'basic_font_white', scores[c].playerName.substring(0, 13) + ((scores[c].playerName.length > 13)?"...":""), 30);
-		        self.add.bitmapText(camera.width / 2 + 100 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
-		    }
+				self.add.bitmapText(camera.width / 2 - 160, 200 + (c*20), 'basic_font_white', scores[c].player.substring(0, 13) + ((scores[c].player.length > 13)?"...":""), 30);
+				self.add.bitmapText(camera.width / 2 + 100 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
+			}
 		}
 
 		function failure() {
 			self.noHighscores.visible = true;
 		}
+
+		// call api
+		this.callAPI(endpoint, payload, 'GET', success, failure);
 	},
 
 	postScore: function() {
 	    // get player name
-		var url = "http://eu.furcode.co:8080/api/UpsertUserScore";
-        var playerName = prompt("Please enter your name", "name");
-		var score = this.score;
+		var endpoint = "UpsertUserScore";
+        var player = prompt("Please enter your name", "name");
+		var score = this.score_int;
 
-		if ( playerName && isSafeCharacters(playerName) ) {
+		if ( player && isSafeCharacters(player) ) {
 			var payload = {
-				"playerName": playerName, 
+				"player": player,
 				"score": score
-			}
+			};
 
 			// call api
-			//this.callAPI(url, payload, success, failure);
+			this.callAPI(endpoint, payload, 'POST', success, failure);
 
 			function success(data) {
 				console.log("Successfully submitted score")
@@ -252,11 +237,13 @@ BasicGame.Lose.prototype = {
 		}
 	},
 
-	callAPI: function (url, payload, callbacksuccess, callbackfailure) {
-		var instance = new XMLHttpRequest()
+	callAPI: function (endpoint, payload, method, callbacksuccess, callbackfailure) {
+		var instance = new XMLHttpRequest();
+
+		console.log('API Payload:', payload);
 
 		if (instance) {
-		    instance.open('POST', url);
+		    instance.open(method, 'http://scores.break-a-pod.rloop.org/api/' + endpoint);
 		    instance.setRequestHeader("Content-type", "application/json");
 		    instance.onreadystatechange = handler;
 		    instance.send(JSON.stringify(payload));
@@ -268,7 +255,7 @@ BasicGame.Lose.prototype = {
 		function handler(evtXHR) {
 			if (instance.readyState == 4 && instance.status==200)
 			{
-				callbacksuccess(instance.responseText);
+				callbacksuccess(JSON.parse(instance.responseText));
 			} else {
 				callbackfailure();
 			}
@@ -276,13 +263,13 @@ BasicGame.Lose.prototype = {
 	},
 
 	supportUs: function (pointer) {
-	    this.sound_music.stop(); 
+	    this.sound_music.stop();
 	    window.open("https://www.indiegogo.com/projects/help-build-rloop-s-pod-for-spacex-hyperloop-comp#/", "_blank");
 	},
 
 	startGame: function (pointer) {
-		console.log("restart game")
-		this.sound_music.stop(); 
+		console.log("restart game");
+		this.sound_music.stop();
 		this.game.state.start('Game');
 	}
 };
