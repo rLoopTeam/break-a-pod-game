@@ -1029,6 +1029,32 @@ var environments = [
 					'y':0
 				}
 			},
+			'snow_dark' : {
+				'type': 'repeat',
+				'texture' : 'snow_dark',
+				'parallax': 0.08,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':0
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0.5,
+					'y':1
+				}
+			},
 			'hills_mid' : {
 				'type': 'repeat',
 				'texture' : 'snow_hills_middle',
@@ -1079,6 +1105,32 @@ var environments = [
 				'velocity' : {
 					'x':0,
 					'y':0
+				}
+			},
+			'snow_light' : {
+				'type': 'repeat',
+				'texture' : 'snow_light',
+				'parallax': 0.08,
+				'fixedToCamera': false,
+				'scale' : {
+					'x':1,
+					'y':1
+				},
+				'tileScale': {
+	                'x': 1,
+	                'y': 1
+	            },
+				'position' : {
+					'x':0,
+					'y':0
+				},
+				'tilePosition': {
+	                'x': 0,
+	                'y': 0
+	            },
+				'velocity' : {
+					'x':0.25,
+					'y':1.25
 				}
 			},
 	        'ground': {

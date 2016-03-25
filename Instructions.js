@@ -124,8 +124,15 @@ BasicGame.Instructions.prototype = {
        	var pos = this.pos;
         this.midground.forEach(function (item) {
             if (item.type === 5) { // tileable sprite
-                item.tilePosition.x = -(pos * item.parallax) + item.offset.x;
-                item.tilePosition.y = item.offset.y;
+                // item.tilePosition.x = -(pos * item.parallax) + item.offset.x;
+                // item.tilePosition.y = item.offset.y;
+                if (item.velocity.x != 0 || item.velocity.y != 0) {
+                item.tilePosition.x += item.velocity.x;
+                item.tilePosition.y += item.velocity.y;
+                } else {
+                    item.tilePosition.x = -(pos * item.parallax) + item.offset.x;
+                    item.tilePosition.y = item.offset.y - item.velocity.y;
+                }
             }
         })
 	},
@@ -174,6 +181,7 @@ BasicGame.Instructions.prototype = {
                     // need to pass some data to the update function so store it on the object
                     tileable['parallax'] = environmentMidground[key].parallax;
                     tileable['offset'] = environmentMidground[key].tilePosition;
+                    tileable['velocity'] = environmentMidground[key].velocity;
                     midgroundGroup.add(tileable);
 
                 }
