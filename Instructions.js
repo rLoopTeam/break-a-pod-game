@@ -24,6 +24,11 @@ BasicGame.Instructions = function (game) {
 BasicGame.Instructions.prototype = {
 
 	init: function () {
+    // Only show instructions once.
+    if (typeof localStorage !== 'undefined') {
+      if (localStorage['instructions']) return this.startGame();
+      localStorage['instructions'] = true;
+    }
         var envs = this.game['GameData'].environments,
 			totalEnvs = envs.length;
         var levelSelect = this.game['GameData'].startingEnvironment;
@@ -34,13 +39,13 @@ BasicGame.Instructions.prototype = {
 
 		this.stage.backgroundColor = "#000000";
 		this.score = String( Math.floor(this.game['GameData'].score + this.game['GameData'].currentStageScore) );
-		
+
 		var enterKey = this.input.keyboard.addKey(Phaser.Keyboard.ENTER);
         enterKey.onDown.add(this.startGame, this);
 	},
 
 	create: function () {
-       
+
         // set world settings and player start position
         this.startPos = { "x": 150, "y": (this.world.height / 2) + 47 };
         this.stage.backgroundColor = "#0c9fc7";
@@ -51,9 +56,9 @@ BasicGame.Instructions.prototype = {
         var graphics = this.add.graphics(0, 0);
         //this.drawTube(graphics, this.tunnelPhysicsData);
         this.addForeground();
-        
+
 	    // instructions
-	    var instructions = this.add.sprite(this.camera.width/2, this.camera.height/2, 'instructions1')	    
+	    var instructions = this.add.sprite(this.camera.width/2, this.camera.height/2, 'instructions1')
 	    instructions.anchor.set(0.5, 0.5);
 
 	    var pod1 = this.add.sprite(this.camera.width/2, this.camera.height/2 - 150, 'pod');
@@ -75,7 +80,7 @@ BasicGame.Instructions.prototype = {
 	    var pod3tween = this.add.tween(pod3).to( { angle: 0 }, 0, Phaser.Easing.Exponential.Out, true, 0, 0);
 	    pod3tween.onComplete.add(pod3Complete, this);
 
-	    // create score board table from external data		
+	    // create score board table from external data
         this.playAgain_button = this.add.bitmapText(this.camera.width / 2, 440, 'basic_font_white', 'Play now!', 40)
         this.playAgain_button.hitArea = new PIXI.Rectangle(-this.playAgain_button.width/2, -this.playAgain_button.height/2, this.playAgain_button.width, this.playAgain_button.height);
         this.playAgain_button.anchor.set(0.5, 0.5);
@@ -154,14 +159,14 @@ BasicGame.Instructions.prototype = {
                     var texture_name = textures[texture_index];
                     var unique = backgroundGroup.create(environmentBackground[key].position.x, environmentBackground[key].position.y, texture_name);
                     unique.fixedToCamera = environmentBackground[key].fixedToCamera;
-                
+
                 }
             }
         }
     },
 
     addMidground: function () {
-        
+
         var environmentMidground = this.environment['midground'];
         var midgroundGroup = this.midground = this.add.group();
         for (var key in environmentMidground) {

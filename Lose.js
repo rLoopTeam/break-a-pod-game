@@ -206,10 +206,18 @@ BasicGame.Lose.prototype = {
 	postScore: function() {
 	    // get player name
 		var endpoint = "UpsertUserScore";
-        var player = prompt("Please enter your name", "name");
+		var player =
+			    (
+			      typeof localStorage !== 'undefined' &&
+			      localStorage['player'] &&
+			      typeof localStorage['player'] === 'string' &&
+			      isSafeCharacters(localStorage['player'])
+			    ) ? localStorage['player'] : prompt("Please enter your name", "name");
 		var score = this.score_int;
 
+
 		if ( player && isSafeCharacters(player) ) {
+			if (typeof localStorage !== 'undefined') localStorage['player'] = player;
 			var payload = {
 				"player": player,
 				"score": score
@@ -229,11 +237,11 @@ BasicGame.Lose.prototype = {
 	        // go back to main menu
 	        this.game.state.start('MainMenu');
 	    } else {
-	    	alert("Only letters, numbers and underscores are allowed")
+	    	alert("Only lowercase letters, numbers and underscores are allowed")
 	    }
 
 	    function isSafeCharacters(str) {
-			return str.match(/^[a-z0-9_]+$/)
+			return str.match(/^[a-z0-9_-]+$/)
 		}
 	},
 
