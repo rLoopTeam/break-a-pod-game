@@ -233,8 +233,8 @@ BasicGame.Lose.prototype = {
 			function failure() {
 				console.log("Something went wrong")
 			}
-
 	        // go back to main menu
+			this.sound_music.stop();
 	        this.game.state.start('MainMenu');
 	    } else {
 	    	alert("Only lowercase letters, numbers and underscores are allowed")
