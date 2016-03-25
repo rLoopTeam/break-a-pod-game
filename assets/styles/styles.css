@@ -83,37 +83,37 @@ a:hover {
 /* Firefox */
  @-moz-keyframes blink {
     0% {
-        color: #fff;
-    }
-    50% {
         color: #58ADF9;
     }
-    100% {
+    50% {
         color: #fff;
+    }
+    100% {
+        color: #58ADF9;
     }
 }
 /* Safari and Chrome */
  @-webkit-keyframes blink {
     0% {
-        color: #fff;
-    }
-    50% {
         color: #58ADF9;
     }
-    100% {
+    50% {
         color: #fff;
+    }
+    100% {
+        color: #58ADF9;
     }
 }
 /* Opera */
  @-o-keyframes blink {
     0% {
-        color: #fff;
-    }
-    50% {
         color: #58ADF9;
     }
-    100% {
+    50% {
         color: #fff;
+    }
+    100% {
+        color: #58ADF9;
     }
 }
 
