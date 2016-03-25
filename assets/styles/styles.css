@@ -130,3 +130,26 @@ a:hover {
     margin: 0 auto;
     padding: 0 30px 0 30px;
 }
+
+/* social icons */
+.social-container a {
+    display: inline-block;
+}
+#facebook-link {
+    width: 32px;
+    height: 32px;
+    background: url('../images/social_icons.png') 0 0;
+    margin: 0 auto;
+}
+#twitter-link {
+    width: 32px;
+    height: 32px;
+    background: url('../images/social_icons.png') -32px 0;
+    margin: 0 auto;
+}
+#youtube-link {
+    width: 32px;
+    height: 32px;
+    background: url('../images/social_icons.png') -64px 0;
+    margin: 0 auto;
+}
