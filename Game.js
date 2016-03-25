@@ -30,7 +30,7 @@ BasicGame.Game = function (game) {
     this.levelLength;
     this.tubeHeight = 200;
     this.flatStartLength = 2500;
-    this.flatEndLength = 500;
+    this.flatEndLength = 1000;
     this.pixelStep = 300;
     this.startPos;
     this.distanceFromEnd;
@@ -198,7 +198,7 @@ BasicGame.Game.prototype = {
 
         //Audio
         //this.sound_music = this.add.sound('level1Music');
-        var trackIndex = Math.floor(12*Math.random() + 1); // select random index for track
+        var trackIndex = Math.floor(10*Math.random() + 1); // select random index for track
         if (!this.sound_music || !this.sound_music.isPlaying) {  
             this.sound_music = this.game.add.sound('track'+trackIndex, 1, true);
         }
@@ -275,7 +275,7 @@ BasicGame.Game.prototype = {
         this.pause_text.anchor.set(0.5, 0.5);
         this.stranded_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'You are stranded!', 30);
         this.stranded_text.anchor.set(0.5, 0.5);
-        this.power_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'Low on power!', 30);
+        this.power_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2 + 50,'basic_font_white', 'Low on power!', 30);
         this.power_text.anchor.set(0.5, 0.5);
         this.power_text.tint = 0xFF0000;
 

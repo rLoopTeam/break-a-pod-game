@@ -43,7 +43,6 @@ BasicGame.Lose.prototype = {
 
 		// add music
 		//this.music = this.add.audio('endMusic');
-		var trackIndex = Math.floor(12*Math.random() + 1); // select random index for track
         if (!this.sound_music || !this.sound_music.isPlaying) {  
             this.sound_music = this.game.add.sound('endMusic', 0.5, true);
         }

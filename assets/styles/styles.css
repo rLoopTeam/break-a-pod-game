@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'Silkscreen';
+    src: url('../images/slkscr.ttf')  format('truetype');
+}
+
+
+@keyframes backgroundScroll {
+    from {background-position: 0 0;}
+    to {background-position: -99999999px 0;}
+}
+
+body {
+    background: #2e4664;
+    background-image: url('../images/night_sky.png'); /* fallback */
+    background-position: right 45px bottom;
+    animation: backgroundScroll 999999s linear infinite; /* Adjust timing here according to speed required */
+}
+
+div.header {
+    background: linear-gradient(to bottom, rgb(55, 117, 162) 10%, rgba(255,0,0,0));
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+div.padder {
+    padding-bottom: 50px;
+}
+
+div.game {
+    display: block;
+    text-align:center;
+}
+
+#hero {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px;
+    height: auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+div.footer {
+    margin-top: 20px;
+    font-family: Silkscreen, sans-serif;
+    display: block;
+    align-content: center;
+    text-align: center;
+}
+
+a {
+    color: white;
+}
+
+.game iframe {
+    -webkit-box-shadow: 10px 10px 0px -1px rgb(2, 47, 62);
+    -moz-box-shadow: 10px 10px 0px -1px rgb(2, 47, 62);
+    box-shadow: 5px 5px 0px -1px rgb(2, 47, 62);
+    border: solid 1px black;
+}
