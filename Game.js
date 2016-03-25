@@ -356,6 +356,7 @@ BasicGame.Game.prototype = {
     },
 
     update: function () {
+        this.carBody.frame = 0;
         //this.currentblock.text = this.getBlockIndex() + "/" + this.getBlocks();
         this.updateTunnel();
 
@@ -486,6 +487,8 @@ BasicGame.Game.prototype = {
         } else {
             this.instructions.visible = false;
         }
+
+
     },
 
     addTunnel: function (graphics) {
@@ -1063,6 +1066,7 @@ BasicGame.Game.prototype = {
             if (damage < .01) { damage = .01; }
             this.carBody.health -= damage;
             if (this.carBody.health > 0) {
+                this.carBody.frame = 1;
                 if (this.carBody.health < 20) {
                     this.sound_hit1.play();
                 } else if (this.carBody.health < 50) {
@@ -1096,6 +1100,7 @@ BasicGame.Game.prototype = {
 
         // create pod
         var carBody = this.add.sprite(startPos.x, startPos.y, 'pod'); //CARBODY
+        carBody.frame = 0;
         carBody.anchor.set(0.5, 0.5);
         carBody.name = 'carBody';
         carBody.scale.set(0.5, 0.5);

@@ -56,7 +56,8 @@ BasicGame.Preloader.prototype = {
 		// WORLD
 		///////////
 		// player
-        this.load.image('pod', 'assets/sprites/rPod.png');
+        //this.load.image('pod', 'assets/sprites/rPod.png');
+        this.load.spritesheet('pod', 'assets/sprites/rPod.png', 269, 93);
 
 	    // props
         this.load.image('pusher', 'assets/sprites/pusher.png');
