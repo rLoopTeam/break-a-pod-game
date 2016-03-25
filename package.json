@@ -4,7 +4,8 @@
   "description": "Break a Pod!",
   "scripts": {
     "dev": "http-server",
-    "deploy:dev": "surge --domain break-a-pod.surge.sh"
+    "deploy:dev": "surge . --domain break-a-pod.surge.sh",
+    "deploy:prod": "surge . --domain break-a-pod.rloop.org"
   },
   "repository": {
     "type": "git",
