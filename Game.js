@@ -278,6 +278,8 @@ BasicGame.Game.prototype = {
         this.power_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2 + 50,'basic_font_white', 'Low on power!', 30);
         this.power_text.anchor.set(0.5, 0.5);
         this.power_text.tint = 0xFF0000;
+        this.winStage_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2,'basic_font_white', 'Stage complete!', 50);
+        this.winStage_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
         this.topUI.fixedToCamera = true;
@@ -297,6 +299,7 @@ BasicGame.Game.prototype = {
         this.pause_text.fixedToCamera = true;
         this.stranded_text.fixedToCamera = true;
         this.power_text.fixedToCamera = true;
+        this.winStage_text.fixedToCamera = true;
 
         // GUI Initial visibility
         this.slowDown_text.visible = false;
@@ -306,6 +309,7 @@ BasicGame.Game.prototype = {
         this.showInstructions = (this.playedBefore)?false:true;
         this.stranded_text.visible = false;
         this.power_text.visible = false;
+        this.winStage_text.visible = false;
 
         // Snow 
         if (this.is_snowing) {
@@ -1017,14 +1021,17 @@ BasicGame.Game.prototype = {
 
     winStage: function (pointer) {
         console.log("You won the stage!")
+        this.winStage_text.visible = true;
+        this.instructions.visible = false;
+        this.stabilise_text.visible = false;  
+        this.speedUp_text.visible = false;
+        this.slowDown_text.visible = false;
+        this.instructions.visible = false;
 
         this.sound_music.stop();
 
         this.game['GameData'].cLevel += 1;
         this.game['GameData'].playedBefore = true;
-        this.instructions.visible = false;
-        this.winStage_graphic = this.add.sprite(this.camera.x + this.camera.width / 2, this.camera.y + this.camera.height / 2, 'win_stage');
-        this.winStage_graphic.anchor.set(0.5, 0.5);
 
         var stageScore = this.carBody.body.x;
         this.game['GameData'].currentStageScore = stageScore;
