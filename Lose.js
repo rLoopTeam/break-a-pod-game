@@ -188,10 +188,10 @@ BasicGame.Lose.prototype = {
 			console.log("api results");
 			console.log(scores);
 			if (scores.length !== 0) self.noHighscores.visible = false;
-			for (var c = 0; c < scores.length && c < 13; c++)
+			for (var c = 0; c < scores.length && c < 12; c++)
 			{
 				self.add.bitmapText(camera.width / 2 - 160, 200 + (c*20), 'basic_font_white', scores[c].player.substring(0, 13) + ((scores[c].player.length > 13)?"...":""), 30);
-				self.add.bitmapText(camera.width / 2 + 100 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
+				self.add.bitmapText(camera.width / 2 + 90 , 200 + (c*20), 'basic_font_white', String(Math.floor(scores[c].score)).substring(0, 20) + ((scores[c].score.length > 20)?"...":""), 30);
 			}
 		}
 
