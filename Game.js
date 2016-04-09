@@ -268,7 +268,7 @@ BasicGame.Game.prototype = {
         this.speedUp_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Speed up!", 30);
         this.speedUp_text.anchor.set(0.5, 0.5);
         this.speedUp_text.tint = 0xFF0000;
-        this.stabilise_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Stabilize the pod now!", 30);
+        this.stabilise_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2 - 50, 'basic_font_white', "Stabilize the pod now!", 30);
         this.stabilise_text.anchor.set(0.5, 0.5);
         this.stabilise_text.tint = 0xFF0000;
         this.pause_text = this.add.bitmapText(this.camera.x + this.camera.width/2, this.camera.y +this.camera.height/2, 'basic_font_white', "Game paused", 30);
@@ -988,16 +988,27 @@ BasicGame.Game.prototype = {
     },
 
     loseStranded: function (pointer) {
-        this.lose();
+        if (this.game['GameData'].currentLives > 0) {
+            this.game['GameData'].currentLives = this.game['GameData'].currentLives - 1;
+            this.restartGame();
+        } else {
+            this.lose();
+        }
     },
 
     loseExplode: function (pointer) {
         this.explode();
-        this.lose();
+        if (this.game['GameData'].currentLives > 0) {
+            this.game['GameData'].currentLives = this.game['GameData'].currentLives - 1;
+            this.restartGame();
+        } else {
+            this.lose();
+        }
     },
 
     lose: function (pointer) {
         this.game['GameData'].currentStageScore = this.carBody.body.x; // set current stage score to current score
+        this.game['GameData'].cLevel = 0;
         this.loseflag = true;
         this.instructions.visible = false;
         this.stabilise_text.visible = false;  

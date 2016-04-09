@@ -278,6 +278,9 @@ BasicGame.Lose.prototype = {
 	startGame: function (pointer) {
 		console.log("restart game");
 		this.sound_music.stop();
+		this.game['GameData'].currentLives = this.game['GameData'].lives;
+		this.game['GameData'].score = 0;
+		this.game['GameData'].currentStageScore = 0;
 		this.game.state.start('Game');
 	}
 };
