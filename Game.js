@@ -81,6 +81,7 @@ BasicGame.Game = function (game) {
     this.pusher_wheel_back;
 
     // GUI
+    this.livesRect;
     this.winStage_graphic;
     this.stranded_text;
     this.Level_text;
@@ -231,6 +232,15 @@ BasicGame.Game.prototype = {
         this.addForeground();
 
         // GUI - create this last so it overlays on top of everything else
+
+        this.lives = this.add.sprite(this.camera.x + this.camera.width - 120, 25, 'lives');
+        this.livesRect = new Phaser.Rectangle(  this.lives.width - (this.game['GameData'].currentLives * this.lives.height), //x
+                                                0, //y
+                                                this.lives.width, //w
+                                                this.lives.height); //h
+        this.lives.crop(this.livesRect);
+        // this.lives.updateCrop();
+
         this.topUI = this.add.sprite(0, 0, 'topUI');
         this.trackProgressorBackground = this.add.sprite(0, this.camera.y + 517, 'progressorBackground');
         this.trackProgressorBackground.anchor.setTo(0, 0);
@@ -282,6 +292,7 @@ BasicGame.Game.prototype = {
         this.winStage_text.anchor.set(0.5, 0.5);
 
         //fix  elements to camera
+        this.lives.fixedToCamera = true;
         this.topUI.fixedToCamera = true;
         this.trackProgressorBackground.fixedToCamera = true; // Setting this to true made the indicator go backwards/slow when accelerating
         this.trackProgressorMarker.fixedToCamera = true;
@@ -981,15 +992,19 @@ BasicGame.Game.prototype = {
     },
 
     restartGame: function (pointer) {
-        clearTimeout(this.winTimeout);
-        clearTimeout(this.loseTimeout);
-        this.sound_music.stop();
-        this.state.start('Game');
+        if (this.game['GameData'].currentLives > 0) {
+            clearTimeout(this.winTimeout);
+            clearTimeout(this.loseTimeout);
+            this.sound_music.stop();
+            this.state.start('Game');
+        }
     },
 
     loseStranded: function (pointer) {
+        this.game['GameData'].currentLives = this.game['GameData'].currentLives - 1;
+        this.livesRect.x = (this.lives.width) - (this.game['GameData'].currentLives * this.lives.height);
+        this.lives.updateCrop();
         if (this.game['GameData'].currentLives > 0) {
-            this.game['GameData'].currentLives = this.game['GameData'].currentLives - 1;
             this.restartGame();
         } else {
             this.lose();
@@ -998,8 +1013,10 @@ BasicGame.Game.prototype = {
 
     loseExplode: function (pointer) {
         this.explode();
+        this.game['GameData'].currentLives = this.game['GameData'].currentLives - 1;
+        this.livesRect.x = (this.lives.width) - (this.game['GameData'].currentLives * this.lives.height);
+        this.lives.updateCrop();
         if (this.game['GameData'].currentLives > 0) {
-            this.game['GameData'].currentLives = this.game['GameData'].currentLives - 1;
             this.restartGame();
         } else {
             this.lose();
@@ -1015,6 +1032,8 @@ BasicGame.Game.prototype = {
         this.speedUp_text.visible = false;
         this.slowDown_text.visible = false;
 
+        this.livesRect.x = this.lives.width + this.lives.height;
+        this.lives.updateCrop();
 
         this.loseTimeout = setTimeout(function (state, music) {
             music.stop();

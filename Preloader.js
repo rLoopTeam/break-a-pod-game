@@ -33,6 +33,7 @@ BasicGame.Preloader.prototype = {
 	    this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
         // GUI assets
+        this.load.image('lives', 'assets/GUI/lives.png');
         this.load.image('instructions1', 'assets/GUI/instructions.png');
         this.load.image('instructions', 'assets/GUI/instructions2.png');
         this.load.image('topUI', 'assets/GUI/topUI.png');
